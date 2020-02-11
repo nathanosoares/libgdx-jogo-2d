@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import dev.game.test.GameUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,8 +29,10 @@ public class Player extends Sprite {
 
     @Override
     public void draw(Batch batch) {
+        Vector3 newLocation = GameUtils.cartesianToIsometric(location);
+
         elapsedTime += Gdx.graphics.getDeltaTime();
 
-        batch.draw(idleAnimation.getKeyFrame(elapsedTime, true), location.x, location.z);
+        batch.draw(idleAnimation.getKeyFrame(elapsedTime, true), newLocation.x, newLocation.y);
     }
 }
