@@ -23,6 +23,7 @@ allprojects {
     ext {
         appName = "jogo-2d"
         gdxVersion = '1.9.10'
+        guavaVersion = '28.2-jre'
     }
 
     repositories {
@@ -53,6 +54,7 @@ project(":core") {
     apply plugin: "java-library"
 
     dependencies {
+        api  "com.google.guava:guava:$guavaVersion"
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
@@ -16,18 +17,25 @@ import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector3;
+import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
 import dev.game.test.inputs.GameInputAdapter;
+import dev.game.test.net.client.ClientGameNet;
 import dev.game.test.world.Player;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 public class GameScreen extends ScreenAdapter {
 
     public static final int WIDTH = 320 * 4;
     public static final int HEIGHT = 180 * 4;
 
+    private final GameApplication application;
+
     @Getter
     private OrthographicCamera camera;
+
+    private BitmapFont font;
 
     private Player player;
 
@@ -37,7 +45,10 @@ public class GameScreen extends ScreenAdapter {
 
     private BatchTiledMapRenderer tiledMapRenderer;
 
-    public GameScreen() {
+    public GameScreen(GameApplication application) {
+        this.application = application;
+
+        this.font = new BitmapFont();;
         this.player = new Player();
 
         this.tiledMap = new TiledMap();
@@ -84,7 +95,7 @@ public class GameScreen extends ScreenAdapter {
             player.getLocation().x = Math.max(player.getLocation().x - 2.5f, 0);
         }
 
-        GameUtils.clearScreen(255, 255, 255, 100);
+        GameUtils.clearScreen(200, 200, 200, 100);
         this.camera.update();
 
         this.tiledMapRenderer.setView(camera);
@@ -92,6 +103,12 @@ public class GameScreen extends ScreenAdapter {
 
         this.tiledMapRenderer.getBatch().begin();
         this.player.draw(this.tiledMapRenderer.getBatch());
+
+        String s = ((ClientGameNet) application.getNet()).serverConnection.getTestString();
+        if(s != null) {
+            this.font.draw(this.tiledMapRenderer.getBatch(), s, 10.0f, 10.0f);
+        }
+
         this.tiledMapRenderer.getBatch().end();
     }
 
