@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import dev.game.test.GameUtils;
 import dev.game.test.inputs.GameInputAdapter;
 import dev.game.test.world.Player;
 import lombok.Getter;
@@ -67,8 +68,7 @@ public class GameScreen extends ScreenAdapter {
             this.player.getLocation().x -= 2.5;
         }
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        GameUtils.clearScreen(255, 255, 255, 100);
 
         this.batch.setProjectionMatrix(this.camera.combined);
         this.camera.update();

@@ -18,8 +18,6 @@ public class Player extends Sprite {
     @Getter
     private Vector2 location = new Vector2(0, 0);
 
-    private Vector2 velocity = new Vector2(0, 0);
-
     public Player() {
         this.idleAtlas = new TextureAtlas(Gdx.files.internal("spritessheets/flatboy/idle/idle.atlas"));
         this.idleAnimation = new Animation<>(1f / 30f, this.idleAtlas.getRegions());
