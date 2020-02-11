@@ -6,6 +6,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
@@ -21,8 +22,10 @@ import com.badlogic.gdx.math.Vector3;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
 import dev.game.test.inputs.GameInputAdapter;
+import dev.game.test.net.GameServerConnection;
 import dev.game.test.net.client.ClientGameNet;
 import dev.game.test.world.Player;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +41,8 @@ public class GameScreen extends ScreenAdapter {
 
     private BitmapFont font;
 
+    private SpriteBatch batch;
+
     private Player player;
 
     private TiledMap tiledMap;
@@ -49,7 +54,8 @@ public class GameScreen extends ScreenAdapter {
     public GameScreen(GameApplication application) {
         this.application = application;
 
-        this.font = new BitmapFont();;
+        this.font = new BitmapFont();
+        this.batch = new SpriteBatch();
         this.player = new Player();
 
         this.tiledMap = new TiledMap();
@@ -115,12 +121,14 @@ public class GameScreen extends ScreenAdapter {
         this.tiledMapRenderer.getBatch().begin();
         this.player.draw(this.tiledMapRenderer.getBatch());
 
-        /*String s = ((ClientGameNet) application.getNet()).serverConnection.getTestString();
-        if(s != null) {
-            this.font.draw(this.tiledMapRenderer.getBatch(), s, 10.0f, 10.0f);
-        }*/
-
         this.tiledMapRenderer.getBatch().end();
+
+        this.batch.begin();
+        String s = Optional.ofNullable(((ClientGameNet) application.getNet()).serverConnection).map(GameServerConnection::getTestString).orElse(null);
+        if(s != null) {
+            this.font.draw(this.batch, s, 10.0f, 20.0f);
+        }
+        this.batch.end();
     }
 
     @Override

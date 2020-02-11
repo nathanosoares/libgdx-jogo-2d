@@ -24,6 +24,8 @@ allprojects {
         appName = "jogo-2d"
         gdxVersion = '1.9.10'
         guavaVersion = '28.2-jre'
+        kryonetVersion = '2.21'
+        kryoVersion = '5.0.0-RC4'
     }
 
     repositories {
@@ -34,6 +36,7 @@ allprojects {
 
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "http://clojars.org/repo/" }
     }
 }
 
@@ -55,6 +58,8 @@ project(":core") {
 
     dependencies {
         api  "com.google.guava:guava:$guavaVersion"
+        api  "kryonet:kryonet:$kryonetVersion"
+        api  "com.esotericsoftware:kryo:$kryoVersion"
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }

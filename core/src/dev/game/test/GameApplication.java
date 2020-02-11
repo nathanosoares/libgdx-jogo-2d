@@ -27,23 +27,27 @@ public class GameApplication extends Game {
 
     @Override
     public void create() {
-        Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        try {
+            Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-        if(this.server) {
-            this.net = new ServerGameNet();
-            this.gameScreen = new ServerScreen();
+            if(this.server) {
+                this.net = new ServerGameNet();
+                this.gameScreen = new ServerScreen();
 
-        } else {
-            this.net = new ClientGameNet();
-            this.gameScreen = new GameScreen(this);
-        }
+            } else {
+                this.net = new ClientGameNet();
+                this.gameScreen = new GameScreen(this);
+            }
 
-        this.setScreen(this.gameScreen);
+            this.setScreen(this.gameScreen);
 
-        if(this.server) {
-            //((ServerGameNet) this.net).start(4097);
-        } else {
-            //((ClientGameNet) this.net).connect("127.0.0.1", 4097);
+            if(this.server) {
+                ((ServerGameNet) this.net).start(4097);
+            } else {
+                ((ClientGameNet) this.net).connect("127.0.0.1", 4097);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
