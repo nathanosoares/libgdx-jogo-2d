@@ -115,10 +115,10 @@ public class GameScreen extends ScreenAdapter {
         this.tiledMapRenderer.getBatch().begin();
         this.player.draw(this.tiledMapRenderer.getBatch());
 
-        String s = ((ClientGameNet) application.getNet()).serverConnection.getTestString();
+        /*String s = ((ClientGameNet) application.getNet()).serverConnection.getTestString();
         if(s != null) {
             this.font.draw(this.tiledMapRenderer.getBatch(), s, 10.0f, 10.0f);
-        }
+        }*/
 
         this.tiledMapRenderer.getBatch().end();
     }
