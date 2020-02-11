@@ -5,12 +5,23 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import dev.game.test.GameUtils;
 import dev.game.test.inputs.GameInputAdapter;
 import dev.game.test.world.Player;
@@ -24,38 +35,60 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private OrthographicCamera camera;
 
-    private SpriteBatch batch;
-
     private Player player;
 
+    private TextureMapObject playerObject;
+
     private TiledMap tiledMap;
-    private TiledMapRenderer tiledMapRenderer;
+
+    private BatchTiledMapRenderer tiledMapRenderer;
 
     public GameScreen() {
-        this.batch = new SpriteBatch();
+        this.player = new Player();
 
-        this.tiledMap = new TmxMapLoader().load("map.tmx");
+        this.tiledMap = new TiledMap();
+        Texture textureSprite = new Texture(Gdx.files.internal("tiles.png"));
+        TextureRegion[][] splitTiles = TextureRegion.split(textureSprite, 16, 16);
 
-        this.tiledMap.getLayers().add(new MapLayer());
+        MapLayers layers = tiledMap.getLayers();
+        for (int l = 0; l < 20; l++) {
+            TiledMapTileLayer layer = new TiledMapTileLayer(5, 5, 16, 16);
 
-        this.tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+            for (int x = 0; x < 5; x++) {
+                for (int y = 0; y < 5; y++) {
+                    int ty = (int)(Math.random() * splitTiles.length);
+                    int tx = (int)(Math.random() * splitTiles[ty].length);
+
+                    Cell cell = new Cell();
+                    cell.setTile(new StaticTiledMapTile(splitTiles[ty][tx]));
+
+                    layer.setCell(x, y, cell);
+                }
+            }
+
+            layers.add(layer);
+        }
+
+        MapLayer playerLayer = new MapLayer();
+        this.playerObject = new TextureMapObject(this.player);
+        this.playerObject.setX(0.0f);
+        this.playerObject.setY(0.0f);
+
+        playerLayer.getObjects().add(this.playerObject);
+        layers.add(playerLayer);
+
+        this.tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap, 4.0f);
     }
 
     @Override
     public void show() {
         this.camera = new OrthographicCamera(WIDTH, HEIGHT);
-        this.camera.position.set(WIDTH / 2f, HEIGHT / 2f, 0f);
 
         Gdx.input.setInputProcessor(new GameInputAdapter(this.camera));
-
-        this.tiledMap.getLayers().get(0).setVisible(false);
-
-        this.player = new Player();
     }
 
     @Override
     public void render(float delta) {
-
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             this.player.getLocation().y += 2.5;
         } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
@@ -69,22 +102,14 @@ public class GameScreen extends ScreenAdapter {
         }
 
         GameUtils.clearScreen(255, 255, 255, 100);
-
-        this.batch.setProjectionMatrix(this.camera.combined);
         this.camera.update();
 
         this.tiledMapRenderer.setView(camera);
         this.tiledMapRenderer.render();
-
-        this.batch.begin();
-
-        this.player.draw(this.batch);
-
-        this.batch.end();
     }
 
     @Override
     public void dispose() {
-        this.batch.dispose();
+
     }
 }
