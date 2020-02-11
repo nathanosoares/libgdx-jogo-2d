@@ -2,6 +2,7 @@ package dev.game.test;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,12 +20,11 @@ public class GameUtils {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
-    public static Vector3 cartesianToIsometric(Vector3 vector) {
-        Vector3 out = new Vector3();
+    public static Vector2 cartesianToIsometric(Vector2 vector) {
+        Vector2 out = new Vector2();
 
-        out.x = vector.x - vector.z;
-        out.y = vector.y;
-        out.z = (vector.x + vector.z) / 2;
+        out.x = vector.x - vector.y;
+        out.y = (vector.x + vector.y) / 2;
 
         return out;
     }

@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import dev.game.test.GameUtils;
 import dev.game.test.inputs.GameInputAdapter;
@@ -37,6 +38,8 @@ public class GameScreen extends ScreenAdapter {
 
     private BatchTiledMapRenderer tiledMapRenderer;
 
+    private TiledMapTileLayer floor;
+
     public GameScreen() {
         this.player = new Player();
 
@@ -45,21 +48,20 @@ public class GameScreen extends ScreenAdapter {
 
         MapLayers layers = tiledMap.getLayers();
 
-        for (int l = 0; l < 20; l++) {
-            TiledMapTileLayer layer = new TiledMapTileLayer(5, 5, 33, 17);
+        this.floor = new TiledMapTileLayer(5, 5, 33, 17);
+        this.floor.setName("floor");
 
-            for (int x = 0; x < layer.getWidth(); x++) {
-                for (int y = 0; y < layer.getHeight(); y++) {
+        for (int x = 0; x < this.floor.getWidth(); x++) {
+            for (int y = 0; y < this.floor.getHeight(); y++) {
 
-                    Cell cell = new Cell();
-                    cell.setTile(new StaticTiledMapTile(new TextureRegion(textureSprite)));
+                Cell cell = new Cell();
+                cell.setTile(new StaticTiledMapTile(new TextureRegion(textureSprite)));
 
-                    layer.setCell(x, y, cell);
-                }
+                this.floor.setCell(x, y, cell);
             }
-
-            layers.add(layer);
         }
+
+        layers.add(this.floor);
 
         MapLayer playerLayer = new MapLayer();
         this.playerObject = new TextureMapObject(this.player);
@@ -82,12 +84,12 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        Vector3 newLocation = new Vector3();
+        Vector2 newLocation = new Vector2();
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            newLocation.z += 2.5;
+            newLocation.y += 2.5;
         } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            newLocation.z -= 2.5;
+            newLocation.y -= 2.5;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
@@ -96,7 +98,7 @@ public class GameScreen extends ScreenAdapter {
             newLocation.x -= 2.5;
         }
 
-        this.player.getLocation().add(GameUtils.cartesianToIsometric(newLocation));
+        this.player.getLocation().add(newLocation);
 
         GameUtils.clearScreen(255, 255, 255, 100);
         this.camera.update();
