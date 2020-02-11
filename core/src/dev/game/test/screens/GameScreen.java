@@ -74,18 +74,24 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        Vector2 to = new Vector2();
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            player.getLocation().y = Math.min(player.getLocation().y + 2.5f, 100000);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            player.getLocation().y = Math.max(player.getLocation().y - 2.5f, 0);
+            to.y += 2.5f;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            to.y -= 2.5f;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            player.getLocation().x = Math.min(player.getLocation().x + 2.5f, 100000);
-
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            player.getLocation().x = Math.max(player.getLocation().x - 2.5f, 0);
+            to.x += 2.5f;
         }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            to.x -= 2.5f;
+        }
+
+        this.player.move(to);
 
         GameUtils.clearScreen(255, 255, 255, 100);
         this.camera.update();

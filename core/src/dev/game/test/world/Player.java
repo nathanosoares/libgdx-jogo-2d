@@ -14,18 +14,21 @@ import lombok.Setter;
 public class Player {
 
     private Texture texture;
+//    Animation walk
+    TextureAtlas atlas;
 
     private float elapsedTime = 0f;
 
-    @Getter
-    @Setter
     private Vector2 location = new Vector2(0, 0);
+
+    private boolean walking = false;
 
     public Player() {
         this.texture = new Texture(
                 Gdx.files.internal("man/man.png")
         );
 
+        this.atlas = new TextureAtlas();
     }
 
     public void draw(Batch batch) {
@@ -37,5 +40,16 @@ public class Player {
                 new TextureRegion(this.texture, 0, 0, 32, 48),
                 newLocation.x, newLocation.y, 32 * 2, 48 * 2
         );
+
+        walking = false;
+    }
+
+    public void move(Vector2 to) {
+        walking = true;
+        this.location.add(to);
+    }
+
+    public void teleport(Vector2 to) {
+
     }
 }
