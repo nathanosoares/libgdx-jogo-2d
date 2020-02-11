@@ -29,10 +29,10 @@ public class Player extends Sprite {
 
     @Override
     public void draw(Batch batch) {
+        Vector2 newLocation = GameUtils.cartesianToIsometric(location);
+
         elapsedTime += Gdx.graphics.getDeltaTime();
 
-        Vector2 isometricLocation = GameUtils.cartesianToIsometric(this.location);
-
-        batch.draw(idleAnimation.getKeyFrame(elapsedTime, true), isometricLocation.x, isometricLocation.y);
+        batch.draw(idleAnimation.getKeyFrame(elapsedTime, true), newLocation.x, newLocation.y);
     }
 }

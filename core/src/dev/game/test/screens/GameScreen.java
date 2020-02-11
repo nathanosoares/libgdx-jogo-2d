@@ -32,9 +32,9 @@ public class GameScreen extends ScreenAdapter {
 
     private Player player;
 
-    private TextureMapObject playerObject;
-
     private TiledMap tiledMap;
+
+    private TiledMapTileLayer groundLayer;
 
     private BatchTiledMapRenderer tiledMapRenderer;
 
@@ -47,29 +47,19 @@ public class GameScreen extends ScreenAdapter {
         Texture textureSprite = new Texture(Gdx.files.internal("tile.png"));
 
         MapLayers layers = tiledMap.getLayers();
+        this.groundLayer = new TiledMapTileLayer(5, 5, 33, 17);
 
-        this.floor = new TiledMapTileLayer(5, 5, 33, 17);
-        this.floor.setName("floor");
-
-        for (int x = 0; x < this.floor.getWidth(); x++) {
-            for (int y = 0; y < this.floor.getHeight(); y++) {
+        for (int x = 0; x < groundLayer.getWidth(); x++) {
+            for (int y = 0; y < groundLayer.getHeight(); y++) {
 
                 Cell cell = new Cell();
                 cell.setTile(new StaticTiledMapTile(new TextureRegion(textureSprite)));
 
-                this.floor.setCell(x, y, cell);
+                groundLayer.setCell(x, y, cell);
             }
         }
 
-        layers.add(this.floor);
-
-        MapLayer playerLayer = new MapLayer();
-        this.playerObject = new TextureMapObject(this.player);
-        this.playerObject.setX(0.0f);
-        this.playerObject.setY(0.0f);
-
-        playerLayer.getObjects().add(this.playerObject);
-        layers.add(playerLayer);
+        layers.add(groundLayer);
 
         this.tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap, 4.0f);
 
@@ -84,21 +74,18 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        Vector2 newLocation = new Vector2();
-
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            newLocation.y += 2.5;
+            player.getLocation().y = Math.min(player.getLocation().y + 2.5f, 100000);
         } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            newLocation.y -= 2.5;
+            player.getLocation().y = Math.max(player.getLocation().y - 2.5f, 0);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            newLocation.x += 2.5;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            newLocation.x -= 2.5;
-        }
+            player.getLocation().x = Math.min(player.getLocation().x + 2.5f, 100000);
 
-        this.player.getLocation().add(newLocation);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            player.getLocation().x = Math.max(player.getLocation().x - 2.5f, 0);
+        }
 
         GameUtils.clearScreen(255, 255, 255, 100);
         this.camera.update();
