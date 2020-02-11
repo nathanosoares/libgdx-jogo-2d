@@ -1,5 +1,6 @@
 package dev.game.test.inputs;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -64,6 +65,27 @@ public class GameInputAdapter extends InputAdapter {
             this.camera.position.y = this.cameraOffset.y + screenY;
 
             return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        if (keycode == Input.Keys.LEFT) {
+            this.camera.translate(-32, 0);
+        }
+
+        if (keycode == Input.Keys.RIGHT) {
+            this.camera.translate(32, 0);
+        }
+
+        if (keycode == Input.Keys.UP) {
+            this.camera.translate(0, -32);
+        }
+
+        if (keycode == Input.Keys.DOWN) {
+            this.camera.translate(0, 32);
         }
 
         return false;

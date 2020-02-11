@@ -1,13 +1,18 @@
 package dev.game.test.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import dev.game.test.inputs.GameInputAdapter;
+import dev.game.test.world.Player;
 import lombok.Getter;
 
 public class GameScreen extends ScreenAdapter {
@@ -19,11 +24,20 @@ public class GameScreen extends ScreenAdapter {
     private OrthographicCamera camera;
 
     private SpriteBatch batch;
-    private Texture img;
+
+    private Player player;
+
+    private TiledMap tiledMap;
+    private TiledMapRenderer tiledMapRenderer;
 
     public GameScreen() {
         this.batch = new SpriteBatch();
-        this.img = new Texture("badlogic.jpg");
+
+        this.tiledMap = new TmxMapLoader().load("map.tmx");
+
+        this.tiledMap.getLayers().add(new MapLayer());
+
+        this.tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
 
     @Override
@@ -32,24 +46,45 @@ public class GameScreen extends ScreenAdapter {
         this.camera.position.set(WIDTH / 2f, HEIGHT / 2f, 0f);
 
         Gdx.input.setInputProcessor(new GameInputAdapter(this.camera));
+
+        this.tiledMap.getLayers().get(0).setVisible(false);
+
+        this.player = new Player();
     }
 
     @Override
     public void render(float delta) {
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            this.player.getLocation().y += 2.5;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            this.player.getLocation().y -= 2.5;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            this.player.getLocation().x += 2.5;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            this.player.getLocation().x -= 2.5;
+        }
+
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         this.batch.setProjectionMatrix(this.camera.combined);
         this.camera.update();
 
-        batch.begin();
-        batch.draw(img, 0, 0);
-        batch.end();
+        this.tiledMapRenderer.setView(camera);
+        this.tiledMapRenderer.render();
+
+        this.batch.begin();
+
+        this.player.draw(this.batch);
+
+        this.batch.end();
     }
 
     @Override
     public void dispose() {
-        batch.dispose();
-        img.dispose();
+        this.batch.dispose();
     }
 }

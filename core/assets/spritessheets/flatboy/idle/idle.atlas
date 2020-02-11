@@ -1,0 +1,182 @@
+
+flatboy2.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (10)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy3.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (11)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy4.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (12)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy5.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (13)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy6.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (14)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy7.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (15)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy8.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (2)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy9.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (3)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy10.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (4)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy11.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (5)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy12.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (6)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy13.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (7)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy14.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (8)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
+
+flatboy15.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Idle (9)
+  rotate: false
+  xy: 2, 2
+  size: 614, 564
+  orig: 614, 564
+  offset: 0, 0
+  index: -1
