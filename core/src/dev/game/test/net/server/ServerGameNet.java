@@ -7,10 +7,16 @@ import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.game.test.net.GameClientConnection;
 import dev.game.test.net.GameNet;
+import dev.game.test.net.packet.EnumPacket;
+import dev.game.test.net.packet.Packet;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.List;
@@ -18,36 +24,51 @@ import java.util.Map;
 
 public class ServerGameNet implements GameNet {
 
-    private List<GameClientConnection> clientConnections = Lists.newArrayList();
+    private Map<Connection, GameClientConnection> clientConnections = Maps.newHashMap();
 
     /*
 
      */
 
-    private ServerSocket serverSocket;
+    private Server server;
 
-    private Thread acceptThread;
+    public void start(int port) throws IOException {
+        this.server = new Server();
 
-    public void start(int port) {
-        ServerSocketHints hints = new ServerSocketHints();
+        Kryo kyro = this.server.getKryo();
+        EnumPacket.registry.forEach((id, packet) -> kyro.register(packet, id));
 
-        this.serverSocket = Gdx.net.newServerSocket(Protocol.TCP, port, hints);
+        this.server.start();
+        this.server.bind(port);
 
-        this.acceptThread = new Thread(this::receiveClient);
-        this.acceptThread.start();
-    }
+        this.server.addListener(new Listener() {
+            @Override
+            public void connected(Connection connection) {
+                super.connected(connection);
 
-    private void receiveClient() {
-        SocketHints hints = new SocketHints();
+                System.out.println("SV - Connected");
+                GameClientConnection clientConnection = new GameClientConnection(ServerGameNet.this, connection);
+                clientConnections.put(connection, clientConnection);
+            }
 
-        while(true) {
-            try {
-                Socket socket = serverSocket.accept(hints);
-                GameClientConnection connection = new GameClientConnection(this, socket);
-                connection.init();
-                clientConnections.add(connection);
-            } catch(GdxRuntimeException ignored){}
-        }
+            @Override
+            public void disconnected(Connection connection) {
+                super.disconnected(connection);
+                System.out.println("SV - Disconnected");
+                clientConnections.remove(connection);
+            }
+
+            @Override
+            public void received(Connection connection, Object o) {
+                super.received(connection, o);
+
+                System.out.println("SV - Received");
+                GameClientConnection clientConnection = clientConnections.get(connection);
+                if(clientConnection != null && o instanceof Packet) {
+                    clientConnection.callPacket((Packet) o);
+                }
+            }
+        });
     }
 
 }
