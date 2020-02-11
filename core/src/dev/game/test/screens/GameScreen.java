@@ -49,36 +49,60 @@ public class GameScreen extends ScreenAdapter {
     public GameScreen(GameApplication application) {
         this.application = application;
 
-        this.font = new BitmapFont();;
+        this.font = new BitmapFont();
+        ;
         this.player = new Player();
 
         this.tiledMap = new TiledMap();
         Texture textureSprite = new Texture(Gdx.files.internal("tile.png"));
+        Texture clickedTextureSprite = new Texture(Gdx.files.internal("tile_clicked.png"));
 
         MapLayers layers = tiledMap.getLayers();
-        this.groundLayer = new TiledMapTileLayer(500, 500, 33, 17);
+        this.groundLayer = new TiledMapTileLayer(10, 10, 33, 17);
 
         for (int x = 0; x < groundLayer.getWidth(); x++) {
             for (int y = 0; y < groundLayer.getHeight(); y++) {
 
                 Cell cell = new Cell();
-                cell.setTile(new StaticTiledMapTile(new TextureRegion(textureSprite)));
-
+                if (x == 3 && y == 0) {
+                    cell.setTile(new StaticTiledMapTile(new TextureRegion(clickedTextureSprite)));
+                } else {
+                    cell.setTile(new StaticTiledMapTile(new TextureRegion(textureSprite)));
+                }
                 groundLayer.setCell(x, y, cell);
             }
         }
 
         layers.add(groundLayer);
 
-        this.tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap, 4.0f);
-
+        this.tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap, 1);
     }
 
     @Override
     public void show() {
         this.camera = new OrthographicCamera(WIDTH, HEIGHT);
 
-        Gdx.input.setInputProcessor(new GameInputAdapter(this.camera));
+        Gdx.input.setInputProcessor(new GameInputAdapter(this.camera) {
+
+            @Override
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                super.touchUp(screenX, screenY, pointer, button);
+
+                Vector3 worldCoordinates = GameScreen.this.camera.unproject(new Vector3(screenX, screenY, 0));
+
+                Vector2 vec = GameUtils.cartesianToIsometric(new Vector2(worldCoordinates.x, worldCoordinates.y));
+
+                System.out.println(String.format(
+                        "%s, %s -> %s, %s",
+                        vec.x / 33f,
+                        vec.y / 22f,
+                        screenX,
+                        screenY
+                ));
+
+                return true;
+            }
+        });
     }
 
     @Override
