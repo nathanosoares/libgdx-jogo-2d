@@ -41,9 +41,9 @@ public class GameApplication extends Game {
         this.setScreen(this.gameScreen);
 
         if(this.server) {
-            ((ServerGameNet) this.net).start(4097);
+            //((ServerGameNet) this.net).start(4097);
         } else {
-            ((ClientGameNet) this.net).connect("127.0.0.1", 4097);
+            //((ClientGameNet) this.net).connect("127.0.0.1", 4097);
         }
     }
 }
