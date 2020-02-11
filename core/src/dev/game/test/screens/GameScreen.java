@@ -76,11 +76,11 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         Vector2 to = new Vector2();
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            to.y += 2.5f;
+            to.y += 2.5f / 2;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            to.y -= 2.5f;
+            to.y -= 2.5f / 2;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
@@ -89,6 +89,10 @@ public class GameScreen extends ScreenAdapter {
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             to.x -= 2.5f;
+        }
+
+        if (to.x == 0 && to.y != 0) {
+            to.y *= 2;
         }
 
         this.player.move(to);

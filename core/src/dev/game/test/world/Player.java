@@ -32,7 +32,8 @@ public class Player {
     }
 
     public void draw(Batch batch) {
-        Vector2 newLocation = GameUtils.cartesianToIsometric(location);
+//        Vector2 newLocation = GameUtils.cartesianToIsometric(location);
+        Vector2 newLocation = location;
 
         elapsedTime += Gdx.graphics.getDeltaTime();
 
