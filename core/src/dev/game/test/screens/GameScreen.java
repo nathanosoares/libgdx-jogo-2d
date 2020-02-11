@@ -47,20 +47,18 @@ public class GameScreen extends ScreenAdapter {
         this.player = new Player();
 
         this.tiledMap = new TiledMap();
-        Texture textureSprite = new Texture(Gdx.files.internal("tiles.png"));
-        TextureRegion[][] splitTiles = TextureRegion.split(textureSprite, 16, 16);
+        Texture textureSprite = new Texture(Gdx.files.internal("tile.png"));
 
         MapLayers layers = tiledMap.getLayers();
-        for (int l = 0; l < 20; l++) {
-            TiledMapTileLayer layer = new TiledMapTileLayer(5, 5, 16, 16);
 
-            for (int x = 0; x < 5; x++) {
-                for (int y = 0; y < 5; y++) {
-                    int ty = (int)(Math.random() * splitTiles.length);
-                    int tx = (int)(Math.random() * splitTiles[ty].length);
+        for (int l = 0; l < 20; l++) {
+            TiledMapTileLayer layer = new TiledMapTileLayer(5, 5, 33, 17);
+
+            for (int x = 0; x < layer.getWidth(); x++) {
+                for (int y = 0; y < layer.getHeight(); y++) {
 
                     Cell cell = new Cell();
-                    cell.setTile(new StaticTiledMapTile(splitTiles[ty][tx]));
+                    cell.setTile(new StaticTiledMapTile(new TextureRegion(textureSprite)));
 
                     layer.setCell(x, y, cell);
                 }
@@ -78,6 +76,7 @@ public class GameScreen extends ScreenAdapter {
         layers.add(playerLayer);
 
         this.tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap, 4.0f);
+
     }
 
     @Override
