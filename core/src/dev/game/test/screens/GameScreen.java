@@ -105,6 +105,10 @@ public class GameScreen extends ScreenAdapter {
 
         this.tiledMapRenderer.setView(camera);
         this.tiledMapRenderer.render();
+
+        this.tiledMapRenderer.getBatch().begin();
+        this.player.draw(this.tiledMapRenderer.getBatch());
+        this.tiledMapRenderer.getBatch().end();
     }
 
     @Override
