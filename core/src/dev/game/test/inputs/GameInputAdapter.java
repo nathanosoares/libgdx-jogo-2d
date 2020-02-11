@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GameInputAdapter extends InputAdapter {
 
-    private static final float MIN_ZOOM = 0.5f;
-    private static final float MAX_ZOOM = 1.5f;
-    private static final float ZOOM_STEEP = 0.02f;
+    private static final float MAX_ZOOM = 0.3f;
+    private static final float MIN_ZOOM = 1.5f;
+    private static final float ZOOM_STEEP = 0.05f;
 
     private final OrthographicCamera camera;
 
@@ -23,8 +23,8 @@ public class GameInputAdapter extends InputAdapter {
         if (this.camera != null) {
 
             this.camera.zoom = Math.min(
-                    Math.max(this.camera.zoom + (ZOOM_STEEP * amount), MIN_ZOOM),
-                    MAX_ZOOM
+                    Math.max(this.camera.zoom + (ZOOM_STEEP * amount), MAX_ZOOM),
+                    MIN_ZOOM
             );
 
             return true;

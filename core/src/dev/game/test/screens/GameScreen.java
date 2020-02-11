@@ -8,9 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
-import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -25,9 +23,9 @@ import dev.game.test.inputs.GameInputAdapter;
 import dev.game.test.net.GameServerConnection;
 import dev.game.test.net.client.ClientGameNet;
 import dev.game.test.world.Player;
-import java.util.Optional;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -51,6 +49,12 @@ public class GameScreen extends ScreenAdapter {
 
     private BatchTiledMapRenderer tiledMapRenderer;
 
+
+    private Texture clickedTextureSprite = new Texture(Gdx.files.internal("tile_clicked.png"));
+    private Texture textureSprite = new Texture(Gdx.files.internal("tile.png"));
+
+    private Cell lastCellHover = null;
+
     public GameScreen(GameApplication application) {
         this.application = application;
 
@@ -59,8 +63,6 @@ public class GameScreen extends ScreenAdapter {
         this.player = new Player();
 
         this.tiledMap = new TiledMap();
-        Texture textureSprite = new Texture(Gdx.files.internal("tile.png"));
-        Texture clickedTextureSprite = new Texture(Gdx.files.internal("tile_clicked.png"));
 
         MapLayers layers = tiledMap.getLayers();
         this.groundLayer = new TiledMapTileLayer(10, 10, 33, 17);
@@ -69,45 +71,23 @@ public class GameScreen extends ScreenAdapter {
             for (int y = 0; y < groundLayer.getHeight(); y++) {
 
                 Cell cell = new Cell();
-                if (x == 3 && y == 0) {
-                    cell.setTile(new StaticTiledMapTile(new TextureRegion(clickedTextureSprite)));
-                } else {
-                    cell.setTile(new StaticTiledMapTile(new TextureRegion(textureSprite)));
-                }
+                cell.setTile(new StaticTiledMapTile(new TextureRegion(this.textureSprite)));
+
                 groundLayer.setCell(x, y, cell);
             }
         }
 
         layers.add(groundLayer);
 
-        this.tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap, 1);
+        this.tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap, 1f);
     }
 
     @Override
     public void show() {
         this.camera = new OrthographicCamera(WIDTH, HEIGHT);
+        this.camera.zoom = .5f;
 
-        Gdx.input.setInputProcessor(new GameInputAdapter(this.camera) {
-
-            @Override
-            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                super.touchUp(screenX, screenY, pointer, button);
-
-                Vector3 worldCoordinates = GameScreen.this.camera.unproject(new Vector3(screenX, screenY, 0));
-
-                Vector2 vec = GameUtils.cartesianToIsometric(new Vector2(worldCoordinates.x, worldCoordinates.y));
-
-                System.out.println(String.format(
-                        "%s, %s -> %s, %s",
-                        vec.x / 33f,
-                        vec.y / 22f,
-                        screenX,
-                        screenY
-                ));
-
-                return true;
-            }
-        });
+        Gdx.input.setInputProcessor(new GameInputAdapter(this.camera));
     }
 
     @Override
@@ -139,6 +119,9 @@ public class GameScreen extends ScreenAdapter {
         this.camera.update();
 
         this.tiledMapRenderer.setView(camera);
+
+        markGroundHover();
+
         this.tiledMapRenderer.render();
 
         this.tiledMapRenderer.getBatch().begin();
@@ -148,10 +131,34 @@ public class GameScreen extends ScreenAdapter {
 
         this.batch.begin();
         String s = Optional.ofNullable(((ClientGameNet) application.getNet()).serverConnection).map(GameServerConnection::getTestString).orElse(null);
-        if(s != null) {
+        if (s != null) {
             this.font.draw(this.batch, s, 10.0f, 20.0f);
         }
+
         this.batch.end();
+    }
+
+    private void markGroundHover() {
+        if (lastCellHover != null) {
+            lastCellHover.setTile(new StaticTiledMapTile(new TextureRegion(GameScreen.this.textureSprite)));
+        }
+
+        Vector3 point = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        GameScreen.this.camera.unproject(point);
+
+        point.x /= 33;
+        point.y = (point.y - 17 / 2f) / 17 + point.x;
+        point.x -= point.y - point.x;
+
+        int cellX = (int) Math.floor(point.x);
+        int cellY = (int) Math.floor(point.y);
+
+        Cell cell = groundLayer.getCell(cellX, cellY);
+
+        if (cell != null) {
+            cell.setTile(new StaticTiledMapTile(new TextureRegion(GameScreen.this.clickedTextureSprite)));
+            lastCellHover = cell;
+        }
     }
 
     @Override
