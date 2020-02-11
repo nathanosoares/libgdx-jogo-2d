@@ -16,6 +16,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
@@ -55,7 +56,7 @@ public class GameScreen extends ScreenAdapter {
         Texture textureSprite = new Texture(Gdx.files.internal("tile.png"));
 
         MapLayers layers = tiledMap.getLayers();
-        this.groundLayer = new TiledMapTileLayer(5, 5, 33, 17);
+        this.groundLayer = new TiledMapTileLayer(500, 500, 33, 17);
 
         for (int x = 0; x < groundLayer.getWidth(); x++) {
             for (int y = 0; y < groundLayer.getHeight(); y++) {
@@ -82,20 +83,30 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        Vector2 to = new Vector2();
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            player.getLocation().y = Math.min(player.getLocation().y + 2.5f, 100000);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            player.getLocation().y = Math.max(player.getLocation().y - 2.5f, 0);
+            to.y += 2.5f / 2;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            to.y -= 2.5f / 2;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            player.getLocation().x = Math.min(player.getLocation().x + 2.5f, 100000);
-
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            player.getLocation().x = Math.max(player.getLocation().x - 2.5f, 0);
+            to.x += 2.5f;
         }
 
-        GameUtils.clearScreen(200, 200, 200, 100);
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            to.x -= 2.5f;
+        }
+
+        if (to.x == 0 && to.y != 0) {
+            to.y *= 2;
+        }
+
+        this.player.move(to);
+
+        GameUtils.clearScreen(255, 255, 255, 100);
         this.camera.update();
 
         this.tiledMapRenderer.setView(camera);
