@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import dev.game.test.inputs.GameInputAdapter;
 import lombok.Getter;
 
@@ -30,7 +31,7 @@ public class GameScreen extends ScreenAdapter {
         this.camera = new OrthographicCamera(WIDTH, HEIGHT);
         this.camera.position.set(WIDTH / 2f, HEIGHT / 2f, 0f);
 
-        Gdx.input.setInputProcessor(new GameInputAdapter(this));
+        Gdx.input.setInputProcessor(new GameInputAdapter(this.camera));
     }
 
     @Override
