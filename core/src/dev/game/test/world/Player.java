@@ -1,20 +1,19 @@
 package dev.game.test.world;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import dev.game.test.GameUtils;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Player extends Sprite {
+public class Player {
 
-    private TextureAtlas idleAtlas;
-    private Animation<TextureAtlas.AtlasRegion> idleAnimation;
+    private Texture texture;
 
     private float elapsedTime = 0f;
 
@@ -23,16 +22,20 @@ public class Player extends Sprite {
     private Vector2 location = new Vector2(0, 0);
 
     public Player() {
-        this.idleAtlas = new TextureAtlas(Gdx.files.internal("spritessheets/flatboy/idle/idle.atlas"));
-        this.idleAnimation = new Animation<>(1f / 30f, this.idleAtlas.getRegions());
+        this.texture = new Texture(
+                Gdx.files.internal("man/man.png")
+        );
+
     }
 
-    @Override
     public void draw(Batch batch) {
         Vector2 newLocation = GameUtils.cartesianToIsometric(location);
 
         elapsedTime += Gdx.graphics.getDeltaTime();
 
-        batch.draw(idleAnimation.getKeyFrame(elapsedTime, true), newLocation.x, newLocation.y);
+        batch.draw(
+                new TextureRegion(this.texture, 0, 0, 32, 48),
+                newLocation.x, newLocation.y, 32 * 2, 48 * 2
+        );
     }
 }

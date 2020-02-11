@@ -47,7 +47,7 @@ public class GameScreen extends ScreenAdapter {
         Texture textureSprite = new Texture(Gdx.files.internal("tile.png"));
 
         MapLayers layers = tiledMap.getLayers();
-        this.groundLayer = new TiledMapTileLayer(5, 5, 33, 17);
+        this.groundLayer = new TiledMapTileLayer(500, 500, 33, 17);
 
         for (int x = 0; x < groundLayer.getWidth(); x++) {
             for (int y = 0; y < groundLayer.getHeight(); y++) {
