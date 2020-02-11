@@ -3,24 +3,18 @@ package dev.game.test.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import dev.game.test.GameUtils;
 import dev.game.test.inputs.GameInputAdapter;
@@ -88,17 +82,21 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        Vector3 newLocation = new Vector3();
+
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            this.player.getLocation().y += 2.5;
+            newLocation.z += 2.5;
         } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            this.player.getLocation().y -= 2.5;
+            newLocation.z -= 2.5;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            this.player.getLocation().x += 2.5;
+            newLocation.x += 2.5;
         } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            this.player.getLocation().x -= 2.5;
+            newLocation.x -= 2.5;
         }
+
+        this.player.getLocation().add(GameUtils.cartesianToIsometric(newLocation));
 
         GameUtils.clearScreen(255, 255, 255, 100);
         this.camera.update();
