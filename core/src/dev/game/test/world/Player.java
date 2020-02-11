@@ -7,28 +7,35 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import dev.game.test.GameUtils;
-import lombok.Getter;
-import lombok.Setter;
+import com.badlogic.gdx.utils.Array;
 
 public class Player {
 
     private Texture texture;
-//    Animation walk
-    TextureAtlas atlas;
+    //    Animation walk
+    private TextureAtlas atlas;
+    private TextureRegion lastTextRegion;
+    private Animation<TextureAtlas.AtlasRegion> walkingSouthWestAnimation;
+    private Animation<TextureAtlas.AtlasRegion> walkingSouthEastAnimation;
 
     private float elapsedTime = 0f;
 
     private Vector2 location = new Vector2(0, 0);
+    private Vector2 oldLocation = new Vector2(0, 0);
 
-    private boolean walking = false;
 
     public Player() {
         this.texture = new Texture(
                 Gdx.files.internal("man/man.png")
         );
 
-        this.atlas = new TextureAtlas();
+        this.atlas = new TextureAtlas(Gdx.files.internal("man/man.atlas"));
+
+        Array<TextureAtlas.AtlasRegion> walkingSouthWest = atlas.findRegions("walking_south_west");
+        this.walkingSouthWestAnimation = new Animation<>(1 / 6f, walkingSouthWest);
+
+        Array<TextureAtlas.AtlasRegion> walkingSouthEast = atlas.findRegions("walking_south_east");
+        this.walkingSouthEastAnimation = new Animation<>(1 / 6f, walkingSouthEast);
     }
 
     public void draw(Batch batch) {
@@ -37,16 +44,42 @@ public class Player {
 
         elapsedTime += Gdx.graphics.getDeltaTime();
 
+        TextureRegion textureRegion = null;
+
+        if (!this.oldLocation.equals(this.location)) {
+            Animation<TextureAtlas.AtlasRegion> animation = null;
+
+            if (this.oldLocation.x - this.location.x > 0) {
+                animation =   this.walkingSouthWestAnimation;
+            } else if (this.oldLocation.x - this.location.x < 0) {
+                animation =   this.walkingSouthEastAnimation;
+            }
+
+            if (animation != null) {
+                textureRegion = animation.getKeyFrame(elapsedTime, true);
+
+                this.lastTextRegion = animation.getKeyFrames()[1];
+            }
+        }
+
+        if (textureRegion == null) {
+            textureRegion = this.lastTextRegion == null
+                    ? new TextureRegion(this.texture, 0, 0, 32, 48)
+                    : this.lastTextRegion;
+
+            this.lastTextRegion = textureRegion;
+        }
+
+
         batch.draw(
-                new TextureRegion(this.texture, 0, 0, 32, 48),
+                textureRegion,
                 newLocation.x, newLocation.y, 32 * 2, 48 * 2
         );
 
-        walking = false;
     }
 
     public void move(Vector2 to) {
-        walking = true;
+        this.oldLocation = location.cpy();
         this.location.add(to);
     }
 
