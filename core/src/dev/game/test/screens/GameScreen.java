@@ -42,7 +42,7 @@ public class GameScreen extends ScreenAdapter {
     public static final int WIDTH = 320 * 4;
     public static final int HEIGHT = 180 * 4;
 
-    public static final Vector3 CAMERA_OFFSET = new Vector3(-1.0f, 2.0f, -1.0f);
+    public static final Vector3 CAMERA_OFFSET = new Vector3(-3.0f, 4.0f, -3.0f);
 
     private final GameApplication application;
 
