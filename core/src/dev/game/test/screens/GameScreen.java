@@ -42,6 +42,8 @@ public class GameScreen extends ScreenAdapter {
     public static final int WIDTH = 320 * 4;
     public static final int HEIGHT = 180 * 4;
 
+    public static final Vector3 CAMERA_OFFSET = new Vector3(-1.0f, 2.0f, -1.0f);
+
     private final GameApplication application;
 
     @Getter
@@ -91,8 +93,6 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         this.camera = new PerspectiveCamera(67.0f, WIDTH, HEIGHT);
-        this.camera.position.set(0.0f, 2.0f, 0.0f);
-        this.camera.lookAt(8.0f, 0.0f, 0.0f);
 
         this.playerModel = new ModelBuilder().createCapsule(0.3f, 1.0f, 10, new Material(ColorAttribute.createDiffuse(Color.WHITE)),
             Usage.Position | Usage.Normal);
@@ -148,8 +148,8 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         GameUtils.clearScreen(0, 0, 0, 100);
 
-        this.camera.position.x = this.player.getLocation().x;
-        this.camera.position.z = this.player.getLocation().z;
+        this.camera.position.set(new Vector3(this.player.getLocation()).add(CAMERA_OFFSET));
+        this.camera.lookAt(new Vector3(this.player.getLocation()).add(1.0f, 0.0f, 1.0f));
 
         this.camera.update();
         this.inputController.update();
