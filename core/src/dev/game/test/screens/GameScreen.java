@@ -3,31 +3,41 @@ package dev.game.test.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayers;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
-import dev.game.test.inputs.GameInputAdapter;
 import dev.game.test.net.GameServerConnection;
 import dev.game.test.net.client.ClientGameNet;
 import dev.game.test.world.Player;
+import java.util.Optional;
 import lombok.Getter;
 
-import java.util.Optional;
-
 public class GameScreen extends ScreenAdapter {
+
+    //
+
+    public static final int MODEL_LENGTH = 20;
+
+    public static final int MAP_LENGTH = 10;
+
+    //
 
     public static final int WIDTH = 320 * 4;
     public static final int HEIGHT = 180 * 4;
@@ -35,134 +45,140 @@ public class GameScreen extends ScreenAdapter {
     private final GameApplication application;
 
     @Getter
-    private OrthographicCamera camera;
+    private PerspectiveCamera camera;
+
+    private CameraInputController inputController;
+
+    //
 
     private BitmapFont font;
 
-    private SpriteBatch batch;
+    private SpriteBatch spriteBatch;
+
+    private ModelBatch modelBatch;
+
+    //
 
     private Player player;
 
-    private TiledMap tiledMap;
+    private Model playerModel;
+    private ModelInstance playerModelInstance;
 
-    private TiledMapTileLayer groundLayer;
+    //
 
-    private BatchTiledMapRenderer tiledMapRenderer;
+    private Environment environment;
+    private Model[] blockModels = new Model[MODEL_LENGTH];
+    private ModelInstance[][] mapBlockInstances = new ModelInstance[MAP_LENGTH][MAP_LENGTH];
 
+    //
 
     private Texture clickedTextureSprite = new Texture(Gdx.files.internal("tile_clicked.png"));
     private Texture textureSprite = new Texture(Gdx.files.internal("tile.png"));
 
     private Cell lastCellHover = null;
 
+    private int fps;
+
     public GameScreen(GameApplication application) {
         this.application = application;
 
         this.font = new BitmapFont();
-        this.batch = new SpriteBatch();
+        this.spriteBatch = new SpriteBatch();
+        this.modelBatch = new ModelBatch();
         this.player = new Player();
-
-        this.tiledMap = new TiledMap();
-
-        MapLayers layers = tiledMap.getLayers();
-        this.groundLayer = new TiledMapTileLayer(10, 10, 33, 17);
-
-        for (int x = 0; x < groundLayer.getWidth(); x++) {
-            for (int y = 0; y < groundLayer.getHeight(); y++) {
-
-                Cell cell = new Cell();
-                cell.setTile(new StaticTiledMapTile(new TextureRegion(this.textureSprite)));
-
-                groundLayer.setCell(x, y, cell);
-            }
-        }
-
-        layers.add(groundLayer);
-
-        this.tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap, 1f);
     }
 
     @Override
     public void show() {
-        this.camera = new OrthographicCamera(WIDTH, HEIGHT);
-        this.camera.zoom = .5f;
+        this.camera = new PerspectiveCamera(67.0f, WIDTH, HEIGHT);
+        this.camera.position.set(15.0f, 10.0f, 15.0f);
+        this.camera.lookAt(0.0f, 0.0f, 0.0f);
 
-        Gdx.input.setInputProcessor(new GameInputAdapter(this.camera));
+        this.playerModel = new ModelBuilder().createCapsule(0.3f, 1.0f, 10, new Material(ColorAttribute.createDiffuse(Color.WHITE)),
+            Usage.Position | Usage.Normal);
+        this.playerModelInstance = new ModelInstance(this.playerModel);
+
+        this.environment = new Environment();
+        this.environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        this.environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+
+        for (int i = 0; i < MODEL_LENGTH; i++) {
+            this.blockModels[i] = new ModelBuilder().createBox(1.0f, 1.0f, 1.0f,
+                new Material(ColorAttribute.createDiffuse((float) Math.random(), (float) Math.random(), (float) Math.random(), 1.0f)),
+                Usage.Position | Usage.Normal);
+        }
+
+        for (int x = 0; x < MAP_LENGTH; x++) {
+            for (int y = 0; y < MAP_LENGTH; y++) {
+                ModelInstance blockInstance = new ModelInstance(this.blockModels[(int) (Math.random() * MODEL_LENGTH - 1)]);
+                blockInstance.transform.setToTranslation(x, 0, y);
+
+                mapBlockInstances[x][y] = blockInstance;
+            }
+        }
+
+        inputController = new CameraInputController(this.camera);
+        inputController.forwardKey = inputController.backwardKey = inputController.rotateLeftKey = inputController.rotateRightKey = -1;
+        Gdx.input.setInputProcessor(inputController);
     }
 
     @Override
     public void render(float delta) {
-        Vector2 to = new Vector2();
+        Vector3 to = new Vector3();
+
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            to.y += 2.5f / 2;
+            to.x += 2.5f * delta;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            to.y -= 2.5f / 2;
+            to.x -= 2.5f * delta;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            to.x += 2.5f;
+            to.z += 2.5f * delta;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            to.x -= 2.5f;
-        }
-
-        if (to.x == 0 && to.y != 0) {
-            to.y *= 2;
+            to.z -= 2.5f * delta;
         }
 
         this.player.move(to);
 
-        GameUtils.clearScreen(255, 255, 255, 100);
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        GameUtils.clearScreen(0, 0, 0, 100);
+
         this.camera.update();
+        this.inputController.update();
 
-        this.tiledMapRenderer.setView(camera);
+        this.modelBatch.begin(this.camera);
 
-        markGroundHover();
+        this.playerModelInstance.transform.setToTranslation(this.player.getLocation());
+        this.modelBatch.render(this.playerModelInstance, this.environment);
 
-        this.tiledMapRenderer.render();
+        for (int x = 0; x < MAP_LENGTH; x++) {
+            for (int y = 0; y < MAP_LENGTH; y++) {
+                this.modelBatch.render(this.mapBlockInstances[x][y], this.environment);
+            }
+        }
 
-        this.tiledMapRenderer.getBatch().begin();
-        this.player.draw(this.tiledMapRenderer.getBatch());
+        this.modelBatch.end();
 
-        this.tiledMapRenderer.getBatch().end();
-
-        this.batch.begin();
-        String s = Optional.ofNullable(((ClientGameNet) application.getNet()).serverConnection).map(GameServerConnection::getTestString).orElse(null);
+        this.spriteBatch.begin();
+        String s = Optional.ofNullable(((ClientGameNet) application.getNet()).serverConnection).map(GameServerConnection::getTestString)
+            .orElse(null);
         if (s != null) {
-            this.font.draw(this.batch, s, 10.0f, 20.0f);
+            this.font.draw(this.spriteBatch, s, 10.0f, 20.0f);
         }
 
-        this.batch.end();
-    }
+        this.font.draw(this.spriteBatch, String.format("FPS: %d", Gdx.graphics.getFramesPerSecond()), 10.0f,  50.0f);
 
-    private void markGroundHover() {
-        if (lastCellHover != null) {
-            lastCellHover.setTile(new StaticTiledMapTile(new TextureRegion(GameScreen.this.textureSprite)));
-        }
-
-        Vector3 point = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        GameScreen.this.camera.unproject(point);
-
-        point.x /= 33;
-        point.y = (point.y - 17 / 2f) / 17 + point.x;
-        point.x -= point.y - point.x;
-
-        int cellX = (int) Math.floor(point.x);
-        int cellY = (int) Math.floor(point.y);
-
-        Cell cell = groundLayer.getCell(cellX, cellY);
-
-        if (cell != null) {
-            cell.setTile(new StaticTiledMapTile(new TextureRegion(GameScreen.this.clickedTextureSprite)));
-            lastCellHover = cell;
-        }
+        this.spriteBatch.end();
     }
 
     @Override
     public void dispose() {
-
+        for(int i = 0; i < MODEL_LENGTH; i++) {
+            this.blockModels[i].dispose();
+        }
     }
 }

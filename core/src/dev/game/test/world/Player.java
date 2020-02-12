@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import lombok.Getter;
 
 public class Player {
 
@@ -20,8 +22,9 @@ public class Player {
 
     private float elapsedTime = 0f;
 
-    private Vector2 location = new Vector2(0, 0);
-    private Vector2 oldLocation = new Vector2(0, 0);
+    @Getter
+    private Vector3 location = new Vector3(0, 1, 0);
+    private Vector3 oldLocation = new Vector3(0, 1, 0);
 
 
     public Player() {
@@ -40,7 +43,7 @@ public class Player {
 
     public void draw(Batch batch) {
 //        Vector2 newLocation = GameUtils.cartesianToIsometric(location);
-        Vector2 newLocation = location;
+        Vector3 newLocation = location;
 
         elapsedTime += Gdx.graphics.getDeltaTime();
 
@@ -78,7 +81,7 @@ public class Player {
 
     }
 
-    public void move(Vector2 to) {
+    public void move(Vector3 to) {
         this.oldLocation = location.cpy();
         this.location.add(to);
     }
