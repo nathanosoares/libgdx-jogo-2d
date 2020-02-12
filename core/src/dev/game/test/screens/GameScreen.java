@@ -91,8 +91,8 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         this.camera = new PerspectiveCamera(67.0f, WIDTH, HEIGHT);
-        this.camera.position.set(15.0f, 10.0f, 15.0f);
-        this.camera.lookAt(0.0f, 0.0f, 0.0f);
+        this.camera.position.set(0.0f, 2.0f, 0.0f);
+        this.camera.lookAt(8.0f, 0.0f, 0.0f);
 
         this.playerModel = new ModelBuilder().createCapsule(0.3f, 1.0f, 10, new Material(ColorAttribute.createDiffuse(Color.WHITE)),
             Usage.Position | Usage.Normal);
@@ -119,7 +119,7 @@ public class GameScreen extends ScreenAdapter {
 
         inputController = new CameraInputController(this.camera);
         inputController.forwardKey = inputController.backwardKey = inputController.rotateLeftKey = inputController.rotateRightKey = -1;
-        Gdx.input.setInputProcessor(inputController);
+        //Gdx.input.setInputProcessor(inputController);
     }
 
     @Override
@@ -143,16 +143,19 @@ public class GameScreen extends ScreenAdapter {
         }
 
         this.player.move(to);
+        this.playerModelInstance.transform.setToTranslation(this.player.getLocation());
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         GameUtils.clearScreen(0, 0, 0, 100);
+
+        this.camera.position.x = this.player.getLocation().x;
+        this.camera.position.z = this.player.getLocation().z;
 
         this.camera.update();
         this.inputController.update();
 
         this.modelBatch.begin(this.camera);
 
-        this.playerModelInstance.transform.setToTranslation(this.player.getLocation());
         this.modelBatch.render(this.playerModelInstance, this.environment);
 
         for (int x = 0; x < MAP_LENGTH; x++) {
