@@ -185,6 +185,9 @@
   <image width="16" height="9" source="../rpg-pack/props n decorations/generic-rpg-grass02.png"/>
  </tile>
  <tile id="61">
+  <properties>
+   <property name="colision" value=""/>
+  </properties>
   <image width="70" height="88" source="../rpg-pack/props n decorations/generic-rpg-house-inn.png"/>
  </tile>
  <tile id="62">

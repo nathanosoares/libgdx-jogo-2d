@@ -52,6 +52,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         this.camera = new OrthographicCamera();
+        this.camera.zoom = 1.5f;
 
         DisplayMode displayMode = Gdx.graphics.getDisplayMode();
         float ratio = (float) displayMode.width / (float) displayMode.height;
@@ -115,8 +116,8 @@ public class GameScreen extends ScreenAdapter {
         this.mapRenderer.setView(this.camera);
 
         this.mapRenderer.render(new int[]{0});
-        this.mapRenderer.render(new int[]{1});
         this.mapRenderer.renderObject(this.player);
+        this.mapRenderer.renderDecorations(this.player);
     }
 
     @Override
