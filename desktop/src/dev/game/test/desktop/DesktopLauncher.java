@@ -1,19 +1,20 @@
 package dev.game.test.desktop;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import dev.game.test.GameApplication;
 import dev.game.test.screens.GameScreen;
 
 public class DesktopLauncher {
 
     public static void main(String[] arg) {
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.forceExit = false;
-        config.width = 800;
-        config.height = 600;
-        config.samples = 3;
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setMaximized(true);
 
-        new LwjglApplication(new GameApplication(arg), config);
+        new Lwjgl3Application(new GameApplication(arg), config);
     }
 }
