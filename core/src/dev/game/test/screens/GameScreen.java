@@ -8,25 +8,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.IntMap;
-import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
+import dev.game.test.world.GameMapRenderer;
+import dev.game.test.world.Player;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -51,14 +43,12 @@ public class GameScreen extends ScreenAdapter {
     private SpriteBatch spriteBatch;
 
     private TiledMap map;
-    private BatchTiledMapRenderer mapRenderer;
+    private GameMapRenderer mapRenderer;
 
     private Texture playerTexture;
     private TextureRegion playerTextureRegion;
 
-    //
-
-    private Vector2 playerLocation = new Vector2();
+    private Player player;
 
     public GameScreen(GameApplication application) {
         this.application = application;
@@ -78,7 +68,7 @@ public class GameScreen extends ScreenAdapter {
         this.spriteBatch = new SpriteBatch();
 
         this.map = new TmxMapLoader().load("map/test.tmx");
-        this.mapRenderer = new OrthogonalTiledMapRenderer(this.map, UNIT_PER_PIXEL);
+        this.mapRenderer = new GameMapRenderer(this.map, UNIT_PER_PIXEL);
 
         MapProperties prop = this.map.getProperties();
 
@@ -91,8 +81,9 @@ public class GameScreen extends ScreenAdapter {
         this.playerTexture = new Texture(Gdx.files.internal("rpg-pack/chars/gabe/gabe-idle-run.png"));
         this.playerTextureRegion = new TextureRegion(this.playerTexture, 0, 0, 24, 24);
 
-        this.playerLocation.x = mapWidth / 2f;
-        this.playerLocation.y = mapHeight / 2f;
+
+        this.player = new Player();
+        this.player.setLocation(new Vector2(mapWidth / 2f, mapHeight / 2f));
     }
 
     @Override
@@ -105,22 +96,23 @@ public class GameScreen extends ScreenAdapter {
         GameUtils.clearScreen(0, 50, 0, 100);
 
         if (Gdx.input.isKeyPressed(Keys.W)) {
-            this.playerLocation.y = Math.min(this.playerLocation.y + delta * 5.0f, WORLD_SIZE - 1.8f);
+            this.player.getLocation().y = Math.min(this.player.getLocation().y + delta * 5.0f, WORLD_SIZE - 1.8f);
         }
 
         if (Gdx.input.isKeyPressed(Keys.S)) {
-            this.playerLocation.y = Math.max(this.playerLocation.y - delta * 5.0f, 0);
+            this.player.getLocation().y = Math.max(this.player.getLocation().y - delta * 5.0f, 0);
         }
 
         if (Gdx.input.isKeyPressed(Keys.D)) {
-            this.playerLocation.x = Math.min(this.playerLocation.x + delta * 5.0f, WORLD_SIZE - 1.8f);
+            this.player.getLocation().x = Math.min(this.player.getLocation().x + delta * 5.0f, WORLD_SIZE - 1.8f);
         }
 
         if (Gdx.input.isKeyPressed(Keys.A)) {
-            this.playerLocation.x = Math.max(this.playerLocation.x - delta * 5.0f, 0);
+            this.player.getLocation().x = Math.max(this.player.getLocation().x - delta * 5.0f, 0);
         }
 
-        this.camera.position.set(this.playerLocation.x, this.playerLocation.y, 0);
+
+        this.camera.position.set(this.player.getLocation().x, this.player.getLocation().y, 0);
 
         float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
         float visibleH = viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
@@ -134,14 +126,7 @@ public class GameScreen extends ScreenAdapter {
 
         this.mapRenderer.render(new int[]{0});
         this.mapRenderer.render(new int[]{1});
-        this.mapRenderer.render(new int[]{2});
-
-        this.spriteBatch.begin();
-        this.spriteBatch.setProjectionMatrix(this.camera.combined);
-        this.spriteBatch.draw(this.playerTextureRegion, this.playerLocation.x, this.playerLocation.y, 1.8f, 1.8f);
-        this.spriteBatch.end();
-
-        this.mapRenderer.render(new int[]{2});
+        this.mapRenderer.renderObject(this.player);
     }
 
     @Override
