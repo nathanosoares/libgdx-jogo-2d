@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -79,11 +80,19 @@ public class GameScreen extends ScreenAdapter {
         this.map = new TmxMapLoader().load("map/test.tmx");
         this.mapRenderer = new OrthogonalTiledMapRenderer(this.map, UNIT_PER_PIXEL);
 
+        MapProperties prop = this.map.getProperties();
+
+        int mapWidth = prop.get("width", Integer.class);
+        int mapHeight = prop.get("height", Integer.class);
+        int tilePixelWidth = prop.get("tilewidth", Integer.class);
+        int tilePixelHeight = prop.get("tileheight", Integer.class);
+
+
         this.playerTexture = new Texture(Gdx.files.internal("rpg-pack/chars/gabe/gabe-idle-run.png"));
         this.playerTextureRegion = new TextureRegion(this.playerTexture, 0, 0, 24, 24);
 
-        this.playerLocation.x = this.map.getProperties().get("width", Integer.class) / 2;
-        this.playerLocation.y = this.map.getProperties().get("height", Integer.class) / 2;
+        this.playerLocation.x = mapWidth / 2f;
+        this.playerLocation.y = mapHeight / 2f;
     }
 
     @Override
@@ -95,25 +104,25 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         GameUtils.clearScreen(0, 50, 0, 100);
 
-        if(Gdx.input.isKeyPressed(Keys.W)) {
+        if (Gdx.input.isKeyPressed(Keys.W)) {
             this.playerLocation.y = Math.min(this.playerLocation.y + delta * 5.0f, WORLD_SIZE - 1.8f);
         }
 
-        if(Gdx.input.isKeyPressed(Keys.S)) {
+        if (Gdx.input.isKeyPressed(Keys.S)) {
             this.playerLocation.y = Math.max(this.playerLocation.y - delta * 5.0f, 0);
         }
 
-        if(Gdx.input.isKeyPressed(Keys.D)) {
+        if (Gdx.input.isKeyPressed(Keys.D)) {
             this.playerLocation.x = Math.min(this.playerLocation.x + delta * 5.0f, WORLD_SIZE - 1.8f);
         }
 
-        if(Gdx.input.isKeyPressed(Keys.A)) {
+        if (Gdx.input.isKeyPressed(Keys.A)) {
             this.playerLocation.x = Math.max(this.playerLocation.x - delta * 5.0f, 0);
         }
 
         this.camera.position.set(this.playerLocation.x, this.playerLocation.y, 0);
 
-        float visibleW =  viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
+        float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
         float visibleH = viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
 
         this.camera.position.x = MathUtils.clamp(this.camera.position.x, visibleW, WORLD_SIZE - visibleW);
@@ -123,15 +132,16 @@ public class GameScreen extends ScreenAdapter {
 
         this.mapRenderer.setView(this.camera);
 
-        this.mapRenderer.render(new int[] { 0 });
-        this.mapRenderer.render(new int[] { 1 });
+        this.mapRenderer.render(new int[]{0});
+        this.mapRenderer.render(new int[]{1});
+        this.mapRenderer.render(new int[]{2});
 
         this.spriteBatch.begin();
         this.spriteBatch.setProjectionMatrix(this.camera.combined);
         this.spriteBatch.draw(this.playerTextureRegion, this.playerLocation.x, this.playerLocation.y, 1.8f, 1.8f);
         this.spriteBatch.end();
 
-        this.mapRenderer.render(new int[] { 2 });
+        this.mapRenderer.render(new int[]{2});
     }
 
     @Override
