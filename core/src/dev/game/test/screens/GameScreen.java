@@ -5,9 +5,7 @@ import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -45,9 +43,6 @@ public class GameScreen extends ScreenAdapter {
     private TiledMap map;
     private GameMapRenderer mapRenderer;
 
-    private Texture playerTexture;
-    private TextureRegion playerTextureRegion;
-
     private Player player;
 
     public GameScreen(GameApplication application) {
@@ -76,11 +71,6 @@ public class GameScreen extends ScreenAdapter {
         int mapHeight = prop.get("height", Integer.class);
         int tilePixelWidth = prop.get("tilewidth", Integer.class);
         int tilePixelHeight = prop.get("tileheight", Integer.class);
-
-
-        this.playerTexture = new Texture(Gdx.files.internal("rpg-pack/chars/gabe/gabe-idle-run.png"));
-        this.playerTextureRegion = new TextureRegion(this.playerTexture, 0, 0, 24, 24);
-
 
         this.player = new Player();
         this.player.setLocation(new Vector2(mapWidth / 2f, mapHeight / 2f));
