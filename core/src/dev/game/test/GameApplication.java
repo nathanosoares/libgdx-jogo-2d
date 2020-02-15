@@ -68,9 +68,9 @@ public class GameApplication extends Game {
             int mapWidth = 20;
             int mapHeight = 20;
 
-            this.world = new World("world", mapWidth, mapHeight);
+//            this.world = new World("world", mapWidth, mapHeight);
 
-            this.gameScreen = new GameScreen(this.world, this.player, this);
+            this.gameScreen = new GameScreen(this.player, this);
             this.blocksRegistry = new BlocksRegistry();
 
             this.blocksRegistry.registerBlock(0, Blocks.AIR);

@@ -58,9 +58,8 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private Vector2 hover = new Vector2();
 
-    public GameScreen(World world, Player player, GameApplication application) {
+    public GameScreen(Player player, GameApplication application) {
         this.application = application;
-        this.world = world;
         this.player = player;
         instance = this;
     }
@@ -76,11 +75,8 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-        this.worldRender = new WorldRender(spriteBatch, world);
-        this.worldRender.setView(this.camera);
-        this.worldRender.setViewport(this.viewport);
-
-        this.player.setPosition(new Vector2(this.world.getBounds().getWidth() / 2f, this.world.getBounds().getHeight() / 2f));
+        int mapWidth = 20;
+        int mapHeight = 20;
 
         {
             World world = new World("world", mapWidth, mapHeight);
