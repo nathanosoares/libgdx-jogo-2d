@@ -48,7 +48,7 @@ public class BlockState {
             PolygonShape groundBox = new PolygonShape();
 
 
-            Vector2 center = new Vector2(this.block.getWidth() / 2f / 2f, this.block.getHeight() / 2f / 2f);
+            Vector2 center = new Vector2(this.block.getWidth() / 2f, this.block.getHeight() / 2f);
             groundBox.setAsBox(this.block.getWidth() / 2f, this.block.getHeight() / 2f, center, 0f);
 
             this.body.createFixture(groundBox, 0f);
