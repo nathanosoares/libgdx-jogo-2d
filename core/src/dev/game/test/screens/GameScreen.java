@@ -160,7 +160,7 @@ public class GameScreen extends ScreenAdapter {
                 setCurrentWorld(worlds.get("test"));
             }
 
-            this.worldRender.getWorld().addEntity(this.player, this.player.getPosition());
+            this.worldRender.getWorld().addEntity(this.player, this.player.getBody().getPosition());
         }
 
         if (Gdx.input.isKeyPressed(Keys.W)) {
@@ -182,7 +182,7 @@ public class GameScreen extends ScreenAdapter {
         this.player.move(moveTo);
 
         if (this.worldRender != null) {
-            this.camera.position.set(this.player.getPosition().x, this.player.getPosition().y, 0);
+            this.camera.position.set(this.player.getBody().getPosition().x, this.player.getBody().getPosition().y, 0);
 
             float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
             float visibleH = viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();

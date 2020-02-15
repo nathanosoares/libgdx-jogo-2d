@@ -56,7 +56,7 @@ public class Player extends Entity implements EntityRunner {
 
         this.stateTime += Gdx.graphics.getDeltaTime();
 
-        if (!this.lastPosition.equals(this.position)) {
+        if (!this.lastPosition.equals(this.body.getPosition())) {
             if (this.isRunning()) {
                 textureRegion = runningAnimation.getKeyFrame(stateTime, true);
             } else {
@@ -66,25 +66,26 @@ public class Player extends Entity implements EntityRunner {
 
         EnumFacing direction = this.lastDirection;
 
-        if (this.position.x != this.lastPosition.x) {
-            if (this.position.x < this.lastPosition.x) {
+        if (this.getBody().getPosition().x != this.lastPosition.x) {
+            if (this.getBody().getPosition().x < this.lastPosition.x) {
                 direction = EnumFacing.EAST;
-            } else if (this.position.x > this.lastPosition.x) {
+            } else if (this.getBody().getPosition().x > this.lastPosition.x) {
                 direction = EnumFacing.WEST;
             }
         }
 
 
         float width = 32 / 16f;
-        float x = position.x;
+        float x = this.body.getPosition().x;
         if (direction == EnumFacing.EAST) {
             width *= -1;
             x += 24 / 16f;
         }
 
         this.lastDirection = direction;
+        this.lastPosition = this.body.getPosition().cpy();
 
-        batch.draw(textureRegion, x, position.y, width, 24 / 16f);
+        batch.draw(textureRegion, x, this.body.getPosition().y, width, 24 / 16f);
     }
 
     @Override
@@ -97,10 +98,4 @@ public class Player extends Entity implements EntityRunner {
         return false;
     }
 
-    @Override
-    public Vector2 move(Vector2 vector2) {
-        this.lastPosition = this.position.cpy();
-
-        return super.move(vector2);
-    }
 }

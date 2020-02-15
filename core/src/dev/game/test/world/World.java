@@ -113,14 +113,14 @@ public class World {
         }
 
         entity.setWorld(this);
-        entity.position.set(new Vector2(x, y));
+
         this.entities.add(entity);
 
         if (entity instanceof Player) {
             this.players.put(entity.getId(), (Player) entity);
         }
 
-        entity.onWorldAdd(this);
+        entity.onWorldAdd(this, x, y);
     }
 
     public void removeEntity(Entity entity) {
