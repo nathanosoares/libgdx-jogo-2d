@@ -3,13 +3,12 @@ package dev.game.test.world;
 import com.badlogic.gdx.maps.MapGroupLayer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
-import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import dev.game.test.world.entities.Entity;
-import dev.game.test.world.entities.Player;
+import dev.game.test.world.entity.Entity;
+import dev.game.test.world.entity.Player;
 
 public class GameMapRenderer extends OrthogonalTiledMapRenderer {
 

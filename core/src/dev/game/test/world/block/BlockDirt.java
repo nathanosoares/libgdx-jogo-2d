@@ -1,4 +1,4 @@
-package dev.game.test.block;
+package dev.game.test.world.block;
 
 public class BlockDirt extends Block {
 

@@ -1,4 +1,4 @@
-package dev.game.test.world.entities;
+package dev.game.test.world.entity;
 
 import com.badlogic.gdx.math.Vector2;
 

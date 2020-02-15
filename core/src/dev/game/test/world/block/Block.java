@@ -1,4 +1,4 @@
-package dev.game.test.block;
+package dev.game.test.world.block;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;

@@ -1,7 +1,7 @@
 package dev.game.test.world;
 
 import com.google.common.collect.Lists;
-import dev.game.test.world.entities.Entity;
+import dev.game.test.world.entity.Entity;
 
 import java.util.List;
 
