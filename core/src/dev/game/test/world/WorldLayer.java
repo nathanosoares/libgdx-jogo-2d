@@ -20,4 +20,10 @@ public class WorldLayer {
             }
         }
     }
+
+    public boolean isOrigin(int x, int y) {
+        BlockData block = getBlock(x, y);
+
+        return block != null && (block.getPosition().x == x && block.getPosition().y == y);
+    }
 }
