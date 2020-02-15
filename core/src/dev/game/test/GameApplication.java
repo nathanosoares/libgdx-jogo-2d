@@ -4,15 +4,19 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.math.Vector2;
 import dev.game.test.net.ConnectionHandler;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import dev.game.test.net.client.ClientConnectionHandler;
 import dev.game.test.screens.GameScreen;
+import dev.game.test.world.World;
 import dev.game.test.world.block.Blocks;
 import dev.game.test.world.block.BlocksRegistry;
+import dev.game.test.world.entity.Player;
 import lombok.Getter;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class GameApplication extends Game {
 
@@ -31,6 +35,12 @@ public class GameApplication extends Game {
 
     @Getter
     private String username;
+
+    @Getter
+    private Player player;
+
+    @Getter
+    private World world;
 
     public GameApplication(String[] args) {
         if (System.getProperty("username") != null) {
@@ -51,8 +61,16 @@ public class GameApplication extends Game {
 
             Box2D.init();
 
-            this.net = new ClientConnectionHandler();
-            this.gameScreen = new GameScreen(this);
+            this.net = new ClientConnectionHandler(this);
+
+            this.player = new Player(UUID.randomUUID());
+
+            int mapWidth = 20;
+            int mapHeight = 20;
+
+            this.world = new World("world", mapWidth, mapHeight);
+
+            this.gameScreen = new GameScreen(this.world, this.player, this);
             this.blocksRegistry = new BlocksRegistry();
 
             this.blocksRegistry.registerBlock(0, Blocks.AIR);

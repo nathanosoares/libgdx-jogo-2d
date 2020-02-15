@@ -9,11 +9,12 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketPlayerInfo {
+public class PacketEntitySpawn {
 
     @Getter
     private UUID id;
 
-
+    @Getter
+    private Vector2 position;
 
 }

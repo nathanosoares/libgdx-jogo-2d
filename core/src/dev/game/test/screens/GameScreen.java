@@ -21,8 +21,6 @@ import dev.game.test.world.entity.Player;
 import dev.game.test.world.render.WorldRender;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
 public class GameScreen extends ScreenAdapter {
 
@@ -54,8 +52,10 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private Vector2 hover = new Vector2();
 
-    public GameScreen(GameApplication application) {
+    public GameScreen(World world, Player player, GameApplication application) {
         this.application = application;
+        this.world = world;
+        this.player = player;
         instance = this;
     }
 
@@ -70,16 +70,11 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-        int mapWidth = 20;
-        int mapHeight = 20;
-
-        this.world = new World("world", mapWidth, mapHeight);
         this.worldRender = new WorldRender(spriteBatch, world);
         this.worldRender.setView(this.camera);
         this.worldRender.setViewport(this.viewport);
 
-        this.player = new Player(UUID.randomUUID());
-        this.player.setPosition(new Vector2(mapWidth / 2f, mapHeight / 2f));
+        this.player.setPosition(new Vector2(this.world.getBounds().getWidth() / 2f, this.world.getBounds().getHeight() / 2f));
 
         this.world.addEntity(this.player);
 
