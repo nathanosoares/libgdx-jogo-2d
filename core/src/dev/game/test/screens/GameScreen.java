@@ -52,7 +52,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         this.camera = new OrthographicCamera();
-        this.camera.zoom = 1.5f;
+//        this.camera.zoom = 1.5f;
 
         DisplayMode displayMode = Gdx.graphics.getDisplayMode();
         float ratio = (float) displayMode.width / (float) displayMode.height;
@@ -87,7 +87,7 @@ public class GameScreen extends ScreenAdapter {
         GameUtils.clearScreen(0, 50, 0, 100);
 
         if (Gdx.input.isKeyPressed(Keys.W)) {
-            this.player.getLocation().y = Math.min(this.player.getLocation().y + delta * 5.0f, WORLD_SIZE - 1.8f);
+            this.player.getLocation().y = Math.min(this.player.getLocation().y + delta * 5.0f, WORLD_SIZE - 24 / 10f);
         }
 
         if (Gdx.input.isKeyPressed(Keys.S)) {
@@ -95,7 +95,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (Gdx.input.isKeyPressed(Keys.D)) {
-            this.player.getLocation().x = Math.min(this.player.getLocation().x + delta * 5.0f, WORLD_SIZE - 1.8f);
+            this.player.getLocation().x = Math.min(this.player.getLocation().x + delta * 5.0f, WORLD_SIZE - 24 / 10f);
         }
 
         if (Gdx.input.isKeyPressed(Keys.A)) {
