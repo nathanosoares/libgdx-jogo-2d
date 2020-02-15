@@ -73,16 +73,16 @@ public class Player extends Entity implements EntityRunner {
         }
 
 
-        float width = 24 / 10f;
+        float width = 24 / 16f;
         float x = position.x;
         if (direction == EnumFacing.EAST) {
             width *= -1;
-            x += 24 / 10f;
+            x += 24 / 16f;
         }
 
         this.lastDirection = direction;
 
-        batch.draw(textureRegion, x, position.y, width, 24 / 10f);
+        batch.draw(textureRegion, x, position.y, width, 24 / 16f);
     }
 
     @Override
