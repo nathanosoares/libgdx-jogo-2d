@@ -24,10 +24,11 @@ public class BlockState {
     public int connectedData;
 
     public BlockState(Block block, World world, WorldLayer layer, Vector2 position) {
-        this.block = block;
         this.world = world;
         this.layer = layer;
         this.position = position;
+
+        this.setBlock(block);
     }
 
     Body body;
@@ -45,7 +46,10 @@ public class BlockState {
             this.body = world.getBox2dWorld().createBody(def);
 
             PolygonShape groundBox = new PolygonShape();
-            groundBox.setAsBox(18f / 2, 18f / 2);
+
+
+            Vector2 center = new Vector2(this.block.getWidth() / 2f / 2f, this.block.getHeight() / 2f / 2f);
+            groundBox.setAsBox(this.block.getWidth() / 2f, this.block.getHeight() / 2f, center, 0f);
 
             this.body.createFixture(groundBox, 0f);
 
