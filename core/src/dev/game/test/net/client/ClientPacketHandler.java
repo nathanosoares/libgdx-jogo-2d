@@ -2,15 +2,15 @@ package dev.game.test.net.client;
 
 import com.esotericsoftware.kryonet.Connection;
 import dev.game.test.net.GameConnection;
-import dev.game.test.net.GameNet;
-import dev.game.test.net.handshake.PacketHandshake;
+import dev.game.test.net.ConnectionHandler;
+import dev.game.test.net.packet.handshake.PacketHandshake;
 import dev.game.test.net.packet.Packet;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ClientPacketHandler implements GameConnection {
 
-    private final GameNet gameNet;
+    private final ClientConnectionHandler connectionHandler;
 
     //
 
@@ -23,6 +23,7 @@ public class ClientPacketHandler implements GameConnection {
 
     public void callPacket(Packet packet) {
         if(packet instanceof PacketHandshake) {
+            connectionHandler.onHandshake(packet);
         }
     }
 

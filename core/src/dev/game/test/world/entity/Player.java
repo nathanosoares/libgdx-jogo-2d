@@ -10,6 +10,8 @@ import dev.game.test.world.block.EnumFacing;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 public class Player extends Entity implements EntityRunner {
 
     private Vector2 lastPosition = new Vector2();
@@ -27,8 +29,8 @@ public class Player extends Entity implements EntityRunner {
     private final Animation<TextureRegion> runningAnimation;
     private EnumFacing lastDirection = EnumFacing.WEST;
 
-    public Player() {
-        super(new Texture(Gdx.files.internal("rpg-pack/chars/gabe/gabe-idle-run.png")));
+    public Player(UUID uniqueId) {
+        super(uniqueId, new Texture(Gdx.files.internal("rpg-pack/chars/gabe/gabe-idle-run.png")));
 
         TextureRegion[][] tmp = TextureRegion.split(this.texture, this.texture.getWidth() / 7, this.texture.getHeight());
 

@@ -25,6 +25,7 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 public class GameScreen extends ScreenAdapter {
@@ -76,7 +77,7 @@ public class GameScreen extends ScreenAdapter {
         int mapWidth = 20;
         int mapHeight = 20;
 
-        this.player = new Player();
+        this.player = new Player(UUID.randomUUID());
 
         {
             World world = createWorld("world", mapWidth, mapHeight);

@@ -9,9 +9,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @RequiredArgsConstructor
 public abstract class Entity {
+
+    @Getter
+    private final UUID id;
 
     protected final Texture texture;
 

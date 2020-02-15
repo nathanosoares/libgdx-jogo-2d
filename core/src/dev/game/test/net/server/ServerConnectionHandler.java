@@ -5,14 +5,14 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.google.common.collect.Maps;
-import dev.game.test.net.GameNet;
+import dev.game.test.net.ConnectionHandler;
 import dev.game.test.net.packet.EnumPacket;
 import dev.game.test.net.packet.Packet;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class ServerConnectionHandler implements GameNet {
+public class ServerConnectionHandler implements ConnectionHandler {
 
     private Map<Connection, ServerPacketHandler> clientConnections = Maps.newHashMap();
 

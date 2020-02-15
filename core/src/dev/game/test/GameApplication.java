@@ -4,12 +4,11 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import dev.game.test.net.ConnectionHandler;
 import com.badlogic.gdx.physics.box2d.Box2D;
-import dev.game.test.net.GameNet;
 import dev.game.test.net.client.ClientConnectionHandler;
 import dev.game.test.screens.GameScreen;
 import dev.game.test.world.block.Blocks;
-import dev.game.test.world.block.impl.*;
 import dev.game.test.world.block.BlocksRegistry;
 import lombok.Getter;
 
@@ -21,7 +20,7 @@ public class GameApplication extends Game {
     private static GameApplication instance;
 
     @Getter
-    private GameNet net;
+    private ConnectionHandler net;
 
     @Getter
     private BlocksRegistry blocksRegistry;
@@ -63,6 +62,8 @@ public class GameApplication extends Game {
             this.blocksRegistry.registerBlock(4, Blocks.GRASS);
 
             this.setScreen(this.gameScreen);
+
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
