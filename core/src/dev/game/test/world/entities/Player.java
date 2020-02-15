@@ -1,4 +1,4 @@
-package dev.game.test.world;
+package dev.game.test.world.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Player extends MapObject {
+public class Player extends Entity {
 
     private Texture texture;
 
