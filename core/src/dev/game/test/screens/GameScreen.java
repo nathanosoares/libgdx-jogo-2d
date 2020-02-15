@@ -63,7 +63,8 @@ public class GameScreen extends ScreenAdapter {
         int mapHeight = 20;
 
         this.world = new World("world", mapWidth, mapHeight);
-        this.worldRender = new WorldRender(spriteBatch, this.camera, world);
+        this.worldRender = new WorldRender(spriteBatch, world);
+        this.worldRender.setView(this.camera);
 
         this.player = new Player();
         this.player.setLocation(new Vector2(mapWidth / 2f, mapHeight / 2f));
@@ -105,6 +106,7 @@ public class GameScreen extends ScreenAdapter {
 
         this.camera.update();
 
+        this.worldRender.setView(this.camera);
         this.worldRender.render();
         this.spriteBatch.begin();
         this.player.draw(this.spriteBatch);
