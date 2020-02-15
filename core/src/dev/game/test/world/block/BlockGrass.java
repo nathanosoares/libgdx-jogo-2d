@@ -5,26 +5,26 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import dev.game.test.world.block.connected.ConnectedTexture;
 import dev.game.test.world.block.connected.EnumTextureConnection;
 
-import java.awt.*;
+public class BlockGrass extends Block {
 
-public class BlockDirt extends Block {
+    private TextureRegion texture;
 
-    private ConnectedTexture texture;
-
-    public BlockDirt() {
+    public BlockGrass() {
 
     }
 
     @Override
     public void loadTextures() {
-        this.texture = new ConnectedTexture(Gdx.files.internal("map/dirt.png"));
+        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.valueOf("6df7b1"));
+        pixmap.fillRectangle(0,0 , 16, 16);
+        this.texture = new TextureRegion(new Texture(pixmap));
     }
 
     @Override
     public TextureRegion getTexture(BlockData blockData) {
-        return texture.getTexture(blockData);
+        return texture;
     }
 }
