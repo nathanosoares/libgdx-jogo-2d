@@ -20,6 +20,6 @@ public class BlockDirt extends Block {
     }
 
     @Override
-    public TextureRegion getTexture(World world, Vector2 position) {
+    public TextureRegion getTexture(BlockData blockData) {
     }
 }

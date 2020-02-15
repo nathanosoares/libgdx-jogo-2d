@@ -30,7 +30,7 @@ public class Block {
 
     }
 
-    public TextureRegion getTexture(World world, Vector2 position) {
+    public TextureRegion getTexture(BlockData blockData) {
         return MISSING_TEXTURE;
     }
 
