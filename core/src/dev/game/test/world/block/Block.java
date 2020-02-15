@@ -12,10 +12,10 @@ public class Block {
 
     static {
         Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
-        pixmap.setColor(1.0f, 0.0f, 0.0f, 1.0f);
-        pixmap.drawRectangle(0, 0, 16, 16);
+        pixmap.setColor(0.0f, 0.0f, 0.0f, 1.0f);
+        pixmap.fillRectangle(0, 0, 16, 16);
         pixmap.setColor(1.0f, 0.0f, 1.0f, 1.0f);
-        pixmap.drawRectangle(2, 2, 12, 12);
+        pixmap.fillRectangle(1, 1, 14, 14);
 
         MISSING_TEXTURE = new TextureRegion(new Texture(pixmap));
         pixmap.dispose();
