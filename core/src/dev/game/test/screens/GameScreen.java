@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
-import dev.game.test.world.GameMapRenderer;
+import dev.game.test.world.render.GameMapRenderer;
 import dev.game.test.world.entity.Player;
 
 public class GameScreen extends ScreenAdapter {

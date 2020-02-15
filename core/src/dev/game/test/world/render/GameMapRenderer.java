@@ -1,4 +1,4 @@
-package dev.game.test.world;
+package dev.game.test.world.render;
 
 import com.badlogic.gdx.maps.MapGroupLayer;
 import com.badlogic.gdx.maps.MapLayer;
