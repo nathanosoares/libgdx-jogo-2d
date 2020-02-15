@@ -32,9 +32,9 @@ public class Block {
      */
 
 
-    public void neighbourUpdate(BlockData blockData) {
+    public void neighbourUpdate(BlockState blockState) {
         for (EnumFacing facing : EnumFacing.values()) {
-            BlockData targetData = blockData.getLayer().getFacingBlock(blockData, facing);
+            BlockState targetData = blockState.getLayer().getFacingBlock(blockState, facing);
             targetData.getBlock().onBlockNeighbourUpdate(targetData, facing.getOpposite());
         }
     }
@@ -43,11 +43,11 @@ public class Block {
 
      */
 
-    public void onBlockNeighbourUpdate(BlockData blockData, EnumFacing neighbourFacing) {
+    public void onBlockNeighbourUpdate(BlockState blockState, EnumFacing neighbourFacing) {
 
     }
 
-    public TextureRegion getTexture(BlockData blockData) {
+    public TextureRegion getTexture(BlockState blockState) {
         return MISSING_TEXTURE;
     }
 

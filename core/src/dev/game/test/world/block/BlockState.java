@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public class BlockData {
+public class BlockState {
 
     @Setter
     private Block block;
@@ -35,7 +35,7 @@ public class BlockData {
 
      */
 
-    public BlockData(Block block, int width, int height, World world, WorldLayer layer, Vector2 position) {
+    public BlockState(Block block, int width, int height, World world, WorldLayer layer, Vector2 position) {
         this.block = block;
         this.width = width;
         this.height = height;

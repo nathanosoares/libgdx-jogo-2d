@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 import dev.game.test.world.block.Block;
-import dev.game.test.world.block.BlockData;
+import dev.game.test.world.block.BlockState;
 import dev.game.test.world.block.EnumFacing;
 
 public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
@@ -61,8 +61,8 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
         Public
      */
 
-    public TextureRegion getTexture(BlockData blockData) {
-        int code = blockData.getConnectedData();
+    public TextureRegion getTexture(BlockState blockState) {
+        int code = blockState.getConnectedData();
         atlasRegion.setRegion(0, code * 16, 16, 16);
         return atlasRegion;
     }
@@ -72,34 +72,34 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
      */
 
     @Override
-    public boolean shouldRender(BlockData blockData, TextureConnection facing) {
+    public boolean shouldRender(BlockState blockState, TextureConnection facing) {
         if(facing instanceof SideTextureConnection) {
             SideTextureConnection textureConnection = (SideTextureConnection) facing;
-            BlockData sideBlock = blockData.getLayer().getFacingBlock(blockData, textureConnection.getSide());
-            return sideBlock == null || !blockData.getBlock().equals(sideBlock.getBlock());
+            BlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, textureConnection.getSide());
+            return sideBlock == null || !blockState.getBlock().equals(sideBlock.getBlock());
         }
 
         if(facing instanceof CornerTextureConnection) {
             CornerTextureConnection textureConnection = (CornerTextureConnection) facing;
 
             for(EnumFacing facing1 : textureConnection.getSides()) {
-                BlockData sideBlock = blockData.getLayer().getFacingBlock(blockData, facing1);
+                BlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, facing1);
 
-                if(sideBlock == null || !blockData.getBlock().equals(sideBlock.getBlock())) {
+                if(sideBlock == null || !blockState.getBlock().equals(sideBlock.getBlock())) {
                     return false;
                 }
             }
 
-            BlockData sideBlock = blockData.getLayer().getFacingBlock(blockData, textureConnection.getSides());
-            return sideBlock == null || !blockData.getBlock().equals(sideBlock.getBlock());
+            BlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, textureConnection.getSides());
+            return sideBlock == null || !blockState.getBlock().equals(sideBlock.getBlock());
         }
 
         return false;
     }
 
     @Override
-    public void updateNeighbours(BlockData blockData) {
-        this.block.neighbourUpdate(blockData);
+    public void updateNeighbours(BlockState blockState) {
+        this.block.neighbourUpdate(blockState);
     }
 
     /*

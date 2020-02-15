@@ -3,34 +3,34 @@ package dev.game.test.world.block.connected;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import dev.game.test.world.block.BlockData;
+import dev.game.test.world.block.BlockState;
 import dev.game.test.world.block.EnumFacing;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 public interface ConnectedTexture {
 
-    TextureRegion getTexture(BlockData blockData);
+    TextureRegion getTexture(BlockState blockState);
 
-    boolean shouldRender(BlockData blockData, TextureConnection facing);
+    boolean shouldRender(BlockState blockState, TextureConnection facing);
 
-    void updateNeighbours(BlockData blockData);
+    void updateNeighbours(BlockState blockState);
 
-    default int computeTextures(BlockData blockData) {
-        int old = blockData.connectedData;
+    default int computeTextures(BlockState blockState) {
+        int old = blockState.connectedData;
 
         int data = 0;
 
         for (TextureConnection connection : CONNECTIONS) {
-            if (shouldRender(blockData, connection)) {
+            if (shouldRender(blockState, connection)) {
                 data += connection.value;
             }
         }
 
-        blockData.connectedData = data;
+        blockState.connectedData = data;
 
         if (data != old) {
-            updateNeighbours(blockData);
+            updateNeighbours(blockState);
         }
 
         return data;

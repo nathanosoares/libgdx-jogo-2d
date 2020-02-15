@@ -7,6 +7,9 @@ import com.badlogic.gdx.Screen;
 import dev.game.test.net.GameNet;
 import dev.game.test.net.client.ClientConnectionHandler;
 import dev.game.test.screens.GameScreen;
+import dev.game.test.world.block.Blocks;
+import dev.game.test.world.block.impl.*;
+import dev.game.test.world.block.BlocksRegistry;
 import lombok.Getter;
 
 import java.util.Random;
@@ -14,7 +17,13 @@ import java.util.Random;
 public class GameApplication extends Game {
 
     @Getter
+    private static GameApplication instance;
+
+    @Getter
     private GameNet net;
+
+    @Getter
+    private BlocksRegistry blocksRegistry;
 
     private Screen gameScreen;
 
@@ -31,6 +40,15 @@ public class GameApplication extends Game {
         }
 
         System.out.println(String.format("Hello %s", this.username));
+        
+        instance = this;
+        this.blocksRegistry = new BlocksRegistry();
+
+        this.blocksRegistry.registerBlock(0, Blocks.AIR);
+        this.blocksRegistry.registerBlock(1, Blocks.DIRT);
+        this.blocksRegistry.registerBlock(2, Blocks.STONE);
+        this.blocksRegistry.registerBlock(3, Blocks.WATER);
+        this.blocksRegistry.registerBlock(4, Blocks.GRASS);
     }
 
     @Override
