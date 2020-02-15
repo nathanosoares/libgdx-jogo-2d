@@ -103,7 +103,13 @@ public class World {
         return this.players.get(uid);
     }
 
-    public void addEntity(Entity entity) {
+    public void addEntity(Entity entity, int x, int y) {
+        if (entity.getWorld() != null) {
+            entity.getWorld().removeEntity(entity);
+        }
+
+        entity.setWorld(this);
+        entity.setPosition(new Vector2(x, y));
         this.entities.add(entity);
 
         if(entity instanceof Player) {
@@ -112,10 +118,10 @@ public class World {
     }
 
     public void removeEntity(Entity entity) {
-        this.entities.add(entity);
-
         if(entity instanceof Player) {
             this.players.remove(entity.getId());
         }
+        
+        this.entities.remove(entity);
     }
 }
