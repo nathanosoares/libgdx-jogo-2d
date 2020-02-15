@@ -91,11 +91,17 @@ public class World {
         this.layers[1] = decoration;
     }
 
-    public void addEntity(Entity entity) {
+    public void addEntity(Entity entity, int x, int y) {
+        if (entity.getWorld() != null) {
+            entity.getWorld().removeEntity(entity);
+        }
+
+        entity.setWorld(this);
+        entity.setPosition(new Vector2(x, y));
         this.entities.add(entity);
     }
 
     public void removeEntity(Entity entity) {
-        this.entities.add(entity);
+        this.entities.remove(entity);
     }
 }

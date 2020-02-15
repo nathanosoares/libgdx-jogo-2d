@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
 import dev.game.test.world.World;
@@ -20,6 +22,9 @@ import dev.game.test.world.block.Blocks;
 import dev.game.test.world.entity.Player;
 import dev.game.test.world.render.WorldRender;
 import lombok.Getter;
+
+import java.util.List;
+import java.util.Map;
 
 @Getter
 public class GameScreen extends ScreenAdapter {
@@ -43,11 +48,11 @@ public class GameScreen extends ScreenAdapter {
 
     private SpriteBatch spriteBatch;
 
-    private World world;
-
     private WorldRender worldRender;
 
     private Player player;
+
+    private Map<String, World> worlds = Maps.newHashMap();
 
     @Getter
     private Vector2 hover = new Vector2();
@@ -71,15 +76,18 @@ public class GameScreen extends ScreenAdapter {
         int mapWidth = 20;
         int mapHeight = 20;
 
-        this.world = new World("world", mapWidth, mapHeight);
-        this.worldRender = new WorldRender(spriteBatch, world);
-        this.worldRender.setView(this.camera);
-        this.worldRender.setViewport(this.viewport);
-
         this.player = new Player();
-        this.player.setPosition(new Vector2(mapWidth / 2f, mapHeight / 2f));
 
-        this.world.addEntity(this.player);
+        {
+            World world = createWorld("world", mapWidth, mapHeight);
+            world.addEntity(this.player, (int) (mapWidth / 2f), (int) (mapHeight / 2f));
+
+            setCurrentWorld(world);
+        }
+
+        {
+            createWorld("test", mapWidth, mapHeight);
+        }
 
         Gdx.input.setInputProcessor(new InputAdapter() {
 
@@ -98,11 +106,15 @@ public class GameScreen extends ScreenAdapter {
             }
 
             private boolean action(int screenX, int screenY, int button) {
+                if (worldRender == null) {
+                    return false;
+                }
+
                 Vector2 mouseScreenPosition = new Vector2(screenX, screenY);
                 Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
 
-                if (world.getBounds().contains(mouseWorldPosition)) {
-                    BlockState blockState = world.getLayers()[0].getBlockState(mouseWorldPosition.x, mouseWorldPosition.y);
+                if (worldRender.getWorld().getBounds().contains(mouseWorldPosition)) {
+                    BlockState blockState = worldRender.getWorld().getLayers()[0].getBlockState(mouseWorldPosition.x, mouseWorldPosition.y);
 
                     if (button == Input.Buttons.RIGHT) {
                         if (blockState.getBlock() != Blocks.GRASS) {
@@ -140,6 +152,17 @@ public class GameScreen extends ScreenAdapter {
 
         this.player.setRunning(Gdx.input.isKeyPressed(Keys.SHIFT_LEFT));
 
+        if (Gdx.input.isKeyJustPressed(Keys.TAB)) {
+            String currentWorldName = this.worldRender.getWorld().getName();
+            if (currentWorldName.equals("test")) {
+                setCurrentWorld(worlds.get("world"));
+            } else {
+                setCurrentWorld(worlds.get("test"));
+            }
+
+            this.worldRender.getWorld().addEntity(this.player, 0, 0);
+        }
+
         if (Gdx.input.isKeyPressed(Keys.W)) {
             moveTo.y += delta * this.player.getSpeed();
         }
@@ -158,19 +181,20 @@ public class GameScreen extends ScreenAdapter {
 
         this.player.move(moveTo);
 
-        this.camera.position.set(this.player.getPosition().x, this.player.getPosition().y, 0);
+        if (this.worldRender != null) {
+            this.camera.position.set(this.player.getPosition().x, this.player.getPosition().y, 0);
 
-        float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
-        float visibleH = viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
+            float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
+            float visibleH = viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
 
-        this.camera.position.x = MathUtils.clamp(this.camera.position.x, visibleW, this.world.getBounds().getWidth() - visibleW);
-        this.camera.position.y = MathUtils.clamp(this.camera.position.y, visibleH, this.world.getBounds().getHeight() - visibleH);
+            this.camera.position.x = MathUtils.clamp(this.camera.position.x, visibleW, this.worldRender.getWorld().getBounds().getWidth() - visibleW);
+            this.camera.position.y = MathUtils.clamp(this.camera.position.y, visibleH, this.worldRender.getWorld().getBounds().getHeight() - visibleH);
+            this.camera.update();
 
-        this.camera.update();
-
-        this.worldRender.setView(this.camera);
-        this.worldRender.render();
-        this.worldRender.renderEntities();
+            this.worldRender.setView(this.camera);
+            this.worldRender.render();
+            this.worldRender.renderEntities();
+        }
 
 //        this.spriteBatch.begin();
 //        this.player.draw(this.spriteBatch);
@@ -179,5 +203,23 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
+    }
+
+    private void setCurrentWorld(World world) {
+        this.worldRender = new WorldRender(spriteBatch, world);
+        this.worldRender.setView(this.camera);
+        this.worldRender.setViewport(this.viewport);
+    }
+
+    private World createWorld(String name, int width, int height) {
+        if (this.worlds.containsKey(name)) {
+            throw new RuntimeException("Nome de mundo em uso");
+        }
+
+        World world = new World(name, width, height);
+
+        worlds.put(name, world);
+
+        return world;
     }
 }

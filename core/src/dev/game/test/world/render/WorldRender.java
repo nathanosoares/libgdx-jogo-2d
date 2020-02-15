@@ -13,6 +13,7 @@ import dev.game.test.world.World;
 import dev.game.test.world.WorldLayer;
 import dev.game.test.world.block.BlockState;
 import dev.game.test.world.entity.Entity;
+import lombok.Getter;
 import lombok.Setter;
 
 public class WorldRender implements MapRenderer {
@@ -23,6 +24,7 @@ public class WorldRender implements MapRenderer {
     //
     protected final Batch batch;
 
+    @Getter
     protected final World world;
 
     //
