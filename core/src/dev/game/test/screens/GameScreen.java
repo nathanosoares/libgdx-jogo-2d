@@ -163,7 +163,7 @@ public class GameScreen extends ScreenAdapter {
                 setCurrentWorld(worlds.get("test"));
             }
 
-            this.worldRender.getWorld().addEntity(this.player, 0, 0);
+            this.worldRender.getWorld().addEntity(this.player, this.player.getPosition());
         }
 
         if (Gdx.input.isKeyPressed(Keys.W)) {
