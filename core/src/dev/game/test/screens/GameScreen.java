@@ -106,11 +106,6 @@ public class GameScreen extends ScreenAdapter {
         this.camera.update();
 
         this.worldRender.render();
-//        this.mapRenderer.setView(this.camera);
-//
-//        this.mapRenderer.render(new int[]{0});
-//        this.mapRenderer.renderEntity(this.player);
-//        this.mapRenderer.renderDecorations(this.player);
     }
 
     @Override

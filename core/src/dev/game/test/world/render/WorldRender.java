@@ -64,8 +64,6 @@ public class WorldRender {
                 float x = xStart;
 
                 for (int col = col1; col < col2; col++) {
-                    System.out.println(String.format("Hello (%d, %d)", col, row));
-
                     if (!layer.isOrigin(col, row)) {
                         x += layerTileWidth;
                         continue;
@@ -78,6 +76,7 @@ public class WorldRender {
 
                     x += layerTileWidth;
                 }
+
                 y -= layerTileHeight;
             }
         }

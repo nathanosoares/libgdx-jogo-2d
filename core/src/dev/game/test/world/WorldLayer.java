@@ -13,6 +13,10 @@ public class WorldLayer {
     }
 
     public BlockData getBlock(int x, int y) {
+        if(this.blocks.length <= x || this.blocks[x].length <= y) {
+            return null;
+        }
+
         return blocks[x][y];
     }
 
