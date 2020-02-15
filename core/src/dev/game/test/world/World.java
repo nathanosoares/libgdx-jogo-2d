@@ -23,6 +23,12 @@ public class World {
 
     private final List<Entity> entities = Lists.newArrayList();
 
+    public static final BlockDirt DIRT = new BlockDirt();
+
+    static {
+        DIRT.loadTextures();
+    }
+
     public World(String name, int width, int height) {
         this.name = name;
 
@@ -33,8 +39,6 @@ public class World {
 
         WorldLayer ground = new WorldLayer(this);
 
-        BlockDirt dirt = new BlockDirt();
-        dirt.loadTextures();
 
         BlockWater water = new BlockWater();
         water.loadTextures();
@@ -53,15 +57,15 @@ public class World {
         }
 
         for (int x = 4; x < 9; x++) {
-            ground.getBlock(x, 5).setBlock(dirt);
-            ground.getBlock(x, 6).setBlock(dirt);
+            ground.getBlock(x, 5).setBlock(DIRT);
+            ground.getBlock(x, 6).setBlock(DIRT);
 
             if (x == 4 || x == 9) {
                 continue;
             }
 
-            ground.getBlock(x, 4).setBlock(dirt);
-            ground.getBlock(x, 7).setBlock(dirt);
+            ground.getBlock(x, 4).setBlock(DIRT);
+            ground.getBlock(x, 7).setBlock(DIRT);
         }
 
         for (int x = 9; x < 12; x++) {
