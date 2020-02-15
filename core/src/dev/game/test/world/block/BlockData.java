@@ -7,6 +7,8 @@ import lombok.Getter;
 @Getter
 public class BlockData {
 
+    private Block block;
+
     private World world;
 
     private Vector2 position;
