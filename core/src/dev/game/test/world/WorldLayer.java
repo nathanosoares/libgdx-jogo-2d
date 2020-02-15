@@ -8,6 +8,10 @@ public class WorldLayer {
 
     protected BlockData[][] blocks;
 
+    public WorldLayer(World world) {
+        this.blocks = new BlockData[world.getWidth()][world.getHeight()];
+    }
+
     public BlockData getBlock(int x, int y) {
         return blocks[x][y];
     }
