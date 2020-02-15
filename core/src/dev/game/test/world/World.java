@@ -21,12 +21,12 @@ public class World {
 
     private final List<Entity> entities = Lists.newArrayList();
 
-    private World(String name, int width, int height) {
+    public World(String name, int width, int height) {
         this.name = name;
 
         this.width = width;
         this.height = height;
-        
+
         this.layers = new WorldLayer[1];
 
         WorldLayer ground = new WorldLayer(this);

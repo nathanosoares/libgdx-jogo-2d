@@ -15,8 +15,10 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
+import dev.game.test.world.World;
 import dev.game.test.world.render.GameMapRenderer;
 import dev.game.test.world.entity.Player;
+import dev.game.test.world.render.WorldRender;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -38,11 +40,12 @@ public class GameScreen extends ScreenAdapter {
 
     //
 
-    private SpriteBatch spriteBatch;
+//    private SpriteBatch spriteBatch;
 
-    private TiledMap map;
-    private GameMapRenderer mapRenderer;
+//    private TiledMap map;
+//    private GameMapRenderer mapRenderer;
 
+    private WorldRender worldRender;
     private Player player;
 
     public GameScreen(GameApplication application) {
@@ -61,17 +64,23 @@ public class GameScreen extends ScreenAdapter {
 
         this.viewport = new FillViewport(VIEWPORT_SIZE, VIEWPORT_SIZE / ratio, this.camera);
 
-        this.spriteBatch = new SpriteBatch();
+        int mapWidth = 20;
+        int mapHeight = 20;
 
-        this.map = new TmxMapLoader().load("map/test.tmx");
-        this.mapRenderer = new GameMapRenderer(this.map, UNIT_PER_PIXEL);
+        World world = new World("world", mapWidth, mapHeight);
+        this.worldRender = new WorldRender(world);
 
-        MapProperties prop = this.map.getProperties();
+//        this.spriteBatch = new SpriteBatch();
+//
+//        this.map = new TmxMapLoader().load("map/test.tmx");
+//        this.mapRenderer = new GameMapRenderer(this.map, UNIT_PER_PIXEL);
 
-        int mapWidth = prop.get("width", Integer.class);
-        int mapHeight = prop.get("height", Integer.class);
-        int tilePixelWidth = prop.get("tilewidth", Integer.class);
-        int tilePixelHeight = prop.get("tileheight", Integer.class);
+//        MapProperties prop = this.map.getProperties();
+//
+//        int mapWidth = prop.get("width", Integer.class);
+//        int mapHeight = prop.get("height", Integer.class);
+//        int tilePixelWidth = prop.get("tilewidth", Integer.class);
+//        int tilePixelHeight = prop.get("tileheight", Integer.class);
 
         this.player = new Player();
         this.player.setLocation(new Vector2(mapWidth / 2f, mapHeight / 2f));
@@ -113,15 +122,15 @@ public class GameScreen extends ScreenAdapter {
 
         this.camera.update();
 
-        this.mapRenderer.setView(this.camera);
-
-        this.mapRenderer.render(new int[]{0});
-        this.mapRenderer.renderEntity(this.player);
-        this.mapRenderer.renderDecorations(this.player);
+//        this.mapRenderer.setView(this.camera);
+//
+//        this.mapRenderer.render(new int[]{0});
+//        this.mapRenderer.renderEntity(this.player);
+//        this.mapRenderer.renderDecorations(this.player);
     }
 
     @Override
     public void dispose() {
-        this.map.dispose();
+        this.worldRender.dispose();
     }
 }
