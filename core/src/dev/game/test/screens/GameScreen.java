@@ -6,9 +6,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -16,13 +13,17 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
 import dev.game.test.world.World;
-import dev.game.test.world.render.GameMapRenderer;
 import dev.game.test.world.entity.Player;
 import dev.game.test.world.render.WorldRender;
+import lombok.Getter;
 
+@Getter
 public class GameScreen extends ScreenAdapter {
 
     public static final int VIEWPORT_SIZE = 20;
+
+    @Getter
+    private static GameScreen instance;
 
     //
 
@@ -46,6 +47,7 @@ public class GameScreen extends ScreenAdapter {
 
     public GameScreen(GameApplication application) {
         this.application = application;
+        instance = this;
     }
 
     @Override
@@ -81,22 +83,24 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         GameUtils.clearScreen(0, 50, 0, 100);
 
+        Vector2 moveTo = new Vector2();
         if (Gdx.input.isKeyPressed(Keys.W)) {
-            this.player.getPosition().y = Math.min(this.player.getPosition().y + delta * 5.0f, this.world.getHeight() - 24 / 10f);
+            moveTo.y += delta * 5.0f;
         }
 
         if (Gdx.input.isKeyPressed(Keys.S)) {
-            this.player.getPosition().y = Math.max(this.player.getPosition().y - delta * 5.0f, 0);
+            moveTo.y -= delta * 5.0f;
         }
 
         if (Gdx.input.isKeyPressed(Keys.D)) {
-            this.player.getPosition().x = Math.min(this.player.getPosition().x + delta * 5.0f, this.world.getWidth() - 24 / 10f);
+            moveTo.x += delta * 5.0f;
         }
 
         if (Gdx.input.isKeyPressed(Keys.A)) {
-            this.player.getPosition().x = Math.max(this.player.getPosition().x - delta * 5.0f, 0);
+            moveTo.x -= delta * 5.0f;
         }
 
+        this.player.move(moveTo);
 
         this.camera.position.set(this.player.getPosition().x, this.player.getPosition().y, 0);
 

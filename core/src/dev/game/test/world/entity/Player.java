@@ -18,4 +18,9 @@ public class Player extends Entity {
                 position.x, position.y, 24 / 10f, 24 / 10f
         );
     }
+
+    @Override
+    public boolean hasCollision() {
+        return true;
+    }
 }
