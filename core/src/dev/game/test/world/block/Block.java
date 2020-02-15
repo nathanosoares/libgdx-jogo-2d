@@ -3,6 +3,8 @@ package dev.game.test.world.block;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import dev.game.test.world.World;
 
 public class Block {
 
@@ -24,7 +26,11 @@ public class Block {
 
      */
 
-    public TextureRegion getTexture(int x, int y) {
+    public void loadTextures() {
+
+    }
+
+    public TextureRegion getTexture(World world, Vector2 position) {
         return MISSING_TEXTURE;
     }
 
