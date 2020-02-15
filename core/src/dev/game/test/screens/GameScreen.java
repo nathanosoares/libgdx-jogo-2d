@@ -84,20 +84,23 @@ public class GameScreen extends ScreenAdapter {
         GameUtils.clearScreen(0, 50, 0, 100);
 
         Vector2 moveTo = new Vector2();
+
+        this.player.setRunning(Gdx.input.isKeyPressed(Keys.SHIFT_LEFT));
+
         if (Gdx.input.isKeyPressed(Keys.W)) {
-            moveTo.y += delta * 5.0f;
+            moveTo.y += delta * this.player.getSpeed();
         }
 
         if (Gdx.input.isKeyPressed(Keys.S)) {
-            moveTo.y -= delta * 5.0f;
+            moveTo.y -= delta * this.player.getSpeed();
         }
 
         if (Gdx.input.isKeyPressed(Keys.D)) {
-            moveTo.x += delta * 5.0f;
+            moveTo.x += delta * this.player.getSpeed();
         }
 
         if (Gdx.input.isKeyPressed(Keys.A)) {
-            moveTo.x -= delta * 5.0f;
+            moveTo.x -= delta * this.player.getSpeed();
         }
 
         this.player.move(moveTo);

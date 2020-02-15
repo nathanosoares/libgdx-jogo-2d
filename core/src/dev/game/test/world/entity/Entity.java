@@ -17,13 +17,16 @@ public abstract class Entity {
     @Setter
     protected Vector2 position;
 
+    protected float walkSpeed = 5;
+
     public abstract void draw(Batch batch);
 
     public abstract boolean hasCollision();
 
     public abstract boolean canLeaveMap();
 
-    public void move(Vector2 vector2) {
+    public Vector2 move(Vector2 vector2) {
+
 
         if (!this.canLeaveMap()) {
             vector2.y = Math.max(Math.min(this.position.y + vector2.y, GameScreen.getInstance().getWorld().getHeight() - 24 / 10f), 0);
@@ -34,5 +37,15 @@ public abstract class Entity {
         }
 
         this.position = vector2;
+
+        return this.position.cpy();
+    }
+
+    public float getSpeed() {
+        if (this instanceof EntityRunner && ((EntityRunner) this).isRunning()) {
+            return ((EntityRunner) this).getRunningSpeed();
+        }
+
+        return this.walkSpeed;
     }
 }
