@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import dev.game.test.world.entities.Entity;
 import dev.game.test.world.entities.Player;
 
 public class GameMapRenderer extends OrthogonalTiledMapRenderer {
@@ -16,11 +17,10 @@ public class GameMapRenderer extends OrthogonalTiledMapRenderer {
         super(map, unitScale);
     }
 
-    @Override
-    public void renderObject(MapObject object) {
+    public void renderEntity(Entity entity) {
         beginRender();
-        if (object instanceof Player) {
-            Player player = (Player) object;
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
             player.draw(this.batch);
         }
         endRender();
