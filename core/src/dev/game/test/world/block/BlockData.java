@@ -1,4 +1,4 @@
-package dev.game.test.world;
+package dev.game.test.world.block;
 
 import lombok.Getter;
 

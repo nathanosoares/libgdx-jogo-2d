@@ -1,5 +1,7 @@
 package dev.game.test.world;
 
+import dev.game.test.world.block.BlockData;
+
 public class WorldLayer {
 
     private BlockData[][] blocks;
