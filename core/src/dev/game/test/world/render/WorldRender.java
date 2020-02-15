@@ -21,7 +21,7 @@ public class WorldRender implements Disposable {
         for (WorldLayer layer : world.getLayers()) {
             for (BlockData[] blocks : layer.getBlocks()) {
                 for (BlockData block : blocks) {
-                    block.getBlock().getTexture(this.world, block.getPosition());
+                    block.getBlock().getTexture(block);
                 }
             }
         }
