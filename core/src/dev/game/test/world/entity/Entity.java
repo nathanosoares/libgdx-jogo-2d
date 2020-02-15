@@ -72,11 +72,14 @@ public abstract class Entity {
 
     public void onWorldAdd(World world) {
         BodyDef def = new BodyDef();
+        def.type = BodyDef.BodyType.KinematicBody;
         def.position.set(this.position);
         this.body = world.getBox2dWorld().createBody(def);
 
         PolygonShape groundBox = new PolygonShape();
-        groundBox.setAsBox(32 / 16f, 32 / 16f);
+
+        Vector2 center = new Vector2(24 / 16f / 2f, 24 / 16f / 2f);
+        groundBox.setAsBox(24 / 16f / 2.0f, 24 / 16f / 2.0f, center, 0.0f);
 
         this.body.createFixture(groundBox, 0f);
         groundBox.dispose();

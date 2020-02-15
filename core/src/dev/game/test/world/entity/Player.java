@@ -75,7 +75,7 @@ public class Player extends Entity implements EntityRunner {
         }
 
 
-        float width = 24 / 16f;
+        float width = 32 / 16f;
         float x = position.x;
         if (direction == EnumFacing.EAST) {
             width *= -1;
