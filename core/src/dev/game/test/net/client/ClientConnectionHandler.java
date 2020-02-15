@@ -6,10 +6,10 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import dev.game.test.GameApplication;
 import dev.game.test.net.ConnectionHandler;
-import dev.game.test.net.packet.client.PacketWorldRequest;
-import dev.game.test.net.packet.handshake.PacketHandshake;
 import dev.game.test.net.packet.EnumPacket;
 import dev.game.test.net.packet.Packet;
+import dev.game.test.net.packet.client.PacketWorldRequest;
+import dev.game.test.net.packet.handshake.PacketHandshake;
 import dev.game.test.net.packet.server.PacketEntitySpawn;
 import dev.game.test.net.packet.server.PacketPlayerInfo;
 import dev.game.test.net.packet.server.PacketWorldLayerData;
@@ -93,10 +93,9 @@ public class ClientConnectionHandler implements ConnectionHandler {
         World world = application.getWorld();
         Player player = world.getPlayer(packet.getId());
 
-        if(player == null) {
+        if (player == null) {
             player = new Player(packet.getId());
-            player.setPosition(packet.getPosition());
-            world.addEntity(player);
+            world.addEntity(player, packet.getPosition());
         }
     }
 

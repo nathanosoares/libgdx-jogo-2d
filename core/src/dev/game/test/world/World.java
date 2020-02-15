@@ -103,6 +103,11 @@ public class World {
         return this.players.get(uid);
     }
 
+
+    public void addEntity(Entity entity, Vector2 position) {
+        this.addEntity(entity, (int) position.x, (int) position.y);
+    }
+
     public void addEntity(Entity entity, int x, int y) {
         if (entity.getWorld() != null) {
             entity.getWorld().removeEntity(entity);
@@ -112,16 +117,16 @@ public class World {
         entity.setPosition(new Vector2(x, y));
         this.entities.add(entity);
 
-        if(entity instanceof Player) {
+        if (entity instanceof Player) {
             this.players.put(entity.getId(), (Player) entity);
         }
     }
 
     public void removeEntity(Entity entity) {
-        if(entity instanceof Player) {
+        if (entity instanceof Player) {
             this.players.remove(entity.getId());
         }
-        
+
         this.entities.remove(entity);
     }
 }
