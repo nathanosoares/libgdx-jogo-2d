@@ -126,15 +126,15 @@ public class GameScreen extends ScreenAdapter {
         mouseInWorld3D.y = Gdx.input.getY();
         mouseInWorld3D.z = 0;
 
-
-        if (Gdx.input.isTouched()) {
-            this.world.getLayers()[0].getBlock(this.hover.x, this.hover.y).setBlock(World.DIRT);
-        }
-
         this.camera.unproject(mouseInWorld3D);
 
         this.hover.x = (float) Math.floor(mouseInWorld3D.x);
         this.hover.y = (float) Math.floor(mouseInWorld3D.y);
+
+
+        if (Gdx.input.isTouched()) {
+            this.world.getLayers()[0].getBlock(this.hover.x, this.hover.y).setBlock(World.DIRT);
+        }
 
 
         this.worldRender.setView(this.camera);
