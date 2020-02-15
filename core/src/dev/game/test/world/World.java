@@ -46,17 +46,17 @@ public class World {
             for (int y = 0; y < height; y++) {
 
                 ground.setBlock(x, y, new BlockData(
-                        grass, this, ground, new Vector2(x, y), 1, 1
+                        grass, 1, 1, this, ground, new Vector2(x, y)
                 ));
 
             }
         }
 
-        for(int x = 4; x < 9; x++) {
+        for (int x = 4; x < 9; x++) {
             ground.getBlock(x, 5).setBlock(dirt);
             ground.getBlock(x, 6).setBlock(dirt);
 
-            if(x == 4 || x == 9) {
+            if (x == 4 || x == 9) {
                 continue;
             }
 
@@ -64,16 +64,25 @@ public class World {
             ground.getBlock(x, 7).setBlock(dirt);
         }
 
-        for(int x = 9; x < 12; x++) {
+        for (int x = 9; x < 12; x++) {
             ground.getBlock(x, 11).setBlock(water);
             ground.getBlock(x, 12).setBlock(water);
 
-            if(x == 9 || x == 12) {
+            if (x == 9 || x == 12) {
                 continue;
             }
 
             ground.getBlock(x, 9).setBlock(water);
             ground.getBlock(x, 10).setBlock(water);
+        }
+
+        ground.getBlock(4, 10).setBlock(water);
+
+        for (int x = 0; x < this.getWidth(); x++) {
+            for (int y = 0; y < this.getHeight(); y++) {
+                BlockData blockData = ground.getBlock(x, y);
+                blockData.getBlock().onBlockNeighbourUpdate(blockData, null);
+            }
         }
 
         this.layers[0] = ground;

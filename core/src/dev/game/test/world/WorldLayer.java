@@ -9,34 +9,36 @@ public class WorldLayer {
 
     private final BlockData airBlock;
 
+    //
+
     protected BlockData[][] blocks;
 
     public WorldLayer(World world) {
         this.blocks = new BlockData[world.getWidth()][world.getHeight()];
 
-        this.airBlock = new BlockData(new BlockAir(), world, this, new Vector2(0.0f, 0.0f), 1, 1);
+        this.airBlock = new BlockData(new BlockAir(), 1, 1, world, this, new Vector2(0.0f, 0.0f));
     }
 
     public BlockData getBlock(int x, int y) {
-        if(x < 0 || y < 0) {
-            return null;
-        }
-
-        if(this.blocks.length <= x || this.blocks[x].length <= y) {
+        if (x < 0 || y < 0 || this.blocks.length <= x || this.blocks[x].length <= y) {
+            airBlock.getPosition().set(x, y);
             return airBlock;
         }
 
         return blocks[x][y];
     }
 
-    public BlockData getFacingBlock(BlockData blockData, EnumFacing facing, EnumFacing... facings) {
-        BlockData data = getBlock((int) (blockData.getPosition().x + facing.getOffset().x), (int) (blockData.getPosition().y + facing.getOffset().y));
+    public BlockData getFacingBlock(BlockData blockData, EnumFacing... facings) {
+        Vector2 position = blockData.getPosition();
+        int x = (int) position.x;
+        int y = (int) position.y;
 
-        for(EnumFacing facing1 : facings) {
-            data = getFacingBlock(data, facing1);
+        for (EnumFacing facing1 : facings) {
+            x += facing1.getOffset().x;
+            y += facing1.getOffset().y;
         }
 
-        return data;
+        return getBlock(x, y);
     }
 
     public void setBlock(int x, int y, BlockData blockData) {

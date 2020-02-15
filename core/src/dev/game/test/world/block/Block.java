@@ -3,8 +3,6 @@ package dev.game.test.world.block;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import dev.game.test.world.World;
 
 public class Block {
 
@@ -26,6 +24,25 @@ public class Block {
      */
 
     public void loadTextures() {
+
+    }
+
+    /*
+
+     */
+
+
+    public void neighbourUpdate(BlockData blockData) {
+        for (EnumFacing facing : EnumFacing.values()) {
+            onBlockNeighbourUpdate(blockData.getLayer().getFacingBlock(blockData, facing), facing.getOpposite());
+        }
+    }
+
+    /*
+
+     */
+
+    public void onBlockNeighbourUpdate(BlockData blockData, EnumFacing neighbourFacing) {
 
     }
 

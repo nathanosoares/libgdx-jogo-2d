@@ -8,20 +8,39 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
 public class BlockData {
 
     @Setter
     private Block block;
 
-    private World world;
-
-    private WorldLayer layer;
-
-    private Vector2 position;
-
     private int width;
 
     private int height;
 
+    //
+
+    private World world;
+
+    private WorldLayer layer;
+
+    //
+
+    private Vector2 position;
+
+    //
+
+    public int connectedData;
+
+    /*
+
+     */
+
+    public BlockData(Block block, int width, int height, World world, WorldLayer layer, Vector2 position) {
+        this.block = block;
+        this.width = width;
+        this.height = height;
+        this.world = world;
+        this.layer = layer;
+        this.position = position;
+    }
 }

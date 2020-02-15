@@ -15,4 +15,18 @@ public enum EnumFacing {
     @Getter
     private final Vector2 offset;
 
+    @Getter
+    private EnumFacing opposite;
+
+    /*
+
+     */
+
+    static {
+        NORTH.opposite = SOUTH;
+        SOUTH.opposite = NORTH;
+        EAST.opposite = WEST;
+        WEST.opposite = EAST;
+    }
+
 }

@@ -1,18 +1,12 @@
 package dev.game.test.world.block;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import dev.game.test.world.block.connected.ConnectedTexture;
-import dev.game.test.world.block.connected.EnumTextureConnection;
-
-import java.awt.*;
+import dev.game.test.world.block.connected.ConnectedTextureSimple;
 
 public class BlockDirt extends Block {
 
-    private ConnectedTexture texture;
+    private ConnectedTextureSimple texture;
 
     public BlockDirt() {
 
@@ -20,7 +14,13 @@ public class BlockDirt extends Block {
 
     @Override
     public void loadTextures() {
-        this.texture = new ConnectedTexture(Gdx.files.internal("map/dirt.png"));
+        this.texture = new ConnectedTextureSimple(this, Gdx.files.internal("map/dirt.png"));
+    }
+
+    @Override
+    public void onBlockNeighbourUpdate(BlockData blockData, EnumFacing neighbourFacing) {
+        super.onBlockNeighbourUpdate(blockData, neighbourFacing);
+        this.texture.computeTextures(blockData);
     }
 
     @Override

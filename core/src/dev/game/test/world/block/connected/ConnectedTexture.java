@@ -1,81 +1,93 @@
 package dev.game.test.world.block.connected;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import dev.game.test.world.block.BlockData;
+import dev.game.test.world.block.EnumFacing;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-public class ConnectedTexture {
+public interface ConnectedTexture {
 
-    private TextureRegion textureRegion;
+    TextureRegion getTexture(BlockData blockData);
 
-    public ConnectedTexture(FileHandle imageHandle) {
-        Pixmap pixmapRaw = new Pixmap(imageHandle);
+    boolean shouldRender(BlockData blockData, TextureConnection facing);
 
-        Pixmap pixmapOut = new Pixmap(16, 16 * 0xFF, Pixmap.Format.RGBA8888);
+    void updateNeighbours(BlockData blockData);
 
-        for (int i = 0; i < 0xFF; i++) {
-            boolean north = (i & EnumTextureConnection.NORTH.getValue()) != 0;
-            boolean south = (i & EnumTextureConnection.SOUTH.getValue()) != 0;
-            boolean west = (i & EnumTextureConnection.WEST.getValue()) != 0;
-            boolean east = (i & EnumTextureConnection.EAST.getValue()) != 0;
-            boolean northwest = (i & EnumTextureConnection.NORTHWEST.getValue()) != 0;
-            boolean northeast = (i & EnumTextureConnection.NORTHEAST.getValue()) != 0;
-            boolean southwest = (i & EnumTextureConnection.SOUTHWEST.getValue()) != 0;
-            boolean southeast = (i & EnumTextureConnection.SOUTHEAST.getValue()) != 0;
+    default int computeTextures(BlockData blockData) {
+        int old = blockData.connectedData;
 
-            for (int x = 0; x < 16; x++) {
-                for (int y = 0; y < 16; y++) {
-                    int color = pixmapRaw.getPixel(x, y);
+        int data = 0;
 
-                    if (northwest && y < 8 && x < 8) {
-                        color = blendColor(color, pixmapRaw.getPixel(x + 16, y + 16));
-                    } else if (northeast && y < 8 && x > 8) {
-                        color = blendColor(color, pixmapRaw.getPixel(x + 16, y + 16));
-                    } else if (southwest && y > 8 && x < 8) {
-                        color = blendColor(color, pixmapRaw.getPixel(x + 16, y + 16));
-                    } else if (southeast && y > 8 && x > 8) {
-                        color = blendColor(color, pixmapRaw.getPixel(x + 16, y + 16));
-                    }
-
-                    if (north && y < 8) {
-                        color = blendColor(color, pixmapRaw.getPixel(x, y + 16));
-                    } else if (south && y > 8) {
-                        color = blendColor(color, pixmapRaw.getPixel(x, y + 16));
-                    }
-
-                    if (west && x < 8) {
-                        color = blendColor(color, pixmapRaw.getPixel(x + 16, y));
-                    } else if (east && x > 8) {
-                        color = blendColor(color, pixmapRaw.getPixel(x + 16, y));
-                    }
-
-                    pixmapOut.setColor(color);
-
-                    pixmapOut.drawPixel(x, y + i * 16);
-                }
+        for (TextureConnection connection : CONNECTIONS) {
+            if (shouldRender(blockData, connection)) {
+                data += connection.value;
             }
         }
 
-        this.textureRegion = new TextureRegion(new Texture(pixmapOut));
-    }
+        blockData.connectedData = data;
 
-    private int blendColor(int original, int color) {
-        return color > 0 ? color : original;
-    }
-
-    public TextureRegion getTexture(BlockData blockData) {
-        int code = 0;
-        for (EnumTextureConnection connection : EnumTextureConnection.values()) {
-            if (connection.shouldRender(blockData)) {
-                code += connection.getValue();
-            }
+        if (data != old) {
+            updateNeighbours(blockData);
         }
 
-        textureRegion.setRegion(0, code * 16, 16, 16);
-        return textureRegion;
+        return data;
+    }
+
+    /*
+
+     */
+
+    static TextureConnection[] CONNECTIONS = new TextureConnection[]{
+            new SideTextureConnection(1 << 7, new Rectangle(0, 0, 16, 8), new Vector2(0, 16), EnumFacing.NORTH),
+            new SideTextureConnection(1 << 6, new Rectangle(0, 8, 16, 8), new Vector2(0, 16), EnumFacing.SOUTH),
+            new SideTextureConnection(1 << 5, new Rectangle(0, 0, 8, 16), new Vector2(16, 0), EnumFacing.WEST),
+            new SideTextureConnection(1 << 4, new Rectangle(8, 0, 8, 16), new Vector2(16, 0), EnumFacing.EAST),
+            //
+            new CornerTextureConnection(1 << 3, new Rectangle(0, 0, 8, 8), new Vector2(16, 16), EnumFacing.NORTH, EnumFacing.WEST),
+            new CornerTextureConnection(1 << 2, new Rectangle(8, 0, 8, 8), new Vector2(16, 16), EnumFacing.NORTH, EnumFacing.EAST),
+            new CornerTextureConnection(1 << 1, new Rectangle(0, 8, 8, 8), new Vector2(16, 16), EnumFacing.SOUTH, EnumFacing.WEST),
+            new CornerTextureConnection(1 << 0, new Rectangle(8, 8, 8, 8), new Vector2(16, 16), EnumFacing.SOUTH, EnumFacing.EAST),
+    };
+
+    @RequiredArgsConstructor
+    class TextureConnection {
+
+        @Getter
+        private final int value;
+
+        @Getter
+        private final Rectangle drawBounds;
+
+        @Getter
+        private final Vector2 uvOffset;
+
+    }
+
+    class SideTextureConnection extends TextureConnection {
+
+        @Getter
+        private EnumFacing side;
+
+        public SideTextureConnection(int value, Rectangle drawBounds, Vector2 uvOffset, EnumFacing side) {
+            super(value, drawBounds, uvOffset);
+
+            this.side = side;
+        }
+    }
+
+    class CornerTextureConnection extends TextureConnection {
+
+        @Getter
+        private EnumFacing[] sides;
+
+        public CornerTextureConnection(int value, Rectangle drawBounds, Vector2 uvOffset, EnumFacing... sides) {
+            super(value, drawBounds, uvOffset);
+
+            this.sides = sides;
+        }
     }
 
 }
