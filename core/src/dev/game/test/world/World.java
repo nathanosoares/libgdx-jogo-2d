@@ -11,8 +11,11 @@ import java.util.List;
 public class World {
 
     private int width;
+
     private int height;
+
     private WorldLayer[] layers;
+
     private final List<Entity> entities = Lists.newArrayList();
 
     private World(String world, int width, int height) {

@@ -21,5 +21,6 @@ public class BlockDirt extends Block {
 
     @Override
     public TextureRegion getTexture(BlockData blockData) {
+        return super.getTexture(blockData);
     }
 }

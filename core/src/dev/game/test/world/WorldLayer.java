@@ -17,7 +17,6 @@ public class WorldLayer {
             for (int additionalY = 0; additionalY < blockData.getHeight(); additionalY++) {
 
                 this.blocks[x + additionalX][y + additionalY] = blockData;
-
             }
         }
     }
