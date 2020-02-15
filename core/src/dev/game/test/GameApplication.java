@@ -4,16 +4,18 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.math.Vector2;
-import dev.game.test.net.ConnectionHandler;
 import com.badlogic.gdx.physics.box2d.Box2D;
+import dev.game.test.net.ConnectionHandler;
 import dev.game.test.net.client.ClientConnectionHandler;
 import dev.game.test.screens.GameScreen;
+import dev.game.test.setups.RegistrySetups;
+import dev.game.test.setups.SetupBlocks;
+import dev.game.test.setups.SetupGameScreen;
 import dev.game.test.world.World;
-import dev.game.test.world.block.Blocks;
 import dev.game.test.world.block.BlocksRegistry;
 import dev.game.test.world.entity.Player;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Random;
 import java.util.UUID;
@@ -27,16 +29,18 @@ public class GameApplication extends Game {
     private ConnectionHandler net;
 
     @Getter
+    @Setter
     private BlocksRegistry blocksRegistry;
 
+    @Setter
+    @Getter
     private Screen gameScreen;
-
-    //
 
     @Getter
     private String username;
 
     @Getter
+    @Setter
     private Player player;
 
     @Getter
@@ -61,26 +65,14 @@ public class GameApplication extends Game {
 
             Box2D.init();
 
+            RegistrySetups registrySetups = new RegistrySetups();
+
+            registrySetups.registerSetup(new SetupBlocks());
+            registrySetups.registerSetup(new SetupGameScreen());
+
+            registrySetups.runAll(this);
+
             this.net = new ClientConnectionHandler(this);
-
-            this.player = new Player(UUID.randomUUID());
-
-            int mapWidth = 20;
-            int mapHeight = 20;
-
-//            this.world = new World("world", mapWidth, mapHeight);
-
-            this.gameScreen = new GameScreen(this.player, this);
-            this.blocksRegistry = new BlocksRegistry();
-
-            this.blocksRegistry.registerBlock(0, Blocks.AIR);
-            this.blocksRegistry.registerBlock(1, Blocks.DIRT);
-            this.blocksRegistry.registerBlock(2, Blocks.STONE);
-            this.blocksRegistry.registerBlock(3, Blocks.WATER);
-            this.blocksRegistry.registerBlock(4, Blocks.GRASS);
-
-            this.setScreen(this.gameScreen);
-
 
         } catch (Exception ex) {
             ex.printStackTrace();
