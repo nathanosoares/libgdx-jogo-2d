@@ -3,6 +3,7 @@ package dev.game.test.world;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.Lists;
+import dev.game.test.world.block.Block;
 import dev.game.test.world.block.BlockState;
 import dev.game.test.world.block.Blocks;
 import dev.game.test.world.entity.Entity;
@@ -13,6 +14,8 @@ import java.util.List;
 @Getter
 public class World {
 
+    public static Block CLIPBOARD;
+
     private final String name;
 
     private final Rectangle bounds;
@@ -22,6 +25,8 @@ public class World {
     private final List<Entity> entities = Lists.newArrayList();
 
     public World(String name, int width, int height) {
+        CLIPBOARD = Blocks.DIRT;
+
         this.name = name;
 
         this.bounds = new Rectangle(0, 0, width, height);

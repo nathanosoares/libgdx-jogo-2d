@@ -42,13 +42,6 @@ public class GameApplication extends Game {
         System.out.println(String.format("Hello %s", this.username));
         
         instance = this;
-        this.blocksRegistry = new BlocksRegistry();
-
-        this.blocksRegistry.registerBlock(0, Blocks.AIR);
-        this.blocksRegistry.registerBlock(1, Blocks.DIRT);
-        this.blocksRegistry.registerBlock(2, Blocks.STONE);
-        this.blocksRegistry.registerBlock(3, Blocks.WATER);
-        this.blocksRegistry.registerBlock(4, Blocks.GRASS);
     }
 
     @Override
@@ -58,6 +51,13 @@ public class GameApplication extends Game {
 
             this.net = new ClientConnectionHandler();
             this.gameScreen = new GameScreen(this);
+            this.blocksRegistry = new BlocksRegistry();
+
+            this.blocksRegistry.registerBlock(0, Blocks.AIR);
+            this.blocksRegistry.registerBlock(1, Blocks.DIRT);
+            this.blocksRegistry.registerBlock(2, Blocks.STONE);
+            this.blocksRegistry.registerBlock(3, Blocks.WATER);
+            this.blocksRegistry.registerBlock(4, Blocks.GRASS);
 
             this.setScreen(this.gameScreen);
         } catch (Exception ex) {
