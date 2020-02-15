@@ -22,7 +22,7 @@ import dev.game.test.world.render.WorldRender;
 
 public class GameScreen extends ScreenAdapter {
 
-    public static final int VIEWPORT_SIZE = 15;
+    public static final int VIEWPORT_SIZE = 20;
 
     //
 
