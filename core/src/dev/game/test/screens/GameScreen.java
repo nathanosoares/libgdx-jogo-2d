@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
@@ -23,9 +22,7 @@ import dev.game.test.world.entity.Player;
 import dev.game.test.world.render.WorldRender;
 import lombok.Getter;
 
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Getter
 public class GameScreen extends ScreenAdapter {
