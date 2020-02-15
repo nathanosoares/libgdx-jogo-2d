@@ -21,6 +21,8 @@ import dev.game.test.world.entity.Player;
 import dev.game.test.world.render.WorldRender;
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 public class GameScreen extends ScreenAdapter {
 
@@ -76,7 +78,7 @@ public class GameScreen extends ScreenAdapter {
         this.worldRender.setView(this.camera);
         this.worldRender.setViewport(this.viewport);
 
-        this.player = new Player();
+        this.player = new Player(UUID.randomUUID());
         this.player.setPosition(new Vector2(mapWidth / 2f, mapHeight / 2f));
 
         this.world.addEntity(this.player);

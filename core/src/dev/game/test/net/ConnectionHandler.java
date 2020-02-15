@@ -5,6 +5,6 @@ import com.badlogic.gdx.Net.Protocol;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
 
-public interface GameNet {
+public interface ConnectionHandler {
 
 }

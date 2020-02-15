@@ -1,10 +1,8 @@
 package dev.game.test.net.packet;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import dev.game.test.net.handshake.PacketHandshake;
-import java.util.HashMap;
+import dev.game.test.net.packet.handshake.PacketHandshake;
+
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 
@@ -12,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum EnumPacket {
 
 
-    HANDSHAKE{
+    HANDSHAKE {
         {
             register(1, PacketHandshake.class);
         }
