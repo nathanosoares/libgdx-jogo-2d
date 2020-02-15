@@ -80,14 +80,17 @@ public class GameScreen extends ScreenAdapter {
         this.player = new Player(UUID.randomUUID());
 
         {
-            World world = createWorld("world", mapWidth, mapHeight);
+            World world = new World("world", mapWidth, mapHeight);
+            registerWorld(world);
+
             world.addEntity(this.player, (int) (mapWidth / 2f), (int) (mapHeight / 2f));
 
             setCurrentWorld(world);
         }
 
         {
-            createWorld("test", mapWidth, mapHeight);
+            World world = new World("test", mapWidth, mapHeight);
+            registerWorld(world);
         }
 
         Gdx.input.setInputProcessor(new InputAdapter() {
@@ -212,14 +215,12 @@ public class GameScreen extends ScreenAdapter {
         this.worldRender.setViewport(this.viewport);
     }
 
-    private World createWorld(String name, int width, int height) {
-        if (this.worlds.containsKey(name)) {
+    private World registerWorld(World world) {
+        if (this.worlds.containsKey(world.getName())) {
             throw new RuntimeException("Nome de mundo em uso");
         }
 
-        World world = new World(name, width, height);
-
-        worlds.put(name, world);
+        worlds.put(world.getName(), world);
 
         return world;
     }
