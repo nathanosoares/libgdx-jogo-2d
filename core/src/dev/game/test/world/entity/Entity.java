@@ -47,6 +47,7 @@ public abstract class Entity {
         }
 
         this.position.set(vector2);
+        this.body.setTransform(this.position, this.body.getAngle());
 
         return this.position.cpy();
     }
@@ -59,7 +60,15 @@ public abstract class Entity {
         return this.walkSpeed;
     }
 
+    //
+
     Body body;
+
+    public void onWorldRemove(World world) {
+        if (this.body != null) {
+            world.getBox2dWorld().destroyBody(this.body);
+        }
+    }
 
     public void onWorldAdd(World world) {
         BodyDef def = new BodyDef();
@@ -67,9 +76,9 @@ public abstract class Entity {
         this.body = world.getBox2dWorld().createBody(def);
 
         PolygonShape groundBox = new PolygonShape();
-        groundBox.setAsBox(16, 16);
+        groundBox.setAsBox(32 / 16f, 32 / 16f);
 
-        this.body.createFixture(groundBox, 1f);
+        this.body.createFixture(groundBox, 0f);
         groundBox.dispose();
     }
 }

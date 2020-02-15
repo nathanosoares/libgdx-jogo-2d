@@ -33,7 +33,7 @@ public class World {
 
     private final List<Entity> entities = Lists.newArrayList();
 
-    private final com.badlogic.gdx.physics.box2d.World box2dWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+    private final com.badlogic.gdx.physics.box2d.World box2dWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), false);
 
     public World(String name, int width, int height) {
         CLIPBOARD = Blocks.DIRT;
@@ -129,5 +129,7 @@ public class World {
         }
 
         this.entities.remove(entity);
+
+        entity.onWorldRemove(this);
     }
 }

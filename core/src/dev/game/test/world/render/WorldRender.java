@@ -62,6 +62,8 @@ public class WorldRender implements MapRenderer, Disposable {
 
     @Override
     public void render() {
+        this.world.getBox2dWorld().step(1 / 60f, 6, 2);
+
         beginRender();
 
         for (int layerId = 0; layerId < world.getLayers().length; layerId++) {
@@ -69,10 +71,9 @@ public class WorldRender implements MapRenderer, Disposable {
             renderMapLayer(layer);
         }
 
-        debugRenderer.render(this.world.getBox2dWorld(), viewport.getCamera().combined);
-        this.world.getBox2dWorld().step(1 / 60f, 6, 2);
-
         endRender();
+
+        debugRenderer.render(this.world.getBox2dWorld(), viewport.getCamera().combined);
     }
 
     @Override
