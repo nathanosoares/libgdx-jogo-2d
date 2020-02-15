@@ -67,7 +67,9 @@ public class GameScreen extends ScreenAdapter {
         this.worldRender.setView(this.camera);
 
         this.player = new Player();
-        this.player.setLocation(new Vector2(mapWidth / 2f, mapHeight / 2f));
+        this.player.setPosition(new Vector2(mapWidth / 2f, mapHeight / 2f));
+
+        this.world.addEntity(this.player);
     }
 
     @Override
@@ -80,23 +82,23 @@ public class GameScreen extends ScreenAdapter {
         GameUtils.clearScreen(0, 50, 0, 100);
 
         if (Gdx.input.isKeyPressed(Keys.W)) {
-            this.player.getLocation().y = Math.min(this.player.getLocation().y + delta * 5.0f, this.world.getHeight() - 24 / 10f);
+            this.player.getPosition().y = Math.min(this.player.getPosition().y + delta * 5.0f, this.world.getHeight() - 24 / 10f);
         }
 
         if (Gdx.input.isKeyPressed(Keys.S)) {
-            this.player.getLocation().y = Math.max(this.player.getLocation().y - delta * 5.0f, 0);
+            this.player.getPosition().y = Math.max(this.player.getPosition().y - delta * 5.0f, 0);
         }
 
         if (Gdx.input.isKeyPressed(Keys.D)) {
-            this.player.getLocation().x = Math.min(this.player.getLocation().x + delta * 5.0f, this.world.getWidth() - 24 / 10f);
+            this.player.getPosition().x = Math.min(this.player.getPosition().x + delta * 5.0f, this.world.getWidth() - 24 / 10f);
         }
 
         if (Gdx.input.isKeyPressed(Keys.A)) {
-            this.player.getLocation().x = Math.max(this.player.getLocation().x - delta * 5.0f, 0);
+            this.player.getPosition().x = Math.max(this.player.getPosition().x - delta * 5.0f, 0);
         }
 
 
-        this.camera.position.set(this.player.getLocation().x, this.player.getLocation().y, 0);
+        this.camera.position.set(this.player.getPosition().x, this.player.getPosition().y, 0);
 
         float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
         float visibleH = viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
@@ -108,9 +110,11 @@ public class GameScreen extends ScreenAdapter {
 
         this.worldRender.setView(this.camera);
         this.worldRender.render();
-        this.spriteBatch.begin();
-        this.player.draw(this.spriteBatch);
-        this.spriteBatch.end();
+        this.worldRender.renderEntities();
+
+//        this.spriteBatch.begin();
+//        this.player.draw(this.spriteBatch);
+//        this.spriteBatch.end();
     }
 
     @Override

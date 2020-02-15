@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import dev.game.test.world.World;
 import dev.game.test.world.WorldLayer;
 import dev.game.test.world.block.BlockData;
+import dev.game.test.world.entity.Entity;
 
 public class WorldRender implements MapRenderer {
 
@@ -56,16 +57,17 @@ public class WorldRender implements MapRenderer {
         }
 
         endRender();
-
     }
 
     @Override
     public void render(int[] layers) {
         beginRender();
+
         for (int layerIdx : layers) {
             WorldLayer layer = world.getLayers()[layerIdx];
             renderMapLayer(layer);
         }
+
         endRender();
     }
 
@@ -103,6 +105,15 @@ public class WorldRender implements MapRenderer {
         }
     }
 
+    public void renderEntities() {
+        beginRender();
+
+        for (Entity entity : this.world.getEntities()) {
+            entity.draw(this.batch);
+        }
+
+        endRender();
+    }
 
     protected void beginRender() {
         batch.begin();
