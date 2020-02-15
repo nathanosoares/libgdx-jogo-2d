@@ -7,6 +7,8 @@ import dev.game.test.net.packet.handshake.PacketHandshake;
 import dev.game.test.net.packet.Packet;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 public class ServerPacketHandler implements GameConnection {
 
@@ -18,7 +20,7 @@ public class ServerPacketHandler implements GameConnection {
 
      */
 
-    private String clientId;
+    private UUID clientId;
 
     /*
 

@@ -3,13 +3,17 @@ package dev.game.test.world;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import dev.game.test.world.block.Block;
 import dev.game.test.world.block.BlockState;
 import dev.game.test.world.block.Blocks;
 import dev.game.test.world.entity.Entity;
+import dev.game.test.world.entity.Player;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Getter
 public class World {
@@ -21,6 +25,10 @@ public class World {
     private final Rectangle bounds;
 
     private WorldLayer[] layers;
+
+    //
+
+    private final Map<UUID, Player> players = Maps.newHashMap();
 
     private final List<Entity> entities = Lists.newArrayList();
 
@@ -91,6 +99,10 @@ public class World {
         this.layers[1] = decoration;
     }
 
+    public Player getPlayer(UUID uid) {
+        return this.players.get(uid);
+    }
+
     public void addEntity(Entity entity, int x, int y) {
         if (entity.getWorld() != null) {
             entity.getWorld().removeEntity(entity);
@@ -99,9 +111,17 @@ public class World {
         entity.setWorld(this);
         entity.setPosition(new Vector2(x, y));
         this.entities.add(entity);
+
+        if(entity instanceof Player) {
+            this.players.put(entity.getId(), (Player) entity);
+        }
     }
 
     public void removeEntity(Entity entity) {
+        if(entity instanceof Player) {
+            this.players.remove(entity.getId());
+        }
+        
         this.entities.remove(entity);
     }
 }

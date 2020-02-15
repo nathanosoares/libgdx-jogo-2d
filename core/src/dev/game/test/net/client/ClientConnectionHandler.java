@@ -4,14 +4,27 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import dev.game.test.GameApplication;
 import dev.game.test.net.ConnectionHandler;
+import dev.game.test.net.packet.client.PacketWorldRequest;
 import dev.game.test.net.packet.handshake.PacketHandshake;
 import dev.game.test.net.packet.EnumPacket;
 import dev.game.test.net.packet.Packet;
+import dev.game.test.net.packet.server.PacketEntitySpawn;
+import dev.game.test.net.packet.server.PacketPlayerInfo;
+import dev.game.test.net.packet.server.PacketWorldLayerData;
+import dev.game.test.world.World;
+import dev.game.test.world.entity.Player;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 
+@RequiredArgsConstructor
 public class ClientConnectionHandler implements ConnectionHandler {
+
+    private final GameApplication application;
+
+    //
 
     public ClientPacketHandler serverConnection;
 
@@ -36,7 +49,7 @@ public class ClientConnectionHandler implements ConnectionHandler {
                 ClientPacketHandler _serverConnection = new ClientPacketHandler(ClientConnectionHandler.this, connection);
                 serverConnection = _serverConnection;
 
-                serverConnection.sendPacket(new PacketHandshake("Hello World!"));
+                serverConnection.sendPacket(new PacketHandshake(application.getPlayer().getId()));
             }
 
             @Override
@@ -63,8 +76,28 @@ public class ClientConnectionHandler implements ConnectionHandler {
 
      */
 
-    public void onHandshake(Packet packet) {
+    public void onHandshake(PacketHandshake packet) {
         this.state = ClientConnectionState.PREPARING;
+
+        serverConnection.sendPacket(new PacketWorldRequest(30));
+    }
+
+    public void onPlayerInfo(PacketPlayerInfo packet) {
+    }
+
+    public void onWorldLayerData(PacketWorldLayerData packet) {
+
+    }
+
+    public void onEntitySpawn(PacketEntitySpawn packet) {
+        World world = application.getWorld();
+        Player player = world.getPlayer(packet.getId());
+
+        if(player == null) {
+            player = new Player(packet.getId());
+            player.setPosition(packet.getPosition());
+            world.addEntity(player);
+        }
     }
 
 }
