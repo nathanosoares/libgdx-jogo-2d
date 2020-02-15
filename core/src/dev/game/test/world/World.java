@@ -26,7 +26,7 @@ public class World {
 
         this.bounds = new Rectangle(0, 0, width, height);
 
-        this.layers = new WorldLayer[1];
+        this.layers = new WorldLayer[2];
 
         WorldLayer ground = new WorldLayer(this);
 
@@ -67,7 +67,6 @@ public class World {
 
         ground.getBlockState(4, 10).setBlock(Blocks.WATER);
 
-        ground.getBlockState(4, 14).setBlock(Blocks.STONE);
 
         for (int x = 0; x < this.getBounds().getWidth(); x++) {
             for (int y = 0; y < this.getBounds().getHeight(); y++) {
@@ -77,6 +76,12 @@ public class World {
         }
 
         this.layers[0] = ground;
+
+        WorldLayer decoration = new WorldLayer(this);
+
+        decoration.getBlockState(4, 14).setBlock(Blocks.STONE);
+
+        this.layers[1] = ground;
     }
 
     public void addEntity(Entity entity) {
