@@ -109,7 +109,8 @@ public class WorldRender implements MapRenderer {
                 TextureRegion region = blockData.getBlock().getTexture(blockData);
 
                 if(x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
-                    batch.setColor(0.9f, 0.7f, 1.0f, 0.96f);
+                    float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
+                    batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
                 }
 
                 batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);
