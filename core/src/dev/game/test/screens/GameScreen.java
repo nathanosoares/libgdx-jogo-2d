@@ -110,12 +110,12 @@ public class GameScreen extends ScreenAdapter {
                             blockState.getBlock().neighbourUpdate(blockState);
                         }
                     } else if (button == Input.Buttons.MIDDLE) {
-                        World.CLIPBOARD = blockData.getBlock();
+                        World.CLIPBOARD = blockState.getBlock();
                     } else {
-                        if (blockData.getBlock() != World.CLIPBOARD) {
-                            blockData.setBlock(World.CLIPBOARD);
-                            blockData.getBlock().neighbourUpdate(blockData);
-                            blockData.getBlock().onBlockNeighbourUpdate(blockData, null);
+                        if (blockState.getBlock() != World.CLIPBOARD) {
+                            blockState.setBlock(World.CLIPBOARD);
+                            blockState.getBlock().neighbourUpdate(blockState);
+                            blockState.getBlock().onBlockNeighbourUpdate(blockState, null);
                         }
                     }
 
