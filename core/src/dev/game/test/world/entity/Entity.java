@@ -82,6 +82,7 @@ public abstract class Entity {
         groundBox.setAsBox(24 / 16f / 2.0f, 24 / 16f / 2.0f, center, 0.0f);
 
         this.body.createFixture(groundBox, 0f);
+
         groundBox.dispose();
     }
 }
