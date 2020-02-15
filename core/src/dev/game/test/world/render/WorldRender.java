@@ -23,12 +23,13 @@ public class WorldRender implements Disposable {
 
             for (int x = 0; x < layer.getBlocks().length; x++) {
                 for (int y = 0; y < layer.getBlocks()[x].length; y++) {
-                    BlockData blockData = layer.getBlock(x, y);
-                    Vector2 position = blockData.getPosition();
 
                     if (!layer.isOrigin(x, y)) {
                         continue;
                     }
+
+                    BlockData blockData = layer.getBlock(x, y);
+                    Vector2 position = blockData.getPosition();
 
                     TextureRegion textureRegion = blockData.getBlock().getTexture(blockData);
                     this.batch.draw(textureRegion, position.x, position.y);
