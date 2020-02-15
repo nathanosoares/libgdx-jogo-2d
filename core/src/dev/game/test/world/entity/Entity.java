@@ -3,6 +3,9 @@ package dev.game.test.world.entity;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import dev.game.test.screens.GameScreen;
 import dev.game.test.world.World;
 import lombok.Getter;
@@ -23,8 +26,7 @@ public abstract class Entity {
     @Setter
     protected World world;
 
-    @Setter
-    protected Vector2 position;
+    public final Vector2 position = new Vector2(0, 0);
 
     protected float walkSpeed = 5;
 
@@ -44,7 +46,7 @@ public abstract class Entity {
             vector2.x = this.position.x + vector2.x;
         }
 
-        this.position = vector2;
+        this.position.set(vector2);
 
         return this.position.cpy();
     }
@@ -55,5 +57,19 @@ public abstract class Entity {
         }
 
         return this.walkSpeed;
+    }
+
+    Body body;
+
+    public void onWorldAdd(World world) {
+        BodyDef def = new BodyDef();
+        def.position.set(this.position);
+        this.body = world.getBox2dWorld().createBody(def);
+
+        PolygonShape groundBox = new PolygonShape();
+        groundBox.setAsBox(16, 16);
+
+        this.body.createFixture(groundBox, 1f);
+        groundBox.dispose();
     }
 }

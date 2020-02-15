@@ -2,6 +2,7 @@ package dev.game.test.world;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.game.test.world.block.Block;
@@ -36,7 +37,6 @@ public class World {
 
     public World(String name, int width, int height) {
         CLIPBOARD = Blocks.DIRT;
-
 
         this.name = name;
 
@@ -103,7 +103,6 @@ public class World {
         return this.players.get(uid);
     }
 
-
     public void addEntity(Entity entity, Vector2 position) {
         this.addEntity(entity, position.x, position.y);
     }
@@ -114,12 +113,14 @@ public class World {
         }
 
         entity.setWorld(this);
-        entity.setPosition(new Vector2(x, y));
+        entity.position.set(new Vector2(x, y));
         this.entities.add(entity);
 
         if (entity instanceof Player) {
             this.players.put(entity.getId(), (Player) entity);
         }
+
+        entity.onWorldAdd(this);
     }
 
     public void removeEntity(Entity entity) {

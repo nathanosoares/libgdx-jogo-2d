@@ -8,6 +8,8 @@ import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.world.World;
 import dev.game.test.world.WorldLayer;
@@ -16,7 +18,7 @@ import dev.game.test.world.entity.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
-public class WorldRender implements MapRenderer {
+public class WorldRender implements MapRenderer, Disposable {
 
     public static final float TILE_WIDTH = 16.0f;
     public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
@@ -32,6 +34,8 @@ public class WorldRender implements MapRenderer {
 
     @Setter
     private Viewport viewport;
+
+    private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     public WorldRender(Batch batch, World world) {
         this.batch = batch;
@@ -64,6 +68,9 @@ public class WorldRender implements MapRenderer {
             WorldLayer layer = world.getLayers()[layerId];
             renderMapLayer(layer);
         }
+
+        debugRenderer.render(this.world.getBox2dWorld(), viewport.getCamera().combined);
+        this.world.getBox2dWorld().step(1 / 60f, 6, 2);
 
         endRender();
     }
@@ -108,7 +115,7 @@ public class WorldRender implements MapRenderer {
                 BlockState blockState = layer.getBlockState(col, row);
                 TextureRegion region = blockState.getBlock().getTexture(blockState);
 
-                if(x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
+                if (x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
                     float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
                     batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
                 }
@@ -141,4 +148,8 @@ public class WorldRender implements MapRenderer {
         batch.end();
     }
 
+    @Override
+    public void dispose() {
+        this.debugRenderer.dispose();
+    }
 }
