@@ -105,10 +105,10 @@ public class World {
 
 
     public void addEntity(Entity entity, Vector2 position) {
-        this.addEntity(entity, (int) position.x, (int) position.y);
+        this.addEntity(entity, position.x, position.y);
     }
 
-    public void addEntity(Entity entity, int x, int y) {
+    public void addEntity(Entity entity, float x, float y) {
         if (entity.getWorld() != null) {
             entity.getWorld().removeEntity(entity);
         }
