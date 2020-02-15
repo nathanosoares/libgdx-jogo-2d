@@ -21,9 +21,17 @@ public abstract class Entity {
 
     public abstract boolean hasCollision();
 
+    public abstract boolean canLeaveMap();
+
     public void move(Vector2 vector2) {
-        vector2.y = Math.max(Math.min(this.position.y + vector2.y, GameScreen.getInstance().getWorld().getHeight() - 24 / 10f), 0);
-        vector2.x = Math.max(Math.min(this.position.x + vector2.x, GameScreen.getInstance().getWorld().getWidth() - 24 / 10f), 0);
+
+        if (!this.canLeaveMap()) {
+            vector2.y = Math.max(Math.min(this.position.y + vector2.y, GameScreen.getInstance().getWorld().getHeight() - 24 / 10f), 0);
+            vector2.x = Math.max(Math.min(this.position.x + vector2.x, GameScreen.getInstance().getWorld().getWidth() - 24 / 10f), 0);
+        } else {
+            vector2.y = this.position.y + vector2.y;
+            vector2.x = this.position.x + vector2.x;
+        }
 
         this.position = vector2;
     }
