@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.Disposable;
 import dev.game.test.world.World;
 import dev.game.test.world.WorldLayer;
+import dev.game.test.world.block.BlockData;
 
 public class WorldRender implements Disposable {
 
@@ -18,7 +19,9 @@ public class WorldRender implements Disposable {
         beginRender();
 
         for (WorldLayer layer : world.getLayers()) {
-            layer.
+            for (BlockData[] blocks : layer.getBlocks()) {
+
+            }
         }
 
         endRender();
