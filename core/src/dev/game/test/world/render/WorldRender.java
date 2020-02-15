@@ -1,15 +1,20 @@
 package dev.game.test.world.render;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.world.World;
 import dev.game.test.world.WorldLayer;
 import dev.game.test.world.block.BlockData;
 import dev.game.test.world.entity.Entity;
+import lombok.Setter;
 
 public class WorldRender implements MapRenderer {
 
@@ -23,6 +28,9 @@ public class WorldRender implements MapRenderer {
 
     //
     private Rectangle viewBounds;
+
+    @Setter
+    private Viewport viewport;
 
     public WorldRender(Batch batch, World world) {
         this.batch = batch;
@@ -72,14 +80,17 @@ public class WorldRender implements MapRenderer {
     }
 
     private void renderMapLayer(WorldLayer layer) {
+        Vector2 mouseScreenPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
+
         float layerTileWidth = TILE_WIDTH * UNIT_PER_PIXEL;
         float layerTileHeight = TILE_WIDTH * UNIT_PER_PIXEL;
 
         int col1 = Math.max(0, (int) ((viewBounds.x) / layerTileWidth));
-        int col2 = Math.min(world.getWidth(), (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
+        int col2 = (int) Math.min(world.getBounds().getWidth(), (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
 
         int row1 = Math.max(0, (int) ((viewBounds.y) / layerTileHeight));
-        int row2 = Math.min(world.getHeight(), (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
+        int row2 = (int) Math.min(world.getBounds().getHeight(), (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
 
         float y = row2 * layerTileHeight;
         float xStart = col1 * layerTileWidth;
@@ -96,7 +107,12 @@ public class WorldRender implements MapRenderer {
                 BlockData blockData = layer.getBlock(col, row);
                 TextureRegion region = blockData.getBlock().getTexture(blockData);
 
+                if(x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
+                    batch.setColor(0.9f, 0.7f, 1.0f, 0.96f);
+                }
+
                 batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);
+                batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
                 x += layerTileWidth;
             }

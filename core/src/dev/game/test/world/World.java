@@ -1,5 +1,6 @@
 package dev.game.test.world;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.Lists;
 import dev.game.test.world.block.BlockData;
@@ -9,6 +10,7 @@ import dev.game.test.world.block.BlockWater;
 import dev.game.test.world.entity.Entity;
 import lombok.Getter;
 
+import javax.swing.*;
 import java.util.List;
 
 @Getter
@@ -16,8 +18,7 @@ public class World {
 
     private final String name;
 
-    private final int width;
-    private final int height;
+    private final Rectangle bounds;
 
     private WorldLayer[] layers;
 
@@ -26,8 +27,7 @@ public class World {
     public World(String name, int width, int height) {
         this.name = name;
 
-        this.width = width;
-        this.height = height;
+        this.bounds = new Rectangle(0, 0, width, height);
 
         this.layers = new WorldLayer[1];
 
@@ -78,8 +78,9 @@ public class World {
 
         ground.getBlock(4, 10).setBlock(water);
 
-        for (int x = 0; x < this.getWidth(); x++) {
-            for (int y = 0; y < this.getHeight(); y++) {
+
+        for (int x = 0; x < this.getBounds().getWidth(); x++) {
+            for (int y = 0; y < this.getBounds().getHeight(); y++) {
                 BlockData blockData = ground.getBlock(x, y);
                 blockData.getBlock().onBlockNeighbourUpdate(blockData, null);
             }
