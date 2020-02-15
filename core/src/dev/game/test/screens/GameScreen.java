@@ -115,6 +115,5 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        this.worldRender.dispose();
     }
 }

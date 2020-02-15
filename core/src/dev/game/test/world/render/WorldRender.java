@@ -4,12 +4,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Disposable;
 import dev.game.test.world.World;
 import dev.game.test.world.WorldLayer;
 import dev.game.test.world.block.BlockData;
 
-public class WorldRender implements Disposable {
+public class WorldRender {
 
     public static final float TILE_WIDTH = 16.0f;
     public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
@@ -95,8 +94,4 @@ public class WorldRender implements Disposable {
         batch.end();
     }
 
-    @Override
-    public void dispose() {
-        this.batch.dispose();
-    }
 }
