@@ -1,5 +1,6 @@
 package dev.game.test.world.render;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -12,11 +13,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorldRender implements Disposable {
 
+    public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
+
+    //
+
     protected final Batch batch;
+
+    protected final Camera camera;
+
     protected final World world;
 
     public void render() {
         beginRender();
+
+        this.batch.setProjectionMatrix(this.camera.combined);
 
         for (int layerId = 0; layerId < world.getLayers().length; layerId++) {
             WorldLayer layer = world.getLayers()[layerId];
@@ -32,7 +42,7 @@ public class WorldRender implements Disposable {
                     Vector2 position = blockData.getPosition();
 
                     TextureRegion textureRegion = blockData.getBlock().getTexture(blockData);
-                    this.batch.draw(textureRegion, position.x, position.y);
+                    this.batch.draw(textureRegion, position.x * UNIT_PER_PIXEL, position.y * UNIT_PER_PIXEL);
                 }
             }
         }

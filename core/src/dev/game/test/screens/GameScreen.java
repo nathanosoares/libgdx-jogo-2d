@@ -22,11 +22,7 @@ import dev.game.test.world.render.WorldRender;
 
 public class GameScreen extends ScreenAdapter {
 
-    public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
-
     public static final int VIEWPORT_SIZE = 15;
-
-    public static final int WORLD_SIZE = 20;
 
     //
 
@@ -40,12 +36,12 @@ public class GameScreen extends ScreenAdapter {
 
     //
 
-//    private SpriteBatch spriteBatch;
+    private SpriteBatch spriteBatch;
 
-//    private TiledMap map;
-//    private GameMapRenderer mapRenderer;
+    private World world;
 
     private WorldRender worldRender;
+
     private Player player;
 
     public GameScreen(GameApplication application) {
@@ -55,32 +51,19 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         this.camera = new OrthographicCamera();
-//        this.camera.zoom = 1.5f;
 
         DisplayMode displayMode = Gdx.graphics.getDisplayMode();
         float ratio = (float) displayMode.width / (float) displayMode.height;
-        System.out.println(displayMode);
-        System.out.println(ratio);
 
         this.viewport = new FillViewport(VIEWPORT_SIZE, VIEWPORT_SIZE / ratio, this.camera);
+
+        this.spriteBatch = new SpriteBatch();
 
         int mapWidth = 20;
         int mapHeight = 20;
 
-        World world = new World("world", mapWidth, mapHeight);
-        this.worldRender = new WorldRender(world);
-
-//        this.spriteBatch = new SpriteBatch();
-//
-//        this.map = new TmxMapLoader().load("map/test.tmx");
-//        this.mapRenderer = new GameMapRenderer(this.map, UNIT_PER_PIXEL);
-
-//        MapProperties prop = this.map.getProperties();
-//
-//        int mapWidth = prop.get("width", Integer.class);
-//        int mapHeight = prop.get("height", Integer.class);
-//        int tilePixelWidth = prop.get("tilewidth", Integer.class);
-//        int tilePixelHeight = prop.get("tileheight", Integer.class);
+        this.world = new World("world", mapWidth, mapHeight);
+        this.worldRender = new WorldRender(spriteBatch, this.camera, world);
 
         this.player = new Player();
         this.player.setLocation(new Vector2(mapWidth / 2f, mapHeight / 2f));
@@ -96,7 +79,7 @@ public class GameScreen extends ScreenAdapter {
         GameUtils.clearScreen(0, 50, 0, 100);
 
         if (Gdx.input.isKeyPressed(Keys.W)) {
-            this.player.getLocation().y = Math.min(this.player.getLocation().y + delta * 5.0f, WORLD_SIZE - 24 / 10f);
+            this.player.getLocation().y = Math.min(this.player.getLocation().y + delta * 5.0f, this.world.getHeight() - 24 / 10f);
         }
 
         if (Gdx.input.isKeyPressed(Keys.S)) {
@@ -104,7 +87,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (Gdx.input.isKeyPressed(Keys.D)) {
-            this.player.getLocation().x = Math.min(this.player.getLocation().x + delta * 5.0f, WORLD_SIZE - 24 / 10f);
+            this.player.getLocation().x = Math.min(this.player.getLocation().x + delta * 5.0f, this.world.getWidth() - 24 / 10f);
         }
 
         if (Gdx.input.isKeyPressed(Keys.A)) {
@@ -117,11 +100,12 @@ public class GameScreen extends ScreenAdapter {
         float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
         float visibleH = viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
 
-        this.camera.position.x = MathUtils.clamp(this.camera.position.x, visibleW, WORLD_SIZE - visibleW);
-        this.camera.position.y = MathUtils.clamp(this.camera.position.y, visibleH, WORLD_SIZE - visibleH);
+        this.camera.position.x = MathUtils.clamp(this.camera.position.x, visibleW, this.world.getWidth() - visibleW);
+        this.camera.position.y = MathUtils.clamp(this.camera.position.y, visibleH, this.world.getHeight() - visibleH);
 
         this.camera.update();
 
+        this.worldRender.render();
 //        this.mapRenderer.setView(this.camera);
 //
 //        this.mapRenderer.render(new int[]{0});

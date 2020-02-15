@@ -7,15 +7,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum EnumFacing {
 
-    NORTH(new Vector2(0.0f, 1.0f), EnumFacing.SOUTH),
-    EAST(new Vector2(1.0f, 0.0f), EnumFacing.WEST),
-    SOUTH(new Vector2(0.0f, -1.0f), EnumFacing.NORTH),
-    WEST(new Vector2(-1.0f, 0.0f), EnumFacing.EAST);
+    NORTH(new Vector2(0.0f, 1.0f)),
+    EAST(new Vector2(1.0f, 0.0f)),
+    SOUTH(new Vector2(0.0f, -1.0f)),
+    WEST(new Vector2(-1.0f, 0.0f));
 
     @Getter
     private final Vector2 offset;
-
-    @Getter
-    private final EnumFacing opposite;
 
 }
