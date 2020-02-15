@@ -1,53 +1,90 @@
 package dev.game.test.world.render;
 
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import dev.game.test.world.World;
 import dev.game.test.world.WorldLayer;
 import dev.game.test.world.block.BlockData;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class WorldRender implements Disposable {
 
+    public static final float TILE_WIDTH = 16.0f;
     public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
 
     //
 
     protected final Batch batch;
 
-    protected final Camera camera;
+    protected final OrthographicCamera camera;
 
     protected final World world;
+
+    //
+
+    private Rectangle viewBounds;
+
+    public WorldRender(Batch batch, OrthographicCamera camera, World world) {
+        this.batch = batch;
+        this.camera = camera;
+        this.world = world;
+
+        this.viewBounds = new Rectangle();
+    }
 
     public void render() {
         beginRender();
 
         this.batch.setProjectionMatrix(this.camera.combined);
 
+        float width = camera.viewportWidth * camera.zoom;
+        float height = camera.viewportHeight * camera.zoom;
+
+        float w = width * Math.abs(camera.up.y) + height * Math.abs(camera.up.x);
+        float h = height * Math.abs(camera.up.y) + width * Math.abs(camera.up.x);
+
+        viewBounds.set(camera.position.x - w / 2, camera.position.y - h / 2, w, h);
+
+        float layerTileWidth = TILE_WIDTH * UNIT_PER_PIXEL;
+        float layerTileHeight = TILE_WIDTH * UNIT_PER_PIXEL;
+
+        int col1 = Math.max(0, (int) ((viewBounds.x) / layerTileWidth));
+        int col2 = Math.min(world.getWidth(), (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
+
+        int row1 = Math.max(0, (int) ((viewBounds.y) / layerTileHeight));
+        int row2 = Math.min(world.getHeight(), (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
+
+        float y = row2 * layerTileHeight;
+        float xStart = col1 * layerTileWidth;
+
         for (int layerId = 0; layerId < world.getLayers().length; layerId++) {
             WorldLayer layer = world.getLayers()[layerId];
+            for (int row = row2; row >= row1; row--) {
+                float x = xStart;
 
-            for (int x = 0; x < layer.getBlocks().length; x++) {
-                for (int y = 0; y < layer.getBlocks()[x].length; y++) {
+                for (int col = col1; col < col2; col++) {
+                    System.out.println(String.format("Hello (%d, %d)", col, row));
 
-                    if (!layer.isOrigin(x, y)) {
+                    if (!layer.isOrigin(col, row)) {
+                        x += layerTileWidth;
                         continue;
                     }
 
-                    BlockData blockData = layer.getBlock(x, y);
-                    Vector2 position = blockData.getPosition();
+                    BlockData blockData = layer.getBlock(col, row);
+                    TextureRegion region = blockData.getBlock().getTexture(blockData);
 
-                    TextureRegion textureRegion = blockData.getBlock().getTexture(blockData);
-                    this.batch.draw(textureRegion, position.x * UNIT_PER_PIXEL, position.y * UNIT_PER_PIXEL);
+                    batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);
+
+                    x += layerTileWidth;
                 }
+                y -= layerTileHeight;
             }
         }
 
         endRender();
+
     }
 
     protected void beginRender() {
