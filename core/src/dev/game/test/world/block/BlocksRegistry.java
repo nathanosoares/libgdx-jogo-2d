@@ -9,6 +9,7 @@ public class BlocksRegistry {
     private final Map<Integer, Block> MAP = Maps.newHashMap();
 
     public void registerBlock(int id, Block block) {
+        block.setId(id);
         block.loadTextures();
 
         MAP.put(id, block);
