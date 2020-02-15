@@ -24,8 +24,11 @@ public class World {
 
     private final List<Entity> entities = Lists.newArrayList();
 
+    private final com.badlogic.gdx.physics.box2d.World box2dWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+
     public World(String name, int width, int height) {
         CLIPBOARD = Blocks.DIRT;
+
 
         this.name = name;
 
@@ -38,9 +41,8 @@ public class World {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
 
-                ground.setBlock(x, y, new BlockState(
-                        Blocks.DIRT,
-                        1, 1, this, ground, new Vector2(x, y)
+                ground.setBlockState(new BlockState(
+                        Blocks.GRASS, this, ground, new Vector2(x, y)
                 ));
 
             }
@@ -84,9 +86,9 @@ public class World {
 
         WorldLayer decoration = new WorldLayer(this);
 
-        decoration.getBlockState(4, 14).setBlock(Blocks.STONE);
+        decoration.setBlockState(new BlockState(Blocks.STONE, this, decoration, new Vector2(2, 4)));
 
-        this.layers[1] = ground;
+        this.layers[1] = decoration;
     }
 
     public void addEntity(Entity entity) {

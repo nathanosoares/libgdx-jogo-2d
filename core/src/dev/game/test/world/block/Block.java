@@ -3,10 +3,22 @@ package dev.game.test.world.block;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Block {
 
     private static TextureRegion MISSING_TEXTURE;
+
+    @Getter
+    @Setter
+    protected int id;
+
+    @Getter
+    protected int width = 1;
+
+    @Getter
+    protected int height = 1;
 
     static {
         Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
@@ -35,7 +47,10 @@ public class Block {
     public void neighbourUpdate(BlockState blockState) {
         for (EnumFacing facing : EnumFacing.values()) {
             BlockState targetData = blockState.getLayer().getFacingBlock(blockState, facing);
-            targetData.getBlock().onBlockNeighbourUpdate(targetData, facing.getOpposite());
+
+            if (targetData != null) {
+                targetData.getBlock().onBlockNeighbourUpdate(targetData, facing.getOpposite());
+            }
         }
     }
 
@@ -50,5 +65,4 @@ public class Block {
     public TextureRegion getTexture(BlockState blockState) {
         return MISSING_TEXTURE;
     }
-
 }

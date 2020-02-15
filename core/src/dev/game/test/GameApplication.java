@@ -5,6 +5,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import dev.game.test.net.ConnectionHandler;
+import com.badlogic.gdx.physics.box2d.Box2D;
 import dev.game.test.net.client.ClientConnectionHandler;
 import dev.game.test.screens.GameScreen;
 import dev.game.test.world.block.Blocks;
@@ -32,14 +33,14 @@ public class GameApplication extends Game {
     private String username;
 
     public GameApplication(String[] args) {
-        if(System.getProperty("username") != null) {
+        if (System.getProperty("username") != null) {
             this.username = System.getProperty("username");
         } else {
             this.username = String.format("Player%d", new Random().nextInt(1000));
         }
 
         System.out.println(String.format("Hello %s", this.username));
-        
+
         instance = this;
     }
 
@@ -47,6 +48,8 @@ public class GameApplication extends Game {
     public void create() {
         try {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+            Box2D.init();
 
             this.net = new ClientConnectionHandler();
             this.gameScreen = new GameScreen(this);

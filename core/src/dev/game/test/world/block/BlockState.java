@@ -13,9 +13,6 @@ public class BlockState {
     @Setter
     private Block block;
 
-    private int width;
-
-    private int height;
 
     //
 
@@ -35,10 +32,8 @@ public class BlockState {
 
      */
 
-    public BlockState(Block block, int width, int height, World world, WorldLayer layer, Vector2 position) {
+    public BlockState(Block block, World world, WorldLayer layer, Vector2 position) {
         this.block = block;
-        this.width = width;
-        this.height = height;
         this.world = world;
         this.layer = layer;
         this.position = position;
