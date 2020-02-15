@@ -1,9 +1,11 @@
-package dev.game.test.world.block;
+package dev.game.test.world.block.impl;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import dev.game.test.world.block.Block;
+import dev.game.test.world.block.BlockState;
 
 public class BlockGrass extends Block {
 
@@ -22,7 +24,7 @@ public class BlockGrass extends Block {
     }
 
     @Override
-    public TextureRegion getTexture(BlockData blockData) {
+    public TextureRegion getTexture(BlockState blockState) {
         return texture;
     }
 }

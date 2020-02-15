@@ -10,13 +10,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
 import dev.game.test.world.World;
-import dev.game.test.world.block.BlockData;
+import dev.game.test.world.block.BlockState;
+import dev.game.test.world.block.Blocks;
 import dev.game.test.world.entity.Player;
 import dev.game.test.world.render.WorldRender;
 import lombok.Getter;
@@ -102,17 +102,17 @@ public class GameScreen extends ScreenAdapter {
                 Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
 
                 if (world.getBounds().contains(mouseWorldPosition)) {
-                    BlockData blockData = world.getLayers()[0].getBlock(mouseWorldPosition.x, mouseWorldPosition.y);
+                    BlockState blockState = world.getLayers()[0].getBlockState(mouseWorldPosition.x, mouseWorldPosition.y);
 
                     if (button == Input.Buttons.RIGHT) {
-                        if (blockData.getBlock() != World.GRASS) {
-                            blockData.setBlock(World.GRASS);
-                            blockData.getBlock().neighbourUpdate(blockData);
+                        if (blockState.getBlock() != Blocks.GRASS) {
+                            blockState.setBlock(Blocks.GRASS);
+                            blockState.getBlock().neighbourUpdate(blockState);
                         }
                     } else {
-                        if (blockData.getBlock() != World.DIRT) {
-                            blockData.setBlock(World.DIRT);
-                            blockData.getBlock().onBlockNeighbourUpdate(blockData, null);
+                        if (blockState.getBlock() != Blocks.DIRT) {
+                            blockState.setBlock(Blocks.DIRT);
+                            blockState.getBlock().onBlockNeighbourUpdate(blockState, null);
                         }
                     }
 

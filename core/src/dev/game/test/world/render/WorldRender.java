@@ -1,7 +1,6 @@
 package dev.game.test.world.render;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,10 +9,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import dev.game.test.screens.GameScreen;
 import dev.game.test.world.World;
 import dev.game.test.world.WorldLayer;
-import dev.game.test.world.block.BlockData;
+import dev.game.test.world.block.BlockState;
 import dev.game.test.world.entity.Entity;
 import lombok.Setter;
 
@@ -105,8 +103,8 @@ public class WorldRender implements MapRenderer {
                     continue;
                 }
 
-                BlockData blockData = layer.getBlock(col, row);
-                TextureRegion region = blockData.getBlock().getTexture(blockData);
+                BlockState blockState = layer.getBlockState(col, row);
+                TextureRegion region = blockState.getBlock().getTexture(blockState);
 
                 if(x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
                     float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
