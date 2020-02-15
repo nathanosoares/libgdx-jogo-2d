@@ -34,7 +34,8 @@ public class Block {
 
     public void neighbourUpdate(BlockData blockData) {
         for (EnumFacing facing : EnumFacing.values()) {
-            onBlockNeighbourUpdate(blockData.getLayer().getFacingBlock(blockData, facing), facing.getOpposite());
+            BlockData targetData = blockData.getLayer().getFacingBlock(blockData, facing);
+            targetData.getBlock().onBlockNeighbourUpdate(targetData, facing.getOpposite());
         }
     }
 

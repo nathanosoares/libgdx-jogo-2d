@@ -3,10 +3,7 @@ package dev.game.test.world;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.Lists;
-import dev.game.test.world.block.BlockData;
-import dev.game.test.world.block.BlockDirt;
-import dev.game.test.world.block.BlockGrass;
-import dev.game.test.world.block.BlockWater;
+import dev.game.test.world.block.*;
 import dev.game.test.world.entity.Entity;
 import lombok.Getter;
 
@@ -25,9 +22,11 @@ public class World {
     private final List<Entity> entities = Lists.newArrayList();
 
     public static final BlockDirt DIRT = new BlockDirt();
+    public static final BlockGrass GRASS = new BlockGrass();
 
     static {
         DIRT.loadTextures();
+        GRASS.loadTextures();
     }
 
     public World(String name, int width, int height) {
@@ -43,14 +42,11 @@ public class World {
         BlockWater water = new BlockWater();
         water.loadTextures();
 
-        BlockGrass grass = new BlockGrass();
-        grass.loadTextures();
-
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
 
                 ground.setBlock(x, y, new BlockData(
-                        grass, 1, 1, this, ground, new Vector2(x, y)
+                        GRASS, 1, 1, this, ground, new Vector2(x, y)
                 ));
 
             }

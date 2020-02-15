@@ -14,7 +14,7 @@ public class WorldLayer {
     protected BlockData[][] blocks;
 
     public WorldLayer(World world) {
-        this.blocks = new BlockData[world.getWidth()][world.getHeight()];
+        this.blocks = new BlockData[(int) world.getBounds().getWidth()][(int) world.getBounds().getHeight()];
 
         this.airBlock = new BlockData(new BlockAir(), 1, 1, world, this, new Vector2(0.0f, 0.0f));
     }

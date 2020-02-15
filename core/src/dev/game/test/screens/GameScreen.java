@@ -2,7 +2,9 @@ package dev.game.test.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -72,11 +74,54 @@ public class GameScreen extends ScreenAdapter {
         this.world = new World("world", mapWidth, mapHeight);
         this.worldRender = new WorldRender(spriteBatch, world);
         this.worldRender.setView(this.camera);
+        this.worldRender.setViewport(this.viewport);
 
         this.player = new Player();
         this.player.setPosition(new Vector2(mapWidth / 2f, mapHeight / 2f));
 
         this.world.addEntity(this.player);
+
+        Gdx.input.setInputProcessor(new InputAdapter() {
+
+            private int button;
+
+            @Override
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
+                return action(screenX, screenY, button);
+            }
+
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                this.button = button;
+
+                return action(screenX, screenY, button);
+            }
+
+            private boolean action(int screenX, int screenY, int button) {
+                Vector2 mouseScreenPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+                Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
+
+                if (world.getBounds().contains(mouseWorldPosition)) {
+                    BlockData blockData = world.getLayers()[0].getBlock(mouseWorldPosition.x, mouseWorldPosition.y);
+
+                    if (button == Input.Buttons.RIGHT) {
+                        if (blockData.getBlock() != World.GRASS) {
+                            blockData.setBlock(World.GRASS);
+                            blockData.getBlock().neighbourUpdate(blockData);
+                        }
+                    } else {
+                        if (blockData.getBlock() != World.DIRT) {
+                            blockData.setBlock(World.DIRT);
+                            blockData.getBlock().onBlockNeighbourUpdate(blockData, null);
+                        }
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
@@ -115,27 +160,10 @@ public class GameScreen extends ScreenAdapter {
         float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();//half of world visible
         float visibleH = viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
 
-        this.camera.position.x = MathUtils.clamp(this.camera.position.x, visibleW, this.world.getWidth() - visibleW);
-        this.camera.position.y = MathUtils.clamp(this.camera.position.y, visibleH, this.world.getHeight() - visibleH);
+        this.camera.position.x = MathUtils.clamp(this.camera.position.x, visibleW, this.world.getBounds().getWidth() - visibleW);
+        this.camera.position.y = MathUtils.clamp(this.camera.position.y, visibleH, this.world.getBounds().getHeight() - visibleH);
 
         this.camera.update();
-
-        Vector3 mouseInWorld3D = new Vector3();
-
-        mouseInWorld3D.x = Gdx.input.getX();
-        mouseInWorld3D.y = Gdx.input.getY();
-        mouseInWorld3D.z = 0;
-
-        this.camera.unproject(mouseInWorld3D);
-
-        this.hover.x = (float) Math.floor(mouseInWorld3D.x);
-        this.hover.y = (float) Math.floor(mouseInWorld3D.y);
-
-
-        if (Gdx.input.isTouched()) {
-            this.world.getLayers()[0].getBlock(this.hover.x, this.hover.y).setBlock(World.DIRT);
-        }
-
 
         this.worldRender.setView(this.camera);
         this.worldRender.render();
