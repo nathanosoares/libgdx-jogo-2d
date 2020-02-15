@@ -19,6 +19,10 @@ public class WorldLayer {
         this.airBlock = new BlockData(new BlockAir(), 1, 1, world, this, new Vector2(0.0f, 0.0f));
     }
 
+    public BlockData getBlock(float x, float y) {
+        return getBlock((int) x, (int) y);
+    }
+
     public BlockData getBlock(int x, int y) {
         if (x < 0 || y < 0 || this.blocks.length <= x || this.blocks[x].length <= y) {
             airBlock.getPosition().set(x, y);

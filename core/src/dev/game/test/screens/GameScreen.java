@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.GameApplication;
 import dev.game.test.GameUtils;
 import dev.game.test.world.World;
+import dev.game.test.world.block.BlockData;
 import dev.game.test.world.entity.Player;
 import dev.game.test.world.render.WorldRender;
 import lombok.Getter;
@@ -44,6 +46,9 @@ public class GameScreen extends ScreenAdapter {
     private WorldRender worldRender;
 
     private Player player;
+
+    @Getter
+    private Vector2 hover = new Vector2();
 
     public GameScreen(GameApplication application) {
         this.application = application;
@@ -114,6 +119,23 @@ public class GameScreen extends ScreenAdapter {
         this.camera.position.y = MathUtils.clamp(this.camera.position.y, visibleH, this.world.getHeight() - visibleH);
 
         this.camera.update();
+
+        Vector3 mouseInWorld3D = new Vector3();
+
+        mouseInWorld3D.x = Gdx.input.getX();
+        mouseInWorld3D.y = Gdx.input.getY();
+        mouseInWorld3D.z = 0;
+
+
+        if (Gdx.input.isTouched()) {
+            this.world.getLayers()[0].getBlock(this.hover.x, this.hover.y).setBlock(World.DIRT);
+        }
+
+        this.camera.unproject(mouseInWorld3D);
+
+        this.hover.x = (float) Math.floor(mouseInWorld3D.x);
+        this.hover.y = (float) Math.floor(mouseInWorld3D.y);
+
 
         this.worldRender.setView(this.camera);
         this.worldRender.render();
