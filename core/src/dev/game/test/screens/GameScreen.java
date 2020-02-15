@@ -98,7 +98,7 @@ public class GameScreen extends ScreenAdapter {
             }
 
             private boolean action(int screenX, int screenY, int button) {
-                Vector2 mouseScreenPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+                Vector2 mouseScreenPosition = new Vector2(screenX, screenY);
                 Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
 
                 if (world.getBounds().contains(mouseWorldPosition)) {
@@ -109,9 +109,12 @@ public class GameScreen extends ScreenAdapter {
                             blockData.setBlock(World.GRASS);
                             blockData.getBlock().neighbourUpdate(blockData);
                         }
+                    } else if (button == Input.Buttons.MIDDLE) {
+                        World.CLIPBOARD = blockData.getBlock();
                     } else {
-                        if (blockData.getBlock() != World.DIRT) {
-                            blockData.setBlock(World.DIRT);
+                        if (blockData.getBlock() != World.CLIPBOARD) {
+                            blockData.setBlock(World.CLIPBOARD);
+                            blockData.getBlock().neighbourUpdate(blockData);
                             blockData.getBlock().onBlockNeighbourUpdate(blockData, null);
                         }
                     }

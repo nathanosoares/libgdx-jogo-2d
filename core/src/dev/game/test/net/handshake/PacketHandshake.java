@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 public class PacketHandshake implements Packet {
 
     public String clientId;
+
 }

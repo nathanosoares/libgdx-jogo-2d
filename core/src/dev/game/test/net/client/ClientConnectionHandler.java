@@ -1,26 +1,19 @@
 package dev.game.test.net.client;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.Protocol;
-import com.badlogic.gdx.net.Socket;
-import com.badlogic.gdx.net.SocketHints;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
-import dev.game.test.net.GameClientConnection;
 import dev.game.test.net.GameNet;
-import dev.game.test.net.GameServerConnection;
 import dev.game.test.net.handshake.PacketHandshake;
 import dev.game.test.net.packet.EnumPacket;
 import dev.game.test.net.packet.Packet;
-import dev.game.test.net.server.ServerGameNet;
+
 import java.io.IOException;
 
-public class ClientGameNet implements GameNet {
+public class ClientConnectionHandler implements GameNet {
 
-    public GameServerConnection serverConnection;
+    public ClientPacketHandler serverConnection;
 
     private Client client;
 
@@ -36,7 +29,7 @@ public class ClientGameNet implements GameNet {
             @Override
             public void connected(Connection connection) {
                 super.connected(connection);
-                GameServerConnection _serverConnection = new GameServerConnection(ClientGameNet.this, connection);
+                ClientPacketHandler _serverConnection = new ClientPacketHandler(ClientConnectionHandler.this, connection);
                 serverConnection = _serverConnection;
 
                 System.out.println("Sending packet to server");

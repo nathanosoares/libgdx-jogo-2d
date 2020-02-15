@@ -23,10 +23,14 @@ public class World {
 
     public static final BlockDirt DIRT = new BlockDirt();
     public static final BlockGrass GRASS = new BlockGrass();
+    public static final BlockWater WATER = new BlockWater();
+
+    public static Block CLIPBOARD = DIRT;
 
     static {
         DIRT.loadTextures();
         GRASS.loadTextures();
+        WATER.loadTextures();
     }
 
     public World(String name, int width, int height) {
@@ -38,9 +42,6 @@ public class World {
 
         WorldLayer ground = new WorldLayer(this);
 
-
-        BlockWater water = new BlockWater();
-        water.loadTextures();
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -65,18 +66,18 @@ public class World {
         }
 
         for (int x = 9; x < 12; x++) {
-            ground.getBlock(x, 11).setBlock(water);
-            ground.getBlock(x, 12).setBlock(water);
+            ground.getBlock(x, 11).setBlock(WATER);
+            ground.getBlock(x, 12).setBlock(WATER);
 
             if (x == 9 || x == 12) {
                 continue;
             }
 
-            ground.getBlock(x, 9).setBlock(water);
-            ground.getBlock(x, 10).setBlock(water);
+            ground.getBlock(x, 9).setBlock(WATER);
+            ground.getBlock(x, 10).setBlock(WATER);
         }
 
-        ground.getBlock(4, 10).setBlock(water);
+        ground.getBlock(4, 10).setBlock(WATER);
 
 
         for (int x = 0; x < this.getBounds().getWidth(); x++) {
