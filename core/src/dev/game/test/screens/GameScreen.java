@@ -106,6 +106,9 @@ public class GameScreen extends ScreenAdapter {
         this.camera.update();
 
         this.worldRender.render();
+        this.spriteBatch.begin();
+        this.player.draw(this.spriteBatch);
+        this.spriteBatch.end();
     }
 
     @Override
