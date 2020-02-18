@@ -7,5 +7,5 @@ public class RigidBodyComponent extends Component {
 
     public final Vector2 velocity = new Vector2();
 
-    public final float walkSpeed = 1;
+    public final float walkSpeed = 5;
 }

@@ -7,8 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import dev.game.test.client.block.BlocksRegistry;
-import dev.game.test.client.net.ConnectionHandler;
-import dev.game.test.client.net.client.ClientConnectionHandler;
 import dev.game.test.client.setups.RegistrySetups;
 import dev.game.test.client.setups.SetupBlocks;
 import dev.game.test.client.setups.SetupGameScreen;
@@ -21,9 +19,6 @@ public class GameApplication extends Game {
 
     @Getter
     private static GameApplication instance;
-
-    @Getter
-    private ConnectionHandler net;
 
     @Getter
     @Setter
@@ -64,8 +59,6 @@ public class GameApplication extends Game {
             registrySetups.registerSetup(new SetupGameScreen());
 
             registrySetups.runAll(this);
-
-            this.net = new ClientConnectionHandler(this);
 
         } catch (Exception ex) {
             ex.printStackTrace();

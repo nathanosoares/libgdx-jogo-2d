@@ -13,8 +13,6 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
 
     private final Block block;
 
-    //
-
     private FileHandle imageHandle;
 
     private Texture atlasTexture;

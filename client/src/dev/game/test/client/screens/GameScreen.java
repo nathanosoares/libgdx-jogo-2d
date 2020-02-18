@@ -36,20 +36,13 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private static GameScreen instance;
 
-    //
-
     private final GameApplication application;
-
-    //
 
     private Viewport viewport;
 
     private OrthographicCamera camera;
 
-    //
-
     private SpriteBatch spriteBatch;
-
 
     private Map<String, WorldClient> worlds = Maps.newHashMap();
 
