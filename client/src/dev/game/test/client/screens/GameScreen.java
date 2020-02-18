@@ -4,6 +4,7 @@ import com.artemis.WorldConfigurationBuilder;
 import com.artemis.link.EntityLinkManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,9 +15,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.Maps;
+import dev.game.test.client.ClientConstants;
 import dev.game.test.client.GameApplication;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.components.SpriteComponent;
+import dev.game.test.client.entity.systems.CollidableDebugSystem;
 import dev.game.test.client.entity.systems.PlayerControllerSystem;
 import dev.game.test.client.entity.systems.SpriteRenderSystem;
 import dev.game.test.client.world.WorldClient;
@@ -25,6 +28,8 @@ import dev.game.test.core.entity.EntityFactory;
 import dev.game.test.core.entity.components.TransformComponent;
 import dev.game.test.core.entity.systems.MovementSystem;
 import lombok.Getter;
+import net.namekdev.entity_tracker.EntityTracker;
+import net.namekdev.entity_tracker.ui.EntityTrackerMainWindow;
 
 import java.util.Map;
 
@@ -56,6 +61,8 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private int playerId;
 
+    private EntityTrackerMainWindow entityTrackerMainWindow;
+
     public GameScreen(GameApplication application) {
         this.application = application;
         instance = this;
@@ -67,7 +74,7 @@ public class GameScreen extends ScreenAdapter {
             world.edit(entityId)
                     .add(new SpriteComponent(new Sprite(
                             new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),
-                            5, 0, 24, 24
+                            5, 2, 16, 22
                     )));
         };
 
@@ -92,13 +99,18 @@ public class GameScreen extends ScreenAdapter {
                 .with(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport))
                 .with(new SpriteRenderSystem(this.spriteBatch));
 
-//        builder.with(new EntityTracker(new EntityTrackerMainWindow()));
+        if (ClientConstants.DEBUG) {
+            this.entityTrackerMainWindow = new EntityTrackerMainWindow(false, false);
+
+            builder.with(new EntityTracker(entityTrackerMainWindow))
+                    .with(new CollidableDebugSystem(this.spriteBatch));
+        }
 
         this.artemis = new com.artemis.World(builder.build());
 
         this.artemis.inject(entityFactory);
 
-        this.playerId = entityFactory.createPlayer(this.artemis, 0, 0);
+        this.playerId = entityFactory.createPlayer(this.artemis, mapWidth / 2, mapHeight / 2);
     }
 
     @Override
@@ -108,6 +120,13 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+
+        if (entityTrackerMainWindow != null) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+                entityTrackerMainWindow.setVisible(!entityTrackerMainWindow.isVisible());
+            }
+        }
+
         GameUtils.clearScreen(0, 50, 0, 100);
 
         TransformComponent transformComponent = this.artemis.getEntity(playerId)

@@ -8,7 +8,8 @@ public class DesktopLauncher {
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setMaximized(true);
+        config.setMaximized(false);
+        config.useVsync(false);
 
         new Lwjgl3Application(new GameApplication(arg), config);
     }
