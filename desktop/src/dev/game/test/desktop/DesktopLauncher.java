@@ -1,13 +1,8 @@
 package dev.game.test.desktop;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics.DisplayMode;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import dev.game.test.GameApplication;
-import dev.game.test.screens.GameScreen;
+import dev.game.test.client.GameApplication;
 
 public class DesktopLauncher {
 

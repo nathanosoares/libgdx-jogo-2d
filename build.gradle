@@ -26,6 +26,7 @@ allprojects {
         guavaVersion = '28.2-jre'
         kryonetVersion = '2.21'
         kryoVersion = '5.0.0-RC4'
+        artemisVersion = '2.3.0'
     }
 
     repositories {
@@ -53,26 +54,44 @@ project(":desktop") {
     }
 }
 
-project(":server") {
-    apply plugin: "java-library"
-
-    dependencies {
-        implementation project(":client")
-
-        api "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-    }
-}
-
 project(":client") {
     apply plugin: "java-library"
 
     dependencies {
-        api  "com.google.guava:guava:$guavaVersion"
-        api  "kryonet:kryonet:$kryonetVersion"
-        api  "com.esotericsoftware:kryo:$kryoVersion"
+        implementation project(":api")
+        implementation project(":core")
+
+        api "com.google.guava:guava:$guavaVersion"
+        api "kryonet:kryonet:$kryonetVersion"
+        api "com.esotericsoftware:kryo:$kryoVersion"
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        api "net.namekdev.entity_tracker:artemis-entity-tracker:0.4.0-SNAPSHOT"
+        api "net.namekdev.entity_tracker:artemis-entity-tracker-gui:0.4.0-SNAPSHOT"
+        api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
     }
 }
+
+project(":core") {
+    apply plugin: "java-library"
+
+    dependencies {
+        implementation project(":api")
+
+        api "com.google.guava:guava:$guavaVersion"
+        api "kryonet:kryonet:$kryonetVersion"
+        api "com.esotericsoftware:kryo:$kryoVersion"
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
+    }
+}
+
+project(":api") {
+    apply plugin: "java-library"
+
+    dependencies {
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    }
+}
+

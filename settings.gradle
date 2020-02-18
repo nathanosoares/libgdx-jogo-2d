@@ -1,1 +1,2 @@
-include 'server', 'client', 'desktop'a
+include 'api', 'core','client', 'desktop'
+
