@@ -11,13 +11,8 @@ public class BlockDirt extends BlockClient {
 
     private ConnectedTextureSimple texture;
 
-    public BlockDirt() {
-
-    }
-
     @Override
     public void loadTextures() {
-        System.out.println("?");
         this.texture = new ConnectedTextureSimple(this, Gdx.files.internal("map/dirt.png"));
     }
 

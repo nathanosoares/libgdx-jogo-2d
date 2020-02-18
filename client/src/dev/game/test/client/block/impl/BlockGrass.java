@@ -11,10 +11,6 @@ public class BlockGrass extends BlockClient {
 
     private TextureRegion texture;
 
-    public BlockGrass() {
-
-    }
-
     @Override
     public void loadTextures() {
         Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);

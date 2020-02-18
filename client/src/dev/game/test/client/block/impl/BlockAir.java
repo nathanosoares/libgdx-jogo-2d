@@ -4,9 +4,4 @@ import dev.game.test.client.block.BlockClient;
 
 public class BlockAir extends BlockClient {
 
-
-    public BlockAir() {
-
-    }
-
 }
