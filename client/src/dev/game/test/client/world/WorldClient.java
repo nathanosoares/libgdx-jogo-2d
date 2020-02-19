@@ -8,9 +8,8 @@ import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.world.World;
 import dev.game.test.core.world.WorldLayer;
-import lombok.Getter;
-
 import java.util.List;
+import lombok.Getter;
 
 @Getter
 public class WorldClient extends World {
@@ -19,8 +18,6 @@ public class WorldClient extends World {
 
 
     private final List<Entity> entities = Lists.newArrayList();
-
-    private final com.badlogic.gdx.physics.box2d.World box2dWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), false);
 
     public WorldClient(String name, int width, int height) {
         super(name, width, height);

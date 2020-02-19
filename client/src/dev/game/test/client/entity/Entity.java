@@ -3,18 +3,13 @@ package dev.game.test.client.entity;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.world.WorldClient;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
@@ -84,31 +79,6 @@ public abstract class Entity implements IEntity {
 //
 //        groundBox.dispose();
 //        worldClient.getBox2dWorld().setContactListener(new ListenerClass());
-    }
-
-    public static class ListenerClass implements ContactListener {
-        @Override
-        public void endContact(Contact contact) {
-            System.out.println("endContact");
-        }
-
-        @Override
-        public void preSolve(Contact contact, Manifold oldManifold) {
-
-            System.out.println("preSolve");
-        }
-
-        @Override
-        public void postSolve(Contact contact, ContactImpulse impulse) {
-
-            System.out.println("postSolve");
-        }
-
-        @Override
-        public void beginContact(Contact contact) {
-
-            System.out.println("beginContact");
-        }
     }
 
 }
