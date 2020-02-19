@@ -4,7 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.google.common.collect.Maps;
-import dev.game.test.server.packet.Packet;
+import dev.game.test.core.packet.Packet;
 import lombok.Getter;
 
 import java.io.IOException;

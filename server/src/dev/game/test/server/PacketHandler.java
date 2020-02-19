@@ -7,7 +7,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import dev.game.test.api.APIConstants;
-import dev.game.test.server.packet.Packet;
+import dev.game.test.core.packet.Packet;
 import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.InvocationTargetException;
