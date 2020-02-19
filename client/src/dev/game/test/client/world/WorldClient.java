@@ -66,6 +66,7 @@ public class WorldClient extends World {
         }
 
         ground.getBlockState(4, 10).setBlock(Blocks.WATER);
+        ground.getBlockState(4, 11).setBlock(Blocks.REINFORCED_DIRT);
 
 
         for (int x = 0; x < this.getBounds().getWidth(); x++) {
@@ -79,11 +80,10 @@ public class WorldClient extends World {
 
         WorldLayer decoration = new WorldLayer(this);
 
-        decoration.setBlockState(new BlockState(Blocks.STONE, this, decoration, new Vector2(2, 4)));
+        decoration.setBlockState(new BlockState(Blocks.STONE, this, decoration, new Vector2(4, 13)));
 
         this.layers[1] = decoration;
     }
-
 
     public void addEntity(Entity entity, float x, float y) {
         if (entity.getWorld() != null) {

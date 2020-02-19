@@ -45,6 +45,9 @@ project(":desktop") {
     apply plugin: "java-library"
 
     dependencies {
+        implementation project(":api")
+        implementation project(":core")
+        implementation project(":server")
         implementation project(":client")
 
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"

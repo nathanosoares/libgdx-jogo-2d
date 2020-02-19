@@ -1,31 +1,35 @@
-package dev.game.test.client.setups;
+package dev.game.test.core.setup;
 
 import com.badlogic.gdx.Gdx;
 import com.google.common.collect.Maps;
-import dev.game.test.client.GameApplication;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Map;
 
-public class RegistrySetups {
+@RequiredArgsConstructor
+public class SetupPipeline<T> {
 
-    private final Map<Class<? extends Setup>, Setup> REGISTRY = Collections.synchronizedMap(Maps.newLinkedHashMap());
+    private final T application;
 
-    public void registerSetup(Setup setup) {
-        if (REGISTRY.containsKey(setup.getClass())) {
+    private final Map<Class<? extends Setup>, Setup<T>> registry = Maps.newLinkedHashMap();
+
+    public SetupPipeline<T> registerSetup(Setup<T> setup) {
+        if (registry.containsKey(setup.getClass())) {
             Gdx.app.error("Setup", String.format("Duplicated setup: %s", setup.getClass().getName()));
-            return;
+            return this;
         }
 
-        REGISTRY.put(setup.getClass(), setup);
+        registry.put(setup.getClass(), setup);
+
+        return this;
     }
 
-    public void runAll(GameApplication application) {
+    public void runAll() {
         Duration totalDuration = Duration.ZERO;
 
-        for (Map.Entry<Class<? extends Setup>, Setup> entry : REGISTRY.entrySet()) {
+        for (Map.Entry<Class<? extends Setup>, Setup<T>> entry : registry.entrySet()) {
             LocalDateTime start = LocalDateTime.now();
             String className = entry.getKey().getSimpleName();
 
@@ -46,6 +50,6 @@ public class RegistrySetups {
         }
 
         Gdx.app.debug("Setup", String.format("All setups took %sms.", totalDuration.toMillis()));
-        REGISTRY.clear();
+        registry.clear();
     }
 }

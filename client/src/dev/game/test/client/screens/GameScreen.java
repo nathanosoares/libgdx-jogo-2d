@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.Maps;
 import dev.game.test.client.ClientConstants;
-import dev.game.test.client.GameApplication;
+import dev.game.test.client.ClientApplication;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.components.SpriteComponent;
 import dev.game.test.client.entity.systems.CollidableDebugSystem;
@@ -41,7 +41,7 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private static GameScreen instance;
 
-    private final GameApplication application;
+    private final ClientApplication application;
 
     private Viewport viewport;
 
@@ -63,7 +63,7 @@ public class GameScreen extends ScreenAdapter {
 
     private EntityTrackerMainWindow entityTrackerMainWindow;
 
-    public GameScreen(GameApplication application) {
+    public GameScreen(ClientApplication application) {
         this.application = application;
         instance = this;
     }
