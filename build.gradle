@@ -52,7 +52,6 @@ project(":desktop") {
 
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
     }
 }
@@ -65,14 +64,8 @@ project(":client") {
         implementation project(":core")
         implementation project(":server")
 
-        api "com.google.guava:guava:$guavaVersion"
-        api "kryonet:kryonet:$kryonetVersion"
-        api "com.esotericsoftware:kryo:$kryoVersion"
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "net.namekdev.entity_tracker:artemis-entity-tracker:0.4.0-SNAPSHOT"
         api "net.namekdev.entity_tracker:artemis-entity-tracker-gui:0.4.0-SNAPSHOT"
-        api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
     }
 }
 
@@ -92,11 +85,8 @@ project(":core") {
     dependencies {
         implementation project(":api")
 
-        api "com.google.guava:guava:$guavaVersion"
         api "kryonet:kryonet:$kryonetVersion"
         api "com.esotericsoftware:kryo:$kryoVersion"
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
     }
 }
@@ -105,6 +95,7 @@ project(":api") {
     apply plugin: "java-library"
 
     dependencies {
+        api "com.google.guava:guava:$guavaVersion"
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
     }
 }

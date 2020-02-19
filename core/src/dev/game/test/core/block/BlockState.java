@@ -1,9 +1,6 @@
 package dev.game.test.core.block;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.core.world.World;
 import dev.game.test.core.world.WorldLayer;
