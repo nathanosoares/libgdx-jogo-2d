@@ -4,6 +4,7 @@ import com.artemis.annotations.Wire;
 import dev.game.test.client.block.BlockClient;
 import dev.game.test.client.block.Blocks;
 import dev.game.test.client.registry.RegistryBlocks;
+import dev.game.test.core.GameApplication;
 import dev.game.test.core.registry.RegistryManager;
 import dev.game.test.core.setup.Setup;
 
