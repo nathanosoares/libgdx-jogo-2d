@@ -15,12 +15,6 @@ public abstract class GameApplication extends ApplicationAdapter {
 
     protected final boolean clientSide;
 
-    private SetupPipeline setupPipeline;
-
-    private RegistryManager registryManager;
-
-    private EventManager eventManager;
-
     public GameApplication(boolean clientSide) {
         this.clientSide = clientSide;
     }
@@ -30,26 +24,26 @@ public abstract class GameApplication extends ApplicationAdapter {
         try {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-            this.setupPipeline = new SetupPipeline(this);
+            RegistryManager registryManager = new RegistryManager(this);
+            Injection.registerSingleton(registryManager);
+            setupRegistries(registryManager);
 
-            this.registryManager = new RegistryManager(this);
-
-            setupRegistries(this.registryManager);
-
-            this.eventManager = new EventManager();
+            EventManager eventManager = new EventManager();
+            Injection.registerSingleton(eventManager);
 
             this.setupManagers();
 
-            setupPipeline(this.setupPipeline);
+            SetupPipeline setupPipeline = new SetupPipeline(this);
+            setupPipeline(setupPipeline);
+            setupPipeline.runAll();
 
-            this.setupPipeline.runAll();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     protected void setupRegistries(RegistryManager registryManager) {
-        this.registryManager.addRegistry(Keybind.class, new RegistryKeybinds());
+        registryManager.addRegistry(Keybind.class, new RegistryKeybinds());
     }
 
     protected void setupManagers() {

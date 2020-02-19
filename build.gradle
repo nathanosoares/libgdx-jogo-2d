@@ -27,7 +27,7 @@ allprojects {
         kryonetVersion = '2.21'
         kryoVersion = '5.0.0-RC4'
         artemisVersion = '2.3.0'
-        artemisSingletonVersion = '2.5.0-SNAPSHOT'
+        artemisContribVersion = '2.4.0'
     }
 
     repositories {
@@ -88,8 +88,11 @@ project(":core") {
 
         api "kryonet:kryonet:$kryonetVersion"
         api "com.esotericsoftware:kryo:$kryoVersion"
+
         api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
-        api "net.mostlyoriginal.artemis-odb:contrib-plugin-singleton:$artemisSingletonVersion"
+        api "net.mostlyoriginal.artemis-odb:contrib-core:$artemisContribVersion"
+        api "net.mostlyoriginal.artemis-odb:contrib-eventbus:$artemisContribVersion"
+        api "net.mostlyoriginal.artemis-odb:contrib-jam:$artemisContribVersion"
     }
 }
 
