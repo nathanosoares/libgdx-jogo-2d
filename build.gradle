@@ -60,6 +60,7 @@ project(":client") {
     dependencies {
         implementation project(":api")
         implementation project(":core")
+        implementation project(":server")
 
         api "com.google.guava:guava:$guavaVersion"
         api "kryonet:kryonet:$kryonetVersion"
@@ -69,6 +70,16 @@ project(":client") {
         api "net.namekdev.entity_tracker:artemis-entity-tracker:0.4.0-SNAPSHOT"
         api "net.namekdev.entity_tracker:artemis-entity-tracker-gui:0.4.0-SNAPSHOT"
         api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
+    }
+}
+
+
+project(":server") {
+    apply plugin: "java-library"
+
+    dependencies {
+        implementation project(":api")
+        implementation project(":core")
     }
 }
 
