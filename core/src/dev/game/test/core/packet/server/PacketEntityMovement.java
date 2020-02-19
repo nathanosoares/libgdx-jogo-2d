@@ -1,7 +1,7 @@
-package dev.game.test.server.packet.server;
+package dev.game.test.core.packet.server;
 
 import com.badlogic.gdx.math.Vector2;
-import dev.game.test.server.packet.Packet;
+import dev.game.test.core.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketEntityPosition implements Packet {
+public class PacketEntityMovement implements Packet {
 
     @Getter
     @Setter
@@ -19,6 +19,6 @@ public class PacketEntityPosition implements Packet {
 
     @Getter
     @Setter
-    private Vector2 position;
+    private Vector2 movement;
 
 }

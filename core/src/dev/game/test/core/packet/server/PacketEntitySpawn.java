@@ -1,6 +1,7 @@
-package dev.game.test.server.packet.client;
+package dev.game.test.core.packet.server;
 
-import dev.game.test.server.packet.Packet;
+import com.badlogic.gdx.math.Vector2;
+import dev.game.test.core.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,12 +10,12 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketWorldJoin implements Packet {
+public class PacketEntitySpawn implements Packet {
 
     @Getter
     private UUID id;
 
     @Getter
-    private String name;
+    private Vector2 position;
 
 }

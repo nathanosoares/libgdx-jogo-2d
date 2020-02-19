@@ -1,12 +1,12 @@
-package dev.game.test.server.packet;
+package dev.game.test.core.packet;
 
 import com.google.common.collect.Maps;
-import dev.game.test.server.packet.client.PacketKeybindActivate;
-import dev.game.test.server.packet.client.PacketKeybindDeactivate;
-import dev.game.test.server.packet.client.PacketWorldJoin;
-import dev.game.test.server.packet.client.PacketWorldRequest;
-import dev.game.test.server.packet.handshake.PacketHandshake;
-import dev.game.test.server.packet.server.*;
+import dev.game.test.core.packet.client.PacketKeybindActivate;
+import dev.game.test.core.packet.client.PacketKeybindDeactivate;
+import dev.game.test.core.packet.client.PacketWorldJoin;
+import dev.game.test.core.packet.client.PacketWorldRequest;
+import dev.game.test.core.packet.handshake.PacketHandshake;
+import dev.game.test.core.packet.server.*;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;

@@ -1,6 +1,6 @@
-package dev.game.test.server.packet.client;
+package dev.game.test.core.packet.client;
 
-import dev.game.test.server.packet.Packet;
+import dev.game.test.core.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

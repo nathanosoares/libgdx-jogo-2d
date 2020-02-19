@@ -1,6 +1,6 @@
-package dev.game.test.server.packet.handshake;
+package dev.game.test.core.packet.handshake;
 
-import dev.game.test.server.packet.Packet;
+import dev.game.test.core.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
