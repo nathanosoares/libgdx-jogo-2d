@@ -2,6 +2,7 @@ package dev.game.test.core;
 
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
+import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -24,6 +25,9 @@ public abstract class GameApplication extends ApplicationAdapter {
     @Override
     public void create() {
         try {
+            Injection.registerSingleton(this, GameApplication.class);
+            Injection.registerSingleton(this);
+
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
             RegistryManager registryManager = new RegistryManager(this);
