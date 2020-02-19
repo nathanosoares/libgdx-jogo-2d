@@ -17,7 +17,7 @@ import lombok.Setter;
 
 import java.util.Random;
 
-public class ClientApplication extends GameApplication<ClientApplication> implements ApplicationListener {
+public class ClientApplication extends GameApplication<ClientApplication> {
 
     @Getter
     private static ClientApplication instance;
