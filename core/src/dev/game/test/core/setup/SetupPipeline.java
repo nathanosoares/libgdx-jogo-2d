@@ -1,18 +1,21 @@
 package dev.game.test.core.setup;
 
+import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.google.common.collect.Maps;
 import dev.game.test.core.GameApplication;
-import lombok.RequiredArgsConstructor;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class SetupPipeline {
 
-    private final GameApplication application;
+    @Wire
+    protected GameApplication application;
+
+    //
 
     private final Map<Class<? extends Setup>, Setup> registry = Maps.newLinkedHashMap();
 
