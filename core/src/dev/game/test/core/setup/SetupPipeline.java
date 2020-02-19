@@ -1,5 +1,6 @@
 package dev.game.test.core.setup;
 
+import com.artemis.World;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.google.common.collect.Maps;
@@ -30,7 +31,7 @@ public class SetupPipeline {
         return this;
     }
 
-    public void runAll() {
+    public void runAll(World world) {
         Duration totalDuration = Duration.ZERO;
 
         for (Map.Entry<Class<? extends Setup>, Setup> entry : registry.entrySet()) {
@@ -40,7 +41,8 @@ public class SetupPipeline {
             Gdx.app.debug("Setup", String.format("[%s] Running...", className));
 
             try {
-                entry.getValue().setup(application);
+                world.inject(entry.getValue());
+                entry.getValue().setup();
             } catch (Exception | StackOverflowError e) {
                 Gdx.app.error("Setup", String.format("[%s] Error while running. Shutting down...", className));
                 e.printStackTrace();

@@ -4,5 +4,5 @@ import dev.game.test.core.GameApplication;
 
 public interface Setup {
 
-    void setup(GameApplication application);
+    void setup();
 }

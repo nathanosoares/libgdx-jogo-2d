@@ -1,5 +1,7 @@
 package dev.game.test.core;
 
+import com.artemis.World;
+import com.artemis.WorldConfiguration;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -33,9 +35,15 @@ public abstract class GameApplication extends ApplicationAdapter {
 
             this.setupManagers();
 
-            SetupPipeline setupPipeline = new SetupPipeline(this);
+            World world = new World(
+                Injection.injectSingletons(new WorldConfiguration())
+            );
+
+            SetupPipeline setupPipeline = new SetupPipeline();
+            world.inject(setupPipeline);
+
             setupPipeline(setupPipeline);
-            setupPipeline.runAll();
+            setupPipeline.runAll(world);
 
         } catch (Exception ex) {
             ex.printStackTrace();
