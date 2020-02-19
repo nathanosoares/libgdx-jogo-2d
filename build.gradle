@@ -96,7 +96,6 @@ project(":core") {
         api "kryonet:kryonet:$kryonetVersion"
         api "com.esotericsoftware:kryo:$kryoVersion"
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
     }
 }
