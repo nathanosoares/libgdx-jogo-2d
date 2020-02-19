@@ -83,6 +83,8 @@ project(":server") {
     dependencies {
         implementation project(":api")
         implementation project(":core")
+
+        api "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
     }
 }
 

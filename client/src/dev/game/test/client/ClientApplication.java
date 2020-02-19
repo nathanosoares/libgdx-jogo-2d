@@ -1,6 +1,5 @@
 package dev.game.test.client;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -11,6 +10,8 @@ import dev.game.test.client.screens.ScreenManager;
 import dev.game.test.client.setups.SetupBlocks;
 import dev.game.test.client.setups.SetupGameScreen;
 import dev.game.test.core.GameApplication;
+import dev.game.test.core.registry.RegistryManager;
+import dev.game.test.core.setup.SetupPipeline;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,6 +39,32 @@ public class ClientApplication extends GameApplication<ClientApplication> implem
     public ClientApplication(String[] args) {
         super(true);
         instance = this;
+    }
+
+    @Override
+    public void setupManagers() {
+        super.setupManagers();
+
+        this.screenManager = new ScreenManager(this);
+    }
+
+    @Override
+    protected void setupPipeline(SetupPipeline<ClientApplication> pipeline) {
+        super.setupPipeline(pipeline);
+
+        pipeline
+                .registerSetup(new SetupBlocks())
+                .registerSetup(new SetupGameScreen());
+    }
+
+    @Override
+    protected void setupRegistries(RegistryManager<ClientApplication> registryManager) {
+        registryManager.addRegistry(BlockClient.class, new RegistryBlocks());
+    }
+
+    @Override
+    public void create() {
+        super.create();
 
         if (System.getProperty("username") != null) {
             this.username = System.getProperty("username");
@@ -46,28 +73,6 @@ public class ClientApplication extends GameApplication<ClientApplication> implem
         }
 
         System.out.println(String.format("Hello %s", this.username));
-
-        this.screenManager = new ScreenManager(this);
-    }
-
-    @Override
-    public void create() {
-        try {
-            Gdx.app.setLogLevel(Application.LOG_DEBUG);
-
-            this.getRegistryManager()
-                    .addRegistry(BlockClient.class, new RegistryBlocks());
-
-            this.setupDefaultPipeline();
-
-            this.getSetupPipeline()
-                    .registerSetup(new SetupBlocks())
-                    .registerSetup(new SetupGameScreen());
-
-            this.getSetupPipeline().runAll();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     @Override
