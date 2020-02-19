@@ -1,6 +1,5 @@
 package dev.game.test.client;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import dev.game.test.client.block.BlockClient;
@@ -17,7 +16,7 @@ import lombok.Setter;
 
 import java.util.Random;
 
-public class ClientApplication extends GameApplication<ClientApplication> {
+public class ClientApplication extends GameApplication {
 
     @Getter
     private static ClientApplication instance;
@@ -49,7 +48,7 @@ public class ClientApplication extends GameApplication<ClientApplication> {
     }
 
     @Override
-    protected void setupPipeline(SetupPipeline<ClientApplication> pipeline) {
+    protected void setupPipeline(SetupPipeline pipeline) {
         super.setupPipeline(pipeline);
 
         pipeline
@@ -58,7 +57,7 @@ public class ClientApplication extends GameApplication<ClientApplication> {
     }
 
     @Override
-    protected void setupRegistries(RegistryManager<ClientApplication> registryManager) {
+    protected void setupRegistries(RegistryManager registryManager) {
         registryManager.addRegistry(BlockClient.class, new RegistryBlocks());
     }
 

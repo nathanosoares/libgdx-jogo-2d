@@ -1,6 +1,8 @@
 package dev.game.test.core.setup;
 
-public interface Setup<T> {
+import dev.game.test.core.GameApplication;
 
-    void setup(T application);
+public interface Setup {
+
+    void setup(GameApplication application);
 }

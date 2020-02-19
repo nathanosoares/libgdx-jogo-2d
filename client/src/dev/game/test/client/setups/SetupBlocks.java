@@ -1,15 +1,15 @@
 package dev.game.test.client.setups;
 
-import dev.game.test.client.ClientApplication;
 import dev.game.test.client.block.BlockClient;
 import dev.game.test.client.block.Blocks;
 import dev.game.test.client.registry.RegistryBlocks;
+import dev.game.test.core.GameApplication;
 import dev.game.test.core.setup.Setup;
 
-public class SetupBlocks implements Setup<ClientApplication> {
+public class SetupBlocks implements Setup {
 
     @Override
-    public void setup(ClientApplication application) {
+    public void setup(GameApplication application) {
         RegistryBlocks registryBlocks = application.getRegistryManager().getRegistry(BlockClient.class);
 
         registryBlocks.registerBlock(0, Blocks.AIR);

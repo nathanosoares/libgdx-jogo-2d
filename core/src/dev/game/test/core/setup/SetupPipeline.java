@@ -2,6 +2,7 @@ package dev.game.test.core.setup;
 
 import com.badlogic.gdx.Gdx;
 import com.google.common.collect.Maps;
+import dev.game.test.core.GameApplication;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
@@ -9,13 +10,13 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class SetupPipeline<T> {
+public class SetupPipeline {
 
-    private final T application;
+    private final GameApplication application;
 
-    private final Map<Class<? extends Setup>, Setup<T>> registry = Maps.newLinkedHashMap();
+    private final Map<Class<? extends Setup>, Setup> registry = Maps.newLinkedHashMap();
 
-    public SetupPipeline<T> registerSetup(Setup<T> setup) {
+    public SetupPipeline registerSetup(Setup setup) {
         if (registry.containsKey(setup.getClass())) {
             Gdx.app.error("Setup", String.format("Duplicated setup: %s", setup.getClass().getName()));
             return this;
@@ -29,7 +30,7 @@ public class SetupPipeline<T> {
     public void runAll() {
         Duration totalDuration = Duration.ZERO;
 
-        for (Map.Entry<Class<? extends Setup>, Setup<T>> entry : registry.entrySet()) {
+        for (Map.Entry<Class<? extends Setup>, Setup> entry : registry.entrySet()) {
             LocalDateTime start = LocalDateTime.now();
             String className = entry.getKey().getSimpleName();
 

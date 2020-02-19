@@ -11,13 +11,13 @@ import dev.game.test.core.setup.SetupPipeline;
 import lombok.Getter;
 
 @Getter
-public abstract class GameApplication<T extends GameApplication<T>> extends ApplicationAdapter {
+public abstract class GameApplication extends ApplicationAdapter {
 
     protected final boolean clientSide;
 
-    private SetupPipeline<T> setupPipeline;
+    private SetupPipeline setupPipeline;
 
-    private RegistryManager<T> registryManager;
+    private RegistryManager registryManager;
 
     private EventManager eventManager;
 
@@ -30,9 +30,9 @@ public abstract class GameApplication<T extends GameApplication<T>> extends Appl
         try {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-            this.setupPipeline = new SetupPipeline<>((T) this);
+            this.setupPipeline = new SetupPipeline(this);
 
-            this.registryManager = new RegistryManager<>((T) this);
+            this.registryManager = new RegistryManager(this);
 
             setupRegistries(this.registryManager);
 
@@ -48,7 +48,7 @@ public abstract class GameApplication<T extends GameApplication<T>> extends Appl
         }
     }
 
-    protected void setupRegistries(RegistryManager<T> registryManager) {
+    protected void setupRegistries(RegistryManager registryManager) {
         this.registryManager.addRegistry(Keybind.class, new RegistryKeybinds());
     }
 
@@ -56,6 +56,6 @@ public abstract class GameApplication<T extends GameApplication<T>> extends Appl
     }
 
 
-    protected void setupPipeline(SetupPipeline<T> pipeline) {
+    protected void setupPipeline(SetupPipeline pipeline) {
     }
 }
