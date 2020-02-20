@@ -23,6 +23,7 @@ allprojects {
     ext {
         appName = "jogo-2d"
         gdxVersion = '1.9.10'
+        gdxAiVersion = '1.8.2'
         guavaVersion = '28.2-jre'
         kryonetVersion = '2.21'
         kryoVersion = '5.0.0-RC4'
@@ -91,6 +92,7 @@ project(":core") {
         api "kryonet:kryonet:$kryonetVersion"
         api "com.esotericsoftware:kryo:$kryoVersion"
 
+        api "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
         api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
     }
 }

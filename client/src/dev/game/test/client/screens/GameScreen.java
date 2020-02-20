@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.Maps;
+import com.sun.corba.se.spi.orbutil.fsm.State;
 import dev.game.test.client.ClientApplication;
 import dev.game.test.client.ClientConstants;
 import dev.game.test.client.GameUtils;
@@ -28,7 +29,10 @@ import dev.game.test.core.Injection;
 import dev.game.test.core.entity.EntityFactory;
 import dev.game.test.core.entity.components.TransformComponent;
 import dev.game.test.core.entity.systems.MovementSystem;
+
 import java.util.Map;
+
+import dev.game.test.core.entity.systems.StateSystem;
 import lombok.Getter;
 import net.namekdev.entity_tracker.EntityTracker;
 import net.namekdev.entity_tracker.ui.EntityTrackerMainWindow;
@@ -72,10 +76,10 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
         EntityFactory.postCreate = (world, entityId) -> {
             world.edit(entityId)
-                .add(new SpriteComponent(new Sprite(
-                    new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),
-                    5, 2, 16, 22
-                )));
+                    .add(new SpriteComponent(new Sprite(
+                            new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),
+                            5, 2, 16, 22
+                    )));
         };
 
         this.camera = new OrthographicCamera();
@@ -94,8 +98,10 @@ public class GameScreen extends ScreenAdapter {
 
         WorldConfiguration worldConfiguration = new WorldConfiguration();
 
+
         worldConfiguration.setSystem(new EntityLinkManager());
         worldConfiguration.setSystem(new MovementSystem());
+        worldConfiguration.setSystem(new StateSystem());
         worldConfiguration.setSystem(new PlayerControllerSystem(this));
         worldConfiguration.setSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
         worldConfiguration.setSystem(new SpriteRenderSystem(this.spriteBatch));
@@ -133,23 +139,23 @@ public class GameScreen extends ScreenAdapter {
         GameUtils.clearScreen(0, 50, 0, 100);
 
         TransformComponent transformComponent = this.artemis.getEntity(playerId)
-            .getComponent(TransformComponent.class);
+                .getComponent(TransformComponent.class);
 
         if (transformComponent != null) {
             this.camera.position.set(transformComponent.position.x, transformComponent.position.y, 0);
 
             float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport
-                .getWorldWidth();//half of world visible
+                    .getWorldWidth();//half of world visible
             float visibleH =
-                viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport
-                    .getWorldHeight();
+                    viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport
+                            .getWorldHeight();
 
             WorldRenderSystem renderSystem = this.artemis.getSystem(WorldRenderSystem.class);
 
             this.camera.position.x = MathUtils
-                .clamp(this.camera.position.x, visibleW, renderSystem.getWorldClient().getBounds().getWidth() - visibleW);
+                    .clamp(this.camera.position.x, visibleW, renderSystem.getWorldClient().getBounds().getWidth() - visibleW);
             this.camera.position.y = MathUtils
-                .clamp(this.camera.position.y, visibleH, renderSystem.getWorldClient().getBounds().getHeight() - visibleH);
+                    .clamp(this.camera.position.y, visibleH, renderSystem.getWorldClient().getBounds().getHeight() - visibleH);
             this.camera.update();
         }
 
