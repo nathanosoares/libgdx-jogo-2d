@@ -43,7 +43,14 @@ public class VisualRenderSystem extends EntitySystem {
             this.batch.draw(
                     visual.region,
                     position.x,
-                    position.y
+                    position.y,
+                    0,
+                    0,
+                    visual.region.getRegionWidth(),
+                    visual.region.getRegionHeight(),
+                    1 / 16f,
+                    1 / 16f,
+                    0
             );
         }
 

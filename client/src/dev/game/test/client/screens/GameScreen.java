@@ -16,10 +16,12 @@ import com.google.common.collect.Maps;
 import dev.game.test.client.ClientApplication;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.components.VisualComponent;
+import dev.game.test.client.entity.systems.CollidableDebugSystem;
 import dev.game.test.client.entity.systems.LocalEntityControllerSystem;
 import dev.game.test.client.entity.systems.VisualRenderSystem;
 import dev.game.test.client.world.WorldClient;
 import dev.game.test.client.world.systems.WorldRenderSystem;
+import dev.game.test.core.entity.components.CollidableComponent;
 import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 import dev.game.test.core.entity.systems.MovementSystem;
@@ -60,14 +62,6 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-//        EntityFactory.postCreate = (world, entityId) -> {
-//            world.edit(entityId)
-//                    .add(new SpriteComponent(new Sprite(
-//                            new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),
-//                            5, 2, 16, 22
-//                    )));
-//        };
-
         this.camera = new OrthographicCamera();
 
         DisplayMode displayMode = Gdx.graphics.getDisplayMode();
@@ -85,13 +79,15 @@ public class GameScreen extends ScreenAdapter {
         this.application.getEngine().addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
         this.application.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
         this.application.getEngine().addSystem(new LocalEntityControllerSystem(this));
+        this.application.getEngine().addSystem(new CollidableDebugSystem(this.spriteBatch));
 
         this.localEntity = new Entity();
         this.localEntity.add(new PositionComponent(0, 0));
+        this.localEntity.add(new CollidableComponent(16 / 16f, 22 / 16f));
         this.localEntity.add(new MovementComponent());
         this.localEntity.add(new VisualComponent(new TextureRegion(
                 new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),
-                0, 0, 16, 24
+                5, 2, 16, 22
         )));
 
         this.application.getEngine().addEntity(this.localEntity);
