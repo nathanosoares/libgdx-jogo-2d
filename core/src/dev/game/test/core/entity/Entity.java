@@ -8,7 +8,7 @@ import java.util.UUID;
 public class Entity extends com.badlogic.ashley.core.Entity implements IEntity {
 
     public Entity() {
-
+        this.setupDefaultComponents();
     }
 
     protected void setupDefaultComponents() {
