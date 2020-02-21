@@ -24,12 +24,10 @@ public abstract class GameApplication extends ApplicationAdapter {
 
     private final Engine engine = new Engine();
 
-    private final Injector injector;
-
     public GameApplication(boolean clientSide) {
         this.clientSide = clientSide;
 
-        this.injector = InjectorSetup.setup(this);
+        Injection.setup(this);
     }
 
     @Override
@@ -37,7 +35,7 @@ public abstract class GameApplication extends ApplicationAdapter {
         try {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-            RegistryManager registryManager = this.injector.getInstance(RegistryManager.class);
+            RegistryManager registryManager = Injection.injector.getInstance(RegistryManager.class);
 
             Gdx.app.debug("registryManager ", String.valueOf(registryManager));
             setupRegistries(registryManager);
