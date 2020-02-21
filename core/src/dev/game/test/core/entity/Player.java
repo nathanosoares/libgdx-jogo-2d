@@ -9,7 +9,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class Player implements IPlayer {
 
-    private EntityManager entityManager;
 
     public final int entityId;
 
@@ -35,6 +34,6 @@ public class Player implements IPlayer {
 
     @Override
     public UUID getId() {
-        return entityManager.getId(this.entityId);
+        return null;
     }
 }

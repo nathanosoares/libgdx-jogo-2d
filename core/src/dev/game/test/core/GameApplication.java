@@ -1,11 +1,14 @@
 package dev.game.test.core;
 
-import com.artemis.World;
-import com.artemis.WorldConfiguration;
-import com.artemis.annotations.Wire;
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import dev.game.test.core.entity.systems.MovementSystem;
 import dev.game.test.core.event.EventManager;
 import dev.game.test.core.keybind.Keybind;
 import dev.game.test.core.registry.RegistryManager;
@@ -18,36 +21,37 @@ public abstract class GameApplication extends ApplicationAdapter {
 
     protected final boolean clientSide;
 
+    private final Engine engine = new Engine();
+
+    private final Injector injector;
+
     public GameApplication(boolean clientSide) {
         this.clientSide = clientSide;
+
+        this.injector = InjectorSetup.setup(this);
     }
 
     @Override
     public void create() {
         try {
-            Injection.registerSingleton(this, GameApplication.class);
-            Injection.registerSingleton(this);
-
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-            RegistryManager registryManager = new RegistryManager(this);
-            Injection.registerSingleton(registryManager);
+            RegistryManager registryManager = this.injector.getInstance(RegistryManager.class);
+
+            Gdx.app.debug("registryManager ", String.valueOf(registryManager));
             setupRegistries(registryManager);
 
             EventManager eventManager = new EventManager();
-            Injection.registerSingleton(eventManager);
 
             this.setupManagers();
 
-            World world = new World(
-                Injection.injectSingletons(new WorldConfiguration())
-            );
-
-            SetupPipeline setupPipeline = new SetupPipeline();
-            world.inject(setupPipeline);
+            SetupPipeline setupPipeline = new SetupPipeline(this);
 
             setupPipeline(setupPipeline);
-            setupPipeline.runAll(world);
+
+            setupPipeline.runAll();
+
+            this.engine.addSystem(new MovementSystem());
 
         } catch (Exception ex) {
             ex.printStackTrace();

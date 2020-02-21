@@ -1,20 +1,22 @@
 package dev.game.test.client.setups;
 
-import com.artemis.annotations.Wire;
+import com.badlogic.gdx.Gdx;
 import dev.game.test.client.block.BlockClient;
 import dev.game.test.client.block.Blocks;
 import dev.game.test.client.registry.RegistryBlocks;
-import dev.game.test.core.GameApplication;
 import dev.game.test.core.registry.RegistryManager;
 import dev.game.test.core.setup.Setup;
 
+import javax.inject.Inject;
+
 public class SetupBlocks implements Setup {
 
-    @Wire
+    @Inject
     protected RegistryManager registryManager;
 
     @Override
     public void setup() {
+        Gdx.app.debug("registryManager ", String.valueOf(registryManager));
         RegistryBlocks registryBlocks = registryManager.getRegistry(BlockClient.class);
 
         registryBlocks.registerBlock(0, Blocks.AIR);

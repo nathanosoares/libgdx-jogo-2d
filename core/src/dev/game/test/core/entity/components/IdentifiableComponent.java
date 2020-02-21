@@ -1,10 +1,10 @@
 package dev.game.test.core.entity.components;
 
-import com.artemis.Component;
+import com.badlogic.ashley.core.Component;
 
 import java.util.UUID;
 
-public class IdentifiableComponent extends Component {
+public class IdentifiableComponent implements Component {
 
     public UUID uuid;
 }

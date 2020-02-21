@@ -2,6 +2,7 @@ package dev.game.test.client;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.google.inject.Singleton;
 import dev.game.test.client.block.BlockClient;
 import dev.game.test.client.block.BlocksRegistry;
 import dev.game.test.client.registry.RegistryBlocks;
@@ -16,6 +17,7 @@ import lombok.Setter;
 
 import java.util.Random;
 
+@Singleton
 public class ClientApplication extends GameApplication {
 
     @Getter
@@ -34,6 +36,8 @@ public class ClientApplication extends GameApplication {
 
     @Getter
     private String username;
+
+    private final FPSLogger fpsLogger = new FPSLogger(false, true);
 
     public ClientApplication(String[] args) {
         super(true);
@@ -58,6 +62,8 @@ public class ClientApplication extends GameApplication {
 
     @Override
     protected void setupRegistries(RegistryManager registryManager) {
+        super.setupRegistries(registryManager);
+
         registryManager.addRegistry(BlockClient.class, new RegistryBlocks());
     }
 
@@ -83,6 +89,8 @@ public class ClientApplication extends GameApplication {
 
     @Override
     public void render() {
+        this.fpsLogger.log();
+
         if (this.screenManager.getCurrentScreen() != null) {
             this.screenManager.getCurrentScreen().render(Gdx.graphics.getDeltaTime());
         }

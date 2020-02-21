@@ -1,17 +1,17 @@
 package dev.game.test.core.entity.systems;
 
-import com.artemis.ComponentMapper;
-import com.artemis.annotations.All;
-import com.artemis.systems.IteratingSystem;
-import dev.game.test.core.entity.components.StateComponent;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
 
-@All(StateComponent.class)
 public class StateSystem extends IteratingSystem {
 
-    private ComponentMapper<StateComponent> stateMapper;
+    public StateSystem() {
+        super(Family.all().get());
+    }
 
     @Override
-    protected void process(int entityId) {
-        stateMapper.get(entityId).state.update();
+    protected void processEntity(Entity entity, float deltaTime) {
+
     }
 }

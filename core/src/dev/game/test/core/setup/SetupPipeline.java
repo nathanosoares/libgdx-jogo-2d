@@ -1,37 +1,35 @@
 package dev.game.test.core.setup;
 
-import com.artemis.World;
-import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.google.common.collect.Maps;
 import dev.game.test.core.GameApplication;
+import lombok.RequiredArgsConstructor;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class SetupPipeline {
 
-    @Wire
-    protected GameApplication application;
-
-    //
+    private final GameApplication application;
 
     private final Map<Class<? extends Setup>, Setup> registry = Maps.newLinkedHashMap();
 
     public SetupPipeline registerSetup(Setup setup) {
-        if (registry.containsKey(setup.getClass())) {
+        if (this.registry.containsKey(setup.getClass())) {
             Gdx.app.error("Setup", String.format("Duplicated setup: %s", setup.getClass().getName()));
             return this;
         }
 
-        registry.put(setup.getClass(), setup);
+        this.registry.put(setup.getClass(), setup);
+
+        this.application.getInjector().injectMembers(setup);
 
         return this;
     }
 
-    public void runAll(World world) {
+    public void runAll() {
         Duration totalDuration = Duration.ZERO;
 
         for (Map.Entry<Class<? extends Setup>, Setup> entry : registry.entrySet()) {
@@ -41,7 +39,6 @@ public class SetupPipeline {
             Gdx.app.debug("Setup", String.format("[%s] Running...", className));
 
             try {
-                world.inject(entry.getValue());
                 entry.getValue().setup();
             } catch (Exception | StackOverflowError e) {
                 Gdx.app.error("Setup", String.format("[%s] Error while running. Shutting down...", className));

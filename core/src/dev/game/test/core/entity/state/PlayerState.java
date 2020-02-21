@@ -1,7 +1,7 @@
 package dev.game.test.core.entity.state;
 
 
-import com.artemis.Entity;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 

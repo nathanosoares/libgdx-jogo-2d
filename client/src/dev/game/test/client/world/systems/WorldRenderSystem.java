@@ -1,6 +1,6 @@
 package dev.game.test.client.world.systems;
 
-import com.artemis.BaseSystem;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class WorldRenderSystem extends BaseSystem {
+public class WorldRenderSystem extends EntitySystem {
 
     public static final float TILE_WIDTH = 16.0f;
     public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
@@ -29,21 +29,21 @@ public class WorldRenderSystem extends BaseSystem {
 
     private final Rectangle viewBounds = new Rectangle();
 
-    public void begin() {
-        this.batch.begin();
-    }
-
     @Override
-    protected void processSystem() {
+    public void update(float deltaTime) {
+        this.batch.begin();
+
         this.setView(this.camera);
 
         for (int layerId = 0; layerId < worldClient.getLayers().length; layerId++) {
             IWorldLayer layer = worldClient.getLayers()[layerId];
             renderMapLayer(layer);
         }
+
+        this.batch.end();
     }
 
-    public void setView(OrthographicCamera camera) {
+    private void setView(OrthographicCamera camera) {
         this.batch.setProjectionMatrix(camera.combined);
         float width = camera.viewportWidth * camera.zoom;
         float height = camera.viewportHeight * camera.zoom;
@@ -51,13 +51,6 @@ public class WorldRenderSystem extends BaseSystem {
         float h = height * Math.abs(camera.up.y) + width * Math.abs(camera.up.x);
         this.viewBounds.set(camera.position.x - w / 2, camera.position.y - h / 2, w, h);
     }
-
-//    public void render(int[] layers) {
-//        for (int layerIdx : layers) {
-//            IWorldLayer layer = world.getLayers()[layerIdx];
-//            renderMapLayer(layer);
-//        }
-//    }
 
     private void renderMapLayer(IWorldLayer layer) {
         Vector2 mouseScreenPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
@@ -101,9 +94,4 @@ public class WorldRenderSystem extends BaseSystem {
             y -= layerTileHeight;
         }
     }
-
-    public void end() {
-        this.batch.end();
-    }
-
 }

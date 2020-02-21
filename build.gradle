@@ -27,7 +27,8 @@ allprojects {
         guavaVersion = '28.2-jre'
         kryonetVersion = '2.21'
         kryoVersion = '5.0.0-RC4'
-        artemisVersion = '2.3.0'
+        ashleyVersion = '1.7.3'
+        guiceVersion = '4.2.2'
     }
 
     repositories {
@@ -64,9 +65,6 @@ project(":client") {
         implementation project(":api")
         implementation project(":core")
         implementation project(":server")
-
-        api "net.namekdev.entity_tracker:artemis-entity-tracker:0.4.0-SNAPSHOT"
-        api "net.namekdev.entity_tracker:artemis-entity-tracker-gui:0.4.0-SNAPSHOT"
     }
 }
 
@@ -93,7 +91,8 @@ project(":core") {
         api "com.esotericsoftware:kryo:$kryoVersion"
 
         api "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
-        api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
+        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        api "com.google.inject:guice:$guiceVersion"
     }
 }
 

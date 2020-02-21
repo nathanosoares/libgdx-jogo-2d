@@ -1,20 +1,25 @@
 package dev.game.test.core.registry;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import dev.game.test.core.GameApplication;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
-@RequiredArgsConstructor
+@Singleton
 public class RegistryManager {
 
-    private final ApplicationAdapter application;
+    @Inject
+    private GameApplication application;
 
     private final Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
 
     public <T> RegistryManager addRegistry(Class<T> objectClass, Registry<T> registry) {
         this.registries.put(objectClass, registry);
+
+        this.application.getInjector().injectMembers(registry);
 
         return this;
     }

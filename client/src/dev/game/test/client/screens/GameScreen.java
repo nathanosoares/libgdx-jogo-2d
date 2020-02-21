@@ -1,41 +1,32 @@
 package dev.game.test.client.screens;
 
-import com.artemis.WorldConfiguration;
-import com.artemis.link.EntityLinkManager;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.Maps;
-import com.sun.corba.se.spi.orbutil.fsm.State;
 import dev.game.test.client.ClientApplication;
-import dev.game.test.client.ClientConstants;
 import dev.game.test.client.GameUtils;
-import dev.game.test.client.entity.components.SpriteComponent;
-import dev.game.test.client.entity.systems.CollidableDebugSystem;
-import dev.game.test.client.entity.systems.PlayerControllerSystem;
-import dev.game.test.client.entity.systems.SpriteRenderSystem;
+import dev.game.test.client.entity.components.VisualComponent;
+import dev.game.test.client.entity.systems.LocalEntityControllerSystem;
+import dev.game.test.client.entity.systems.VisualRenderSystem;
 import dev.game.test.client.world.WorldClient;
 import dev.game.test.client.world.systems.WorldRenderSystem;
-import dev.game.test.core.Injection;
-import dev.game.test.core.entity.EntityFactory;
-import dev.game.test.core.entity.components.TransformComponent;
+import dev.game.test.core.entity.components.MovementComponent;
+import dev.game.test.core.entity.components.PositionComponent;
 import dev.game.test.core.entity.systems.MovementSystem;
-
-import java.util.Map;
-
-import dev.game.test.core.entity.systems.StateSystem;
 import lombok.Getter;
-import net.namekdev.entity_tracker.EntityTracker;
-import net.namekdev.entity_tracker.ui.EntityTrackerMainWindow;
+
+import javax.inject.Inject;
+import java.util.Map;
 
 @Getter
 public class GameScreen extends ScreenAdapter {
@@ -58,15 +49,10 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private Vector2 hover = new Vector2();
 
-    private com.artemis.World artemis;
-
-    private EntityFactory entityFactory = new EntityFactory();
-
     @Getter
-    private int playerId;
+    private Entity localEntity;
 
-    private EntityTrackerMainWindow entityTrackerMainWindow;
-
+    @Inject
     public GameScreen(ClientApplication application) {
         this.application = application;
         instance = this;
@@ -74,13 +60,13 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        EntityFactory.postCreate = (world, entityId) -> {
-            world.edit(entityId)
-                    .add(new SpriteComponent(new Sprite(
-                            new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),
-                            5, 2, 16, 22
-                    )));
-        };
+//        EntityFactory.postCreate = (world, entityId) -> {
+//            world.edit(entityId)
+//                    .add(new SpriteComponent(new Sprite(
+//                            new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),
+//                            5, 2, 16, 22
+//                    )));
+//        };
 
         this.camera = new OrthographicCamera();
 
@@ -96,30 +82,19 @@ public class GameScreen extends ScreenAdapter {
 
         WorldClient world = new WorldClient("world", mapWidth, mapHeight);
 
-        WorldConfiguration worldConfiguration = new WorldConfiguration();
+        this.application.getEngine().addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
+        this.application.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
+        this.application.getEngine().addSystem(new LocalEntityControllerSystem(this));
 
+        this.localEntity = new Entity();
+        this.localEntity.add(new PositionComponent(0, 0));
+        this.localEntity.add(new MovementComponent());
+        this.localEntity.add(new VisualComponent(new TextureRegion(
+                new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),
+                0, 0, 16, 24
+        )));
 
-        worldConfiguration.setSystem(new EntityLinkManager());
-        worldConfiguration.setSystem(new MovementSystem());
-        worldConfiguration.setSystem(new StateSystem());
-        worldConfiguration.setSystem(new PlayerControllerSystem(this));
-        worldConfiguration.setSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
-        worldConfiguration.setSystem(new SpriteRenderSystem(this.spriteBatch));
-
-        worldConfiguration = Injection.injectSingletons(worldConfiguration);
-
-        if (ClientConstants.DEBUG) {
-            this.entityTrackerMainWindow = new EntityTrackerMainWindow(false, false);
-
-            worldConfiguration.setSystem(new EntityTracker(entityTrackerMainWindow));
-            worldConfiguration.setSystem(new CollidableDebugSystem(this.spriteBatch));
-        }
-
-        this.artemis = new com.artemis.World(worldConfiguration);
-
-        this.artemis.inject(entityFactory);
-
-        this.playerId = entityFactory.createPlayer(this.artemis, mapWidth / 2, mapHeight / 2);
+        this.application.getEngine().addEntity(this.localEntity);
     }
 
     @Override
@@ -130,37 +105,32 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
 
-        if (entityTrackerMainWindow != null) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
-                entityTrackerMainWindow.setVisible(!entityTrackerMainWindow.isVisible());
-            }
-        }
-
         GameUtils.clearScreen(0, 50, 0, 100);
 
-        TransformComponent transformComponent = this.artemis.getEntity(playerId)
-                .getComponent(TransformComponent.class);
+        PositionComponent localEntityPosition = this.localEntity.getComponent(PositionComponent.class);
 
-        if (transformComponent != null) {
-            this.camera.position.set(transformComponent.position.x, transformComponent.position.y, 0);
+        if (localEntityPosition != null) {
+            this.camera.position.set(localEntityPosition.x, localEntityPosition.y, 0);
 
-            float visibleW = viewport.getWorldWidth() / 2.0f + (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport
-                    .getWorldWidth();//half of world visible
-            float visibleH =
-                    viewport.getWorldHeight() / 2.0f + (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport
-                            .getWorldHeight();
+            float visibleW = viewport.getWorldWidth() / 2.0f +
+                    (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();
 
-            WorldRenderSystem renderSystem = this.artemis.getSystem(WorldRenderSystem.class);
+            float visibleH = viewport.getWorldHeight() / 2.0f +
+                    (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
+
+            WorldRenderSystem renderSystem = this.application.getEngine().getSystem(WorldRenderSystem.class);
+            WorldClient worldClient = renderSystem.getWorldClient();
 
             this.camera.position.x = MathUtils
-                    .clamp(this.camera.position.x, visibleW, renderSystem.getWorldClient().getBounds().getWidth() - visibleW);
+                    .clamp(this.camera.position.x, visibleW, worldClient.getBounds().getWidth() - visibleW);
+
             this.camera.position.y = MathUtils
-                    .clamp(this.camera.position.y, visibleH, renderSystem.getWorldClient().getBounds().getHeight() - visibleH);
+                    .clamp(this.camera.position.y, visibleH, worldClient.getBounds().getHeight() - visibleH);
+
             this.camera.update();
         }
 
-        this.artemis.setDelta(delta);
-        this.artemis.process();
+        this.application.getEngine().update(delta);
     }
 
     @Override

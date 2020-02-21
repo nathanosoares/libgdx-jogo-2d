@@ -1,23 +1,23 @@
 package dev.game.test.client.entity.systems;
 
-import com.artemis.BaseSystem;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import dev.game.test.client.screens.GameScreen;
-import dev.game.test.core.entity.components.RigidBodyComponent;
+import dev.game.test.core.entity.components.MovementComponent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class PlayerControllerSystem extends BaseSystem {
+public class LocalEntityControllerSystem extends EntitySystem {
 
     private final GameScreen gameScreen;
 
     @Override
-    protected void processSystem() {
-        RigidBodyComponent rigidBodyComponent = this.world.getEntity(this.gameScreen.getPlayerId())
-                .getComponent(RigidBodyComponent.class);
+    public void update(float deltaTime) {
+        MovementComponent movement = this.gameScreen.getLocalEntity()
+                .getComponent(MovementComponent.class);
 
-        float delta = this.world.getDelta();
+        float walkSpeed = 10;
 
         boolean moveLeft = false;
         boolean moveRight = false;
@@ -31,13 +31,12 @@ public class PlayerControllerSystem extends BaseSystem {
         }
 
         if (moveLeft == moveRight) {
-            rigidBodyComponent.velocity.x = 0;
+            movement.velocityX = 0;
         } else if (moveLeft) {
-            rigidBodyComponent.velocity.x = -rigidBodyComponent.walkSpeed;
+            movement.velocityX = -walkSpeed;
         } else {
-            rigidBodyComponent.velocity.x = rigidBodyComponent.walkSpeed;
+            movement.velocityX = walkSpeed;
         }
-
 
         boolean moveTop = false;
         boolean moveDown = false;
@@ -51,11 +50,11 @@ public class PlayerControllerSystem extends BaseSystem {
         }
 
         if (moveTop == moveDown) {
-            rigidBodyComponent.velocity.y = 0;
+            movement.velocityY = 0;
         } else if (moveTop) {
-            rigidBodyComponent.velocity.y = rigidBodyComponent.walkSpeed;
+            movement.velocityY = walkSpeed;
         } else {
-            rigidBodyComponent.velocity.y = -rigidBodyComponent.walkSpeed;
+            movement.velocityY = -walkSpeed;
         }
     }
 }

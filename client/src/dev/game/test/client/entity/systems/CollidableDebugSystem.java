@@ -1,74 +1,93 @@
 package dev.game.test.client.entity.systems;
 
-import com.artemis.Aspect;
-import com.artemis.ComponentMapper;
-import com.artemis.systems.IteratingSystem;
+import com.badlogic.ashley.core.*;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.core.entity.components.CollidableComponent;
-import dev.game.test.core.entity.components.RigidBodyComponent;
-import dev.game.test.core.entity.components.TransformComponent;
+import dev.game.test.core.entity.components.MovementComponent;
+import dev.game.test.core.entity.components.PositionComponent;
 
-public class CollidableDebugSystem extends IteratingSystem {
+public class CollidableDebugSystem extends EntitySystem {
 
-    private ComponentMapper<TransformComponent> transformMapper;
-    private ComponentMapper<CollidableComponent> collidableMapper;
-    private ComponentMapper<RigidBodyComponent> rigidBodyMapper;
+    private ImmutableArray<Entity> entities;
+
+    private ComponentMapper<PositionComponent> positionMapper = ComponentMapper.getFor(PositionComponent.class);
+    private ComponentMapper<CollidableComponent> collidableMapper = ComponentMapper.getFor(CollidableComponent.class);
 
     private final Batch batch;
     private final ShapeRenderer shapeRenderer;
 
     public CollidableDebugSystem(Batch batch) {
-        super(Aspect.all(TransformComponent.class, CollidableComponent.class));
         this.batch = batch;
         this.shapeRenderer = new ShapeRenderer();
     }
 
     @Override
-    protected void begin() {
-        this.shapeRenderer.setProjectionMatrix(this.batch.getProjectionMatrix());
+    public void addedToEngine(Engine engine) {
+        entities = engine.getEntitiesFor(Family.all(
+                CollidableComponent.class,
+                PositionComponent.class
+        ).get());
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        PositionComponent position;
+        CollidableComponent collidable;
+
         this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-    }
+        this.shapeRenderer.setProjectionMatrix(this.batch.getProjectionMatrix());
 
-    @Override
-    protected void process(int entityId) {
-        TransformComponent transformComponent = transformMapper.get(entityId);
-        CollidableComponent collidableComponent = collidableMapper.get(entityId);
+        for (int i = 0; i < entities.size(); ++i) {
+            Entity entity = entities.get(i);
 
-        Vector2 size = collidableComponent.box.getSize(new Vector2());
-        Vector2 min = collidableComponent.box.getPosition(new Vector2());
-        Vector2 max = size.cpy().add(min);
+            position = positionMapper.get(entity);
+            collidable = collidableMapper.get(entity);
 
-        this.shapeRenderer.setColor(Color.GREEN);
-        this.shapeRenderer.rect(min.x, min.y, size.x, size.y);
+            Vector2 size = collidable.box.getSize(new Vector2());
+            Vector2 min = collidable.box.getPosition(new Vector2());
 
-        if (rigidBodyMapper.has(entityId)) {
-            RigidBodyComponent rigidBodyComponent = rigidBodyMapper.get(entityId);
+            this.shapeRenderer.setColor(Color.GREEN);
+            this.shapeRenderer.rect(min.x, min.y, size.x, size.y);
 
-            this.shapeRenderer.setColor(Color.BLUE);
+            MovementComponent movement;
+            if ((movement = entity.getComponent(MovementComponent.class)) != null) {
+                this.shapeRenderer.setColor(Color.BLUE);
 
-            if (transformComponent.originCenter) {
                 this.shapeRenderer.line(
-                        transformComponent.position.x,
-                        transformComponent.position.y,
-                        transformComponent.position.x + rigidBodyComponent.velocity.x,
-                        transformComponent.position.y + rigidBodyComponent.velocity.y
+                        position.x,
+                        position.y,
+                        position.x + movement.velocityX,
+                        position.y + movement.velocityY
                 );
-            } else {
-                this.shapeRenderer.line(
-                        transformComponent.position.x + transformComponent.width / 2,
-                        transformComponent.position.y + transformComponent.height / 2,
-                        transformComponent.position.x + rigidBodyComponent.velocity.x + transformComponent.width / 2,
-                        transformComponent.position.y + rigidBodyComponent.velocity.y + transformComponent.height / 2
-                );
+//
+//                if (transformComponent.originCenter) {
+//                    this.shapeRenderer.line(
+//                            position.x,
+//                            position.y,
+//                            position.x + rigidBody.velocity.x,
+//                            position.y + rigidBody.velocity.y
+//                    );
+//                } else {
+//                    this.shapeRenderer.line(
+//                            transformComponent.position.x + transformComponent.width / 2,
+//                            transformComponent.position.y + transformComponent.height / 2,
+//                            transformComponent.position.x + rigidBodyComponent.velocity.x + transformComponent.width / 2,
+//                            transformComponent.position.y + rigidBodyComponent.velocity.y + transformComponent.height / 2
+//                    );
+//                }
             }
-        }
-    }
 
-    @Override
-    protected void end() {
+//            if (rigidBodyMapper.has(entity)) {
+//                RigidBodyComponent rigidBodyComponent = rigidBodyMapper.get(entity);
+//
+
+//            }
+        }
+
         this.shapeRenderer.end();
     }
 }
