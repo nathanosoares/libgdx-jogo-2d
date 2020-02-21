@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Rectangle;
-import dev.game.test.core.entity.components.CollidableComponent;
+import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 
@@ -13,7 +13,7 @@ public class MovementSystem extends IteratingSystem {
 
     private ComponentMapper<PositionComponent> positionMapper = ComponentMapper.getFor(PositionComponent.class);
     private ComponentMapper<MovementComponent> movementMapper = ComponentMapper.getFor(MovementComponent.class);
-    private ComponentMapper<CollidableComponent> collidableMapper = ComponentMapper.getFor(CollidableComponent.class);
+    private ComponentMapper<CollisiveComponent> collidableMapper = ComponentMapper.getFor(CollisiveComponent.class);
 
     public MovementSystem() {
         super(Family.all(PositionComponent.class, MovementComponent.class).get());

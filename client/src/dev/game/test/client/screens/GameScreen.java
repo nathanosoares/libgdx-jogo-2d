@@ -16,15 +16,14 @@ import com.google.common.collect.Maps;
 import dev.game.test.client.ClientApplication;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.components.VisualComponent;
-import dev.game.test.client.entity.systems.CollidableDebugSystem;
+import dev.game.test.client.entity.systems.CollisiveDebugSystem;
 import dev.game.test.client.entity.systems.LocalEntityControllerSystem;
 import dev.game.test.client.entity.systems.VisualRenderSystem;
 import dev.game.test.client.world.WorldClient;
 import dev.game.test.client.world.systems.WorldRenderSystem;
-import dev.game.test.core.entity.components.CollidableComponent;
+import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
-import dev.game.test.core.entity.systems.MovementSystem;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -79,11 +78,11 @@ public class GameScreen extends ScreenAdapter {
         this.application.getEngine().addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
         this.application.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
         this.application.getEngine().addSystem(new LocalEntityControllerSystem(this));
-        this.application.getEngine().addSystem(new CollidableDebugSystem(this.spriteBatch));
+        this.application.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
 
         this.localEntity = new Entity();
         this.localEntity.add(new PositionComponent(0, 0));
-        this.localEntity.add(new CollidableComponent(16 / 16f, 22 / 16f));
+        this.localEntity.add(new CollisiveComponent(16 / 16f, 22 / 16f));
         this.localEntity.add(new MovementComponent());
         this.localEntity.add(new VisualComponent(new TextureRegion(
                 new Texture("rpg-pack/chars/gabe/gabe-idle-run.png"),

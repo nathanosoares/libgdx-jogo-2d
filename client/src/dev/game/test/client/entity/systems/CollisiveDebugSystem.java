@@ -6,21 +6,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import dev.game.test.core.entity.components.CollidableComponent;
+import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 
-public class CollidableDebugSystem extends EntitySystem {
+public class CollisiveDebugSystem extends EntitySystem {
 
     private ImmutableArray<Entity> entities;
 
     private ComponentMapper<PositionComponent> positionMapper = ComponentMapper.getFor(PositionComponent.class);
-    private ComponentMapper<CollidableComponent> collidableMapper = ComponentMapper.getFor(CollidableComponent.class);
+    private ComponentMapper<CollisiveComponent> collisiveMapper = ComponentMapper.getFor(CollisiveComponent.class);
 
     private final Batch batch;
     private final ShapeRenderer shapeRenderer;
 
-    public CollidableDebugSystem(Batch batch) {
+    public CollisiveDebugSystem(Batch batch) {
         this.batch = batch;
         this.shapeRenderer = new ShapeRenderer();
     }
@@ -28,7 +28,7 @@ public class CollidableDebugSystem extends EntitySystem {
     @Override
     public void addedToEngine(Engine engine) {
         entities = engine.getEntitiesFor(Family.all(
-                CollidableComponent.class,
+                CollisiveComponent.class,
                 PositionComponent.class
         ).get());
     }
@@ -36,7 +36,7 @@ public class CollidableDebugSystem extends EntitySystem {
     @Override
     public void update(float deltaTime) {
         PositionComponent position;
-        CollidableComponent collidable;
+        CollisiveComponent collisive;
 
         this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         this.shapeRenderer.setProjectionMatrix(this.batch.getProjectionMatrix());
@@ -45,10 +45,10 @@ public class CollidableDebugSystem extends EntitySystem {
             Entity entity = entities.get(i);
 
             position = positionMapper.get(entity);
-            collidable = collidableMapper.get(entity);
+            collisive = collisiveMapper.get(entity);
 
-            Vector2 size = collidable.box.getSize(new Vector2());
-            Vector2 min = collidable.box.getPosition(new Vector2());
+            Vector2 size = collisive.box.getSize(new Vector2());
+            Vector2 min = collisive.box.getPosition(new Vector2());
 
             this.shapeRenderer.setColor(Color.GREEN);
             this.shapeRenderer.rect(min.x, min.y, size.x, size.y);
