@@ -17,7 +17,7 @@ public class LocalEntityControllerSystem extends EntitySystem {
         MovementComponent movement = this.gameScreen.getLocalEntity()
                 .getComponent(MovementComponent.class);
 
-        float walkSpeed = 10;
+        float walkSpeed = 4;
 
         boolean moveLeft = false;
         boolean moveRight = false;

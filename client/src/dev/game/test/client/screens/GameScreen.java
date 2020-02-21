@@ -81,7 +81,7 @@ public class GameScreen extends ScreenAdapter {
         this.application.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
 
         this.localEntity = new Entity();
-        this.localEntity.add(new PositionComponent(0, 0));
+        this.localEntity.add(new PositionComponent(mapWidth / 2f, mapHeight / 2f));
         this.localEntity.add(new CollisiveComponent(16 / 16f, 22 / 16f));
         this.localEntity.add(new MovementComponent());
         this.localEntity.add(new VisualComponent(new TextureRegion(

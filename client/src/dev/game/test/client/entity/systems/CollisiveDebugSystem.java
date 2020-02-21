@@ -58,10 +58,10 @@ public class CollisiveDebugSystem extends EntitySystem {
                 this.shapeRenderer.setColor(Color.BLUE);
 
                 this.shapeRenderer.line(
-                        position.x,
-                        position.y,
-                        position.x + movement.velocityX,
-                        position.y + movement.velocityY
+                        position.x + size.x / 2,
+                        position.y + size.y / 2,
+                        position.x + movement.velocityX + size.x / 2,
+                        position.y + movement.velocityY + size.y / 2
                 );
 //
 //                if (transformComponent.originCenter) {
