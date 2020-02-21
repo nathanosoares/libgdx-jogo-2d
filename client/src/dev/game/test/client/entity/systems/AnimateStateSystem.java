@@ -36,7 +36,7 @@ public class AnimateStateSystem extends EntitySystem {
             animateState = AnimateStateComponent.MAPPER.get(entity);
             state = StateComponent.MAPPER.get(entity);
 
-            Animation<TextureRegion> animation = animateState.animations.get(state.state.getCurrentState());
+            Animation<TextureRegion> animation = animateState.animations.get(state.machine.getCurrentState());
 
             if (animation != null) {
                 visual = VisualComponent.MAPPER.get(entity);

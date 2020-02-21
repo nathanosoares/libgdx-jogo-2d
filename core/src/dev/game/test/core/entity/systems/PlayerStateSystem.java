@@ -17,7 +17,7 @@ public class PlayerStateSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
 
-        StateComponent.MAPPER.get(entity).state.update();
+        StateComponent.MAPPER.get(entity).machine.update();
 
     }
 }
