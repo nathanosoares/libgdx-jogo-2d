@@ -14,8 +14,6 @@ public class CollisiveDebugSystem extends EntitySystem {
 
     private ImmutableArray<Entity> entities;
 
-    private ComponentMapper<PositionComponent> positionMapper = ComponentMapper.getFor(PositionComponent.class);
-    private ComponentMapper<CollisiveComponent> collisiveMapper = ComponentMapper.getFor(CollisiveComponent.class);
 
     private final Batch batch;
     private final ShapeRenderer shapeRenderer;
@@ -44,8 +42,8 @@ public class CollisiveDebugSystem extends EntitySystem {
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
 
-            position = positionMapper.get(entity);
-            collisive = collisiveMapper.get(entity);
+            position = PositionComponent.MAPPER.get(entity);
+            collisive = CollisiveComponent.MAPPER.get(entity);
 
             Vector2 size = collisive.box.getSize(new Vector2());
             Vector2 min = collisive.box.getPosition(new Vector2());

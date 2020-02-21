@@ -4,7 +4,9 @@ import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import dev.game.test.client.entity.components.FacingVisualFlipComponent;
 import dev.game.test.client.entity.components.VisualComponent;
+import dev.game.test.core.entity.components.FacingComponent;
 import dev.game.test.core.entity.components.NamedComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 
@@ -13,10 +15,6 @@ public class VisualRenderSystem extends EntitySystem {
     private final BitmapFont font = new BitmapFont();
 
     private ImmutableArray<Entity> entities;
-
-    private ComponentMapper<PositionComponent> positionMapper = ComponentMapper.getFor(PositionComponent.class);
-    private ComponentMapper<VisualComponent> visualMapper = ComponentMapper.getFor(VisualComponent.class);
-    private ComponentMapper<NamedComponent> namedMapper = ComponentMapper.getFor(NamedComponent.class);
 
     private final Batch batch;
 
@@ -42,11 +40,27 @@ public class VisualRenderSystem extends EntitySystem {
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
 
-            position = positionMapper.get(entity);
-            visual = visualMapper.get(entity);
+            position = PositionComponent.MAPPER.get(entity);
+            visual = VisualComponent.MAPPER.get(entity);
 
             float nameOffsetY = 0;
             if (visual.region != null) {
+
+                if (FacingComponent.MAPPER.has(entity)) {
+                    if (FacingVisualFlipComponent.MAPPER.has(entity)) {
+                        FacingComponent facing = FacingComponent.MAPPER.get(entity);
+                        FacingVisualFlipComponent facingVisualFlip = FacingVisualFlipComponent.MAPPER.get(entity);
+
+                        if (visual.region.isFlipX()) {
+                            if (!facingVisualFlip.flipX.contains(facing.facing)) {
+                                visual.region.flip(true, visual.region.isFlipY());
+                            }
+                        } else {
+                            visual.region.flip(facingVisualFlip.flipX.contains(facing.facing), visual.region.isFlipY());
+                        }
+                    }
+                }
+
                 this.batch.draw(
                         visual.region,
                         position.x,
@@ -63,7 +77,7 @@ public class VisualRenderSystem extends EntitySystem {
                 nameOffsetY = visual.region.getRegionHeight() / 16f;
             }
 
-            if (namedMapper.has(entity)) {
+            if (NamedComponent.MAPPER.has(entity)) {
                 this.font.getData().setScale(1f / 32f);
 //                this.font.draw(
 //                        this.batch,
