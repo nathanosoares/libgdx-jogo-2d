@@ -9,6 +9,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import dev.game.test.core.entity.systems.MovementSystem;
+import dev.game.test.core.entity.systems.PlayerStateSystem;
 import dev.game.test.core.event.EventManager;
 import dev.game.test.core.keybind.Keybind;
 import dev.game.test.core.registry.RegistryManager;
@@ -52,6 +53,7 @@ public abstract class GameApplication extends ApplicationAdapter {
             setupPipeline.runAll();
 
             this.engine.addSystem(new MovementSystem());
+            this.engine.addSystem(new PlayerStateSystem());
 
         } catch (Exception ex) {
             ex.printStackTrace();

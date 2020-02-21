@@ -69,8 +69,6 @@ public class ClientApplication extends GameApplication {
 
     @Override
     public void create() {
-        super.create();
-
         if (System.getProperty("username") != null) {
             this.username = System.getProperty("username");
         } else {
@@ -78,6 +76,8 @@ public class ClientApplication extends GameApplication {
         }
 
         System.out.println(String.format("Hello %s", this.username));
+
+        super.create();
     }
 
     @Override

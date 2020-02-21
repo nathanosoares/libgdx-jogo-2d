@@ -1,15 +1,15 @@
 package dev.game.test.core.entity.state;
 
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
+import dev.game.test.core.entity.Entity;
 
 public enum PlayerState implements State<Entity> {
 
     IDLE,
     WALK,
-    JUMP;
+    RUNNING;
 
     @Override
     public void enter(Entity entity) {
@@ -18,7 +18,7 @@ public enum PlayerState implements State<Entity> {
 
     @Override
     public void update(Entity entity) {
-        System.out.println(this);
+
     }
 
     @Override

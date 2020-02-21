@@ -1,25 +1,40 @@
 package dev.game.test.core.entity;
 
+import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
-import lombok.RequiredArgsConstructor;
+import dev.game.test.core.entity.components.*;
+import dev.game.test.core.entity.state.PlayerState;
 
 import java.util.UUID;
 
-@RequiredArgsConstructor
-public class Player implements IPlayer {
+public class Player extends Entity implements IPlayer {
 
+    public Player(String name) {
+        this.add(new NamedComponent(name));
+    }
 
-    public final int entityId;
+    @Override
+    protected void setupDefaultComponents() {
+        super.setupDefaultComponents();
+
+        this.add(new PositionComponent(0, 0));
+        this.add(new CollisiveComponent(24 / 16f, 24 / 16f));
+        this.add(new MovementComponent());
+
+        DefaultStateMachine<Entity, PlayerState> defaultStateMachine = new DefaultStateMachine<>(this, PlayerState.IDLE);
+
+        this.add(new StateComponent<>(defaultStateMachine));
+    }
 
     @Override
     public String getName() {
-        return null;
+        return this.getComponent(NamedComponent.class).name;
     }
 
     @Override
     public boolean isValid() {
-        return entityId != -1;
+        return false;
     }
 
     @Override
