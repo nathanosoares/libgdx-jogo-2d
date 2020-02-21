@@ -85,7 +85,7 @@ public class GameScreen extends ScreenAdapter {
         this.application.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
         this.application.getEngine().addSystem(new AnimateStateSystem());
 
-        this.localEntity = buildLocalPlayer();
+        this.localEntity = buildLocalPlayer(world);
         this.localEntity.getComponent(PositionComponent.class).x = mapHeight / 2f;
         this.localEntity.getComponent(PositionComponent.class).y = mapHeight / 2f;
 
@@ -132,11 +132,11 @@ public class GameScreen extends ScreenAdapter {
     public void dispose() {
     }
 
-    private Player buildLocalPlayer() {
+    private Player buildLocalPlayer(WorldClient world) {
 
         Texture texture = new Texture("rpg-pack/chars/gabe/gabe-idle-run.png");
 
-        Player player = new Player(this.application.getUsername());
+        Player player = new Player(this.application.getUsername(), world);
 
         player.add(new VisualComponent());
         player.add(new FacingVisualFlipComponent());
