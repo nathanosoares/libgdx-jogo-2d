@@ -22,7 +22,7 @@ public class Player extends Entity implements IPlayer {
         this.add(new CollisiveComponent(24 / 16f, 24 / 16f));
         this.add(new MovementComponent());
 
-        DefaultStateMachine<Entity, PlayerState> defaultStateMachine = new DefaultStateMachine<>(this, PlayerState.IDLE);
+        DefaultStateMachine<Entity, PlayerState> defaultStateMachine = new DefaultStateMachine<>(this, PlayerState.WALK);
 
         this.add(new StateComponent<>(defaultStateMachine));
     }

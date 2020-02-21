@@ -11,5 +11,5 @@ public class StateComponent<T extends State<Entity>> implements Component {
 
     public final StateMachine<Entity, T> state;
     public float time = 0.0f;
-    public boolean isLooping = false;
+    public boolean isLooping = true;
 }
