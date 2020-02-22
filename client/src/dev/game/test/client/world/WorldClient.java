@@ -2,10 +2,10 @@ package dev.game.test.client.world;
 
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.Lists;
-import dev.game.test.client.block.Blocks;
 import dev.game.test.client.entity.Entity;
 import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
+import dev.game.test.core.block.Blocks;
 import dev.game.test.core.world.World;
 import dev.game.test.core.world.WorldLayer;
 
@@ -18,8 +18,6 @@ public class WorldClient extends World {
 
     public static Block CLIPBOARD;
 
-
-    private final List<Entity> entities = Lists.newArrayList();
 
     public WorldClient(String name, int width, int height) {
         super(name, width, height);

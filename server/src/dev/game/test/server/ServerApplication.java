@@ -15,7 +15,7 @@ public class ServerApplication extends GameApplication<ServerGame> {
     public void create() {
         super.create();
 
-        getGame().loadWorlds();
+        getGame().getServerManager().loadWorlds();
     }
 
 }

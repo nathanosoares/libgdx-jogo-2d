@@ -8,12 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import dev.game.test.api.world.IWorldLayer;
-import dev.game.test.client.block.BlockClient;
 import dev.game.test.client.world.WorldClient;
+import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.entity.systems.MovementSystem;
 import lombok.Getter;
@@ -83,7 +80,7 @@ public class WorldRenderSystem extends EntitySystem {
                 }
 
                 BlockState blockState = (BlockState) layer.getBlockState(col, row);
-                TextureRegion region = ((BlockClient) blockState.getBlock()).getTexture(blockState);
+                TextureRegion region = ((Block) blockState.getBlock()).getTexture(blockState);
 
                 if (x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
 

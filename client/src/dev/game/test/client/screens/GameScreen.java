@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
@@ -143,7 +144,7 @@ public class GameScreen extends ScreenAdapter {
             username = String.format("Player%d", new Random().nextInt(1000));
         }
 
-        Player player = new Player(username, world);
+        Player player = new Player(UUID.randomUUID(), username, world);
 
         player.add(new VisualComponent());
         player.add(new FacingVisualFlipComponent());

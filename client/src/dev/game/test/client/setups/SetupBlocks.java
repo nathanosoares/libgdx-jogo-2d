@@ -1,9 +1,9 @@
 package dev.game.test.client.setups;
 
 import dev.game.test.api.IGame;
-import dev.game.test.client.block.BlockClient;
-import dev.game.test.client.block.Blocks;
 import dev.game.test.client.registry.RegistryBlocks;
+import dev.game.test.core.block.Block;
+import dev.game.test.core.block.Blocks;
 import dev.game.test.core.setup.Setup;
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +14,7 @@ public class SetupBlocks implements Setup {
 
     @Override
     public void setup() {
-        RegistryBlocks registryBlocks = game.getRegistryManager().getRegistry(BlockClient.class);
+        RegistryBlocks registryBlocks = game.getRegistryManager().getRegistry(Block.class);
 
         registryBlocks.registerBlock(0, Blocks.AIR);
         registryBlocks.registerBlock(1, Blocks.DIRT);

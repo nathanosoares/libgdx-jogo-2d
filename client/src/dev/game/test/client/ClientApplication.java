@@ -2,9 +2,6 @@ package dev.game.test.client;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import dev.game.test.api.registry.IRegistryManager;
-import dev.game.test.client.block.BlockClient;
-import dev.game.test.client.registry.RegistryBlocks;
 import dev.game.test.client.setups.SetupBlocks;
 import dev.game.test.client.setups.SetupGameScreen;
 import dev.game.test.core.GameApplication;

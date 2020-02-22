@@ -21,7 +21,7 @@ public class World implements IWorld {
     //
 
     @Getter
-    private final List<IEntity> entities = Lists.newArrayList();
+    protected final List<IEntity> entities = Lists.newArrayList();
 
     @Getter
     private final List<IPlayer> players = Lists.newArrayList();

@@ -2,10 +2,10 @@ package dev.game.test.client;
 
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.registry.IRegistryManager;
-import dev.game.test.client.block.BlockClient;
 import dev.game.test.client.registry.RegistryBlocks;
 import dev.game.test.client.screens.ScreenManager;
 import dev.game.test.core.Game;
+import dev.game.test.core.block.Block;
 import lombok.Getter;
 
 public class ClientGame extends Game implements IClientGame {
@@ -25,7 +25,7 @@ public class ClientGame extends Game implements IClientGame {
 
     @Override
     public void setupRegistries(IRegistryManager registryManager) {
-        registryManager.addRegistry(BlockClient.class, new RegistryBlocks());
+        registryManager.addRegistry(Block.class, new RegistryBlocks());
     }
 
 }
