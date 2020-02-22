@@ -8,7 +8,11 @@ public interface IEntity extends Identifiable {
 
     Entity getHandle();
 
+    boolean isSpawned();
+
     IWorld getWorld();
 
-    void setWorld(IWorld world);
+    default void onSpawn(IWorld world) {}
+
+    default void onDestroy(IWorld world) {}
 }

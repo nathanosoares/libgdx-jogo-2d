@@ -7,6 +7,8 @@ public interface IPlayer extends IEntity {
 
     String getName();
 
+    void setName(String name);
+
     /*
         Keybinds
      */

@@ -10,17 +10,17 @@ import lombok.Getter;
 public class WorldLayer implements IWorldLayer {
 
     @Getter
-    protected BlockState[][] states;
+    protected IBlockState[][] states;
 
     public WorldLayer(World world) {
         this.states = new BlockState[(int) world.getBounds().getWidth()][(int) world.getBounds().getHeight()];
     }
 
-    public BlockState getBlockState(float x, float y) {
+    public IBlockState getBlockState(float x, float y) {
         return getBlockState((int) x, (int) y);
     }
 
-    public BlockState getBlockState(int x, int y) {
+    public IBlockState getBlockState(int x, int y) {
         if (x < 0 || y < 0 || this.states.length <= x || this.states[x].length <= y) {
             return null;
         }
@@ -28,7 +28,7 @@ public class WorldLayer implements IWorldLayer {
         return states[x][y];
     }
 
-    public BlockState getFacingBlock(IBlockState blockState, EnumFacing... facings) {
+    public IBlockState getFacingBlock(IBlockState blockState, EnumFacing... facings) {
         Vector2 position = blockState.getPosition();
         int x = (int) position.x;
         int y = (int) position.y;
@@ -41,7 +41,7 @@ public class WorldLayer implements IWorldLayer {
         return getBlockState(x, y);
     }
 
-    public void setBlockState(BlockState blockState) {
+    public void setBlockState(IBlockState blockState) {
         for (int additionalX = 0; additionalX < blockState.getBlock().getWidth(); additionalX++) {
             for (int additionalY = 0; additionalY < blockState.getBlock().getHeight(); additionalY++) {
 
@@ -53,7 +53,7 @@ public class WorldLayer implements IWorldLayer {
     }
 
     public boolean isOrigin(int x, int y) {
-        BlockState block = getBlockState(x, y);
+        IBlockState block = getBlockState(x, y);
 
         return block != null && (block.getPosition().x == x && block.getPosition().y == y);
     }

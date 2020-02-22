@@ -11,6 +11,8 @@ public interface IWorldLayer {
 
     IBlockState getBlockState(float x, float y);
 
+    void setBlockState(IBlockState blockState);
+
     boolean isOrigin(int x, int y);
 
     IBlockState getFacingBlock(IBlockState blockState, EnumFacing... facings);

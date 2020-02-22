@@ -13,11 +13,10 @@ import java.util.UUID;
 
 public class Player extends Entity implements IPlayer {
 
-    public Player(UUID uuid, String name, IWorld world) {
-        super(uuid, world);
+    public Player(UUID uuid, String name) {
+        super(uuid);
 
         this.add(new NamedComponent(name));
-        this.add(new PositionComponent(0, 0, world));
     }
 
     @Override
@@ -37,7 +36,12 @@ public class Player extends Entity implements IPlayer {
 
     @Override
     public String getName() {
-        return this.getComponent(NamedComponent.class).name;
+        return NamedComponent.MAPPER.get(this).name;
+    }
+
+    @Override
+    public void setName(String name) {
+        NamedComponent.MAPPER.get(this).name = name;
     }
 
     /*
