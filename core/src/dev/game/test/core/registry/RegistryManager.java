@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.game.test.core.GameApplication;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
