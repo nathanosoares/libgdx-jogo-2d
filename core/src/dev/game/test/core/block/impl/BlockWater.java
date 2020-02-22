@@ -2,12 +2,13 @@ package dev.game.test.core.block.impl;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
-import dev.game.test.client.block.BlockClient;
+import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.block.connected.ConnectedTextureSimple;
 
-public class BlockWater extends BlockClient {
+public class BlockWater extends Block {
 
     private ConnectedTextureSimple texture;
 
@@ -17,13 +18,13 @@ public class BlockWater extends BlockClient {
     }
 
     @Override
-    public void onBlockNeighbourUpdate(BlockState blockState, EnumFacing neighbourFacing) {
+    public void onBlockNeighbourUpdate(IBlockState blockState, EnumFacing neighbourFacing) {
         super.onBlockNeighbourUpdate(blockState, neighbourFacing);
         this.texture.computeTextures(blockState);
     }
 
     @Override
-    public TextureRegion getTexture(BlockState blockState) {
+    public TextureRegion getTexture(IBlockState blockState) {
         return texture.getTexture(blockState);
     }
 }
