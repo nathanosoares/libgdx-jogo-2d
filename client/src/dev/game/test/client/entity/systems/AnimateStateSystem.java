@@ -1,22 +1,19 @@
 package dev.game.test.client.entity.systems;
 
-import com.badlogic.ashley.core.*;
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import dev.game.test.client.entity.components.AnimateStateComponent;
 import dev.game.test.client.entity.components.VisualComponent;
-import dev.game.test.core.entity.components.PositionComponent;
 import dev.game.test.core.entity.components.StateComponent;
 
 public class AnimateStateSystem extends EntitySystem {
 
     private ImmutableArray<Entity> entities;
-
-    private ComponentMapper<VisualComponent> visualMapper = ComponentMapper.getFor(VisualComponent.class);
-    private ComponentMapper<StateComponent> stateMapper = ComponentMapper.getFor(StateComponent.class);
-    private ComponentMapper<AnimateStateComponent> animateStateMapper = ComponentMapper.getFor(AnimateStateComponent.class);
 
     @Override
     public void addedToEngine(Engine engine) {
@@ -36,13 +33,13 @@ public class AnimateStateSystem extends EntitySystem {
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
 
-            animateState = animateStateMapper.get(entity);
-            state = stateMapper.get(entity);
-            
-            Animation<TextureRegion> animation = animateState.animations.get(state.state.getCurrentState());
+            animateState = AnimateStateComponent.MAPPER.get(entity);
+            state = StateComponent.MAPPER.get(entity);
+
+            Animation<TextureRegion> animation = animateState.animations.get(state.machine.getCurrentState());
 
             if (animation != null) {
-                visual = visualMapper.get(entity);
+                visual = VisualComponent.MAPPER.get(entity);
 
                 visual.region = animation.getKeyFrame(state.time, state.isLooping);
             }

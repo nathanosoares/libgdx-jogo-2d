@@ -2,27 +2,31 @@ package dev.game.test.core.entity;
 
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import dev.game.test.api.entity.IPlayer;
+import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.components.*;
 import dev.game.test.core.entity.state.PlayerState;
+import dev.game.test.core.world.World;
 
 import java.util.UUID;
 
 public class Player extends Entity implements IPlayer {
 
-    public Player(String name) {
+    public Player(String name, World world) {
         this.add(new NamedComponent(name));
+
+        this.add(new PositionComponent(0, 0, world));
     }
 
     @Override
     protected void setupDefaultComponents() {
         super.setupDefaultComponents();
 
-        this.add(new PositionComponent(0, 0));
-        this.add(new CollisiveComponent(24 / 16f, 24 / 16f));
+        this.add(new CollisiveComponent(24f / 16f, 24f / 16f));
         this.add(new MovementComponent());
+        this.add(new FacingComponent(EnumFacing.EAST));
 
-        DefaultStateMachine<Entity, PlayerState> defaultStateMachine = new DefaultStateMachine<>(this, PlayerState.IDLE);
+        DefaultStateMachine<Entity, PlayerState> defaultStateMachine = new DefaultStateMachine<>(this, PlayerState.WALK);
 
         this.add(new StateComponent<>(defaultStateMachine));
     }

@@ -8,10 +8,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.client.block.BlockClient;
 import dev.game.test.client.world.WorldClient;
 import dev.game.test.core.block.BlockState;
+import dev.game.test.core.entity.systems.MovementSystem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -52,6 +56,7 @@ public class WorldRenderSystem extends EntitySystem {
         this.viewBounds.set(camera.position.x - w / 2, camera.position.y - h / 2, w, h);
     }
 
+
     private void renderMapLayer(IWorldLayer layer) {
         Vector2 mouseScreenPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
@@ -81,6 +86,11 @@ public class WorldRenderSystem extends EntitySystem {
                 TextureRegion region = ((BlockClient) blockState.getBlock()).getTexture(blockState);
 
                 if (x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
+
+                    float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
+                    batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
+                }
+                if (MovementSystem.debug.containsEntry(col, row)) {
                     float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
                     batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
                 }

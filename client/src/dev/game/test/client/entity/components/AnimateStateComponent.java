@@ -1,6 +1,7 @@
 package dev.game.test.client.entity.components;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -10,6 +11,8 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 
 public class AnimateStateComponent implements Component {
+
+    public static final ComponentMapper<AnimateStateComponent> MAPPER = ComponentMapper.getFor(AnimateStateComponent.class);
 
     public final Map<State<? extends Entity>, Animation<TextureRegion>> animations = Maps.newHashMap();
 }

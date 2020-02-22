@@ -4,8 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
-import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -19,6 +17,7 @@ import com.google.common.collect.Maps;
 import dev.game.test.client.ClientApplication;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.components.AnimateStateComponent;
+import dev.game.test.client.entity.components.FacingVisualFlipComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.client.entity.systems.AnimateStateSystem;
 import dev.game.test.client.entity.systems.CollisiveDebugSystem;
@@ -27,10 +26,7 @@ import dev.game.test.client.entity.systems.VisualRenderSystem;
 import dev.game.test.client.world.WorldClient;
 import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.Player;
-import dev.game.test.core.entity.components.CollisiveComponent;
-import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
-import dev.game.test.core.entity.components.StateComponent;
 import dev.game.test.core.entity.state.PlayerState;
 import lombok.Getter;
 
@@ -89,7 +85,7 @@ public class GameScreen extends ScreenAdapter {
         this.application.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
         this.application.getEngine().addSystem(new AnimateStateSystem());
 
-        this.localEntity = buildLocalPlayer();
+        this.localEntity = buildLocalPlayer(world);
         this.localEntity.getComponent(PositionComponent.class).x = mapHeight / 2f;
         this.localEntity.getComponent(PositionComponent.class).y = mapHeight / 2f;
 
@@ -136,39 +132,44 @@ public class GameScreen extends ScreenAdapter {
     public void dispose() {
     }
 
-    private Player buildLocalPlayer() {
+    private Player buildLocalPlayer(WorldClient world) {
 
         Texture texture = new Texture("rpg-pack/chars/gabe/gabe-idle-run.png");
 
-        Player player = new Player(this.application.getUsername());
+        Player player = new Player(this.application.getUsername(), world);
 
         player.add(new VisualComponent());
+        player.add(new FacingVisualFlipComponent());
 
-        TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth() / 7, texture.getHeight());
+        // Animate
+        {
+            TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth() / 7, texture.getHeight());
 
-        TextureRegion[] idleFrames = new TextureRegion[1];
-        TextureRegion[] walkFrames = new TextureRegion[6];
+            TextureRegion[] idleFrames = new TextureRegion[1];
+            TextureRegion[] walkFrames = new TextureRegion[6];
 
-        int index = 0;
-        for (int i = 0; i < 7; i++) {
-            if (i == 0) {
-                idleFrames[0] = tmp[0][i];
-                continue;
+            int index = 0;
+            for (int i = 0; i < 7; i++) {
+                if (i == 0) {
+                    idleFrames[0] = tmp[0][i];
+                    continue;
+                }
+                walkFrames[index++] = tmp[0][i];
             }
-            walkFrames[index++] = tmp[0][i];
+
+            Animation<TextureRegion> idleAnimation = new Animation<>(0.135f, idleFrames);
+            Animation<TextureRegion> walkAnimation = new Animation<>(0.135f, walkFrames);
+            Animation<TextureRegion> runningAnimation = new Animation<>(0.105f, walkFrames);
+
+
+            AnimateStateComponent animateStateComponent = new AnimateStateComponent();
+
+            animateStateComponent.animations.put(PlayerState.IDLE, idleAnimation);
+            animateStateComponent.animations.put(PlayerState.WALK, walkAnimation);
+            animateStateComponent.animations.put(PlayerState.RUNNING, runningAnimation);
+
+            player.add(animateStateComponent);
         }
-
-        Animation<TextureRegion> idleAnimation = new Animation<>(0.135f, idleFrames);
-        Animation<TextureRegion> walkAnimation = new Animation<>(0.135f, walkFrames);
-        Animation<TextureRegion> runningAnimation = new Animation<>(0.105f, walkFrames);
-
-        AnimateStateComponent animateStateComponent = new AnimateStateComponent();
-
-        animateStateComponent.animations.put(PlayerState.IDLE, idleAnimation);
-        animateStateComponent.animations.put(PlayerState.WALK, walkAnimation);
-        animateStateComponent.animations.put(PlayerState.RUNNING, runningAnimation);
-
-        player.add(animateStateComponent);
 
         return player;
     }
