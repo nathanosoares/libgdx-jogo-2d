@@ -82,7 +82,7 @@ public class PlayerPacketHandler extends PacketHandler {
     public void onWorldJoin(PacketWorldJoin worldReady) {
         IWorld world = serverGame.getServerManager().getDefaultWorld();
 
-        player = new Player(worldReady.getId(), worldReady.getName(), world);
+        player = new Player(worldReady.getId(), worldReady.getName());
         player.add(new NetworkComponent(this));
 
         world.spawnEntity(player, world.getBounds().getWidth() / 2.0f, world.getBounds().getHeight() / 2.0f);

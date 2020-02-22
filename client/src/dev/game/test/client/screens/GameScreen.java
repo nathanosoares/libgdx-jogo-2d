@@ -1,6 +1,5 @@
 package dev.game.test.client.screens;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.ScreenAdapter;
@@ -14,7 +13,6 @@ import dev.game.test.api.IClientGame;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.world.systems.WorldRenderSystem;
-import dev.game.test.core.entity.components.PositionComponent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -35,9 +33,6 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private Vector2 hover = new Vector2();
 
-    @Getter
-    private Entity localEntity;
-
     @Override
     public void show() {
         this.camera = new OrthographicCamera();
@@ -49,24 +44,12 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-//        int mapWidth = 20;
-//        int mapHeight = 20;
-
-//        WorldClient world = new WorldClient("world", mapWidth, mapHeight);
-//
-//        Engine engine = clientGame.getEngine();
-//
+        // TODO dar setup da engine do IGame
 //        engine.addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
 //        engine.addSystem(new VisualRenderSystem(this.spriteBatch));
 //        engine.addSystem(new LocalEntityControllerSystem(this));
 //        engine.addSystem(new CollisiveDebugSystem(this.spriteBatch));
 //        engine.addSystem(new AnimateStateSystem());
-//
-//        this.localEntity = buildLocalPlayer(world);
-//        this.localEntity.getComponent(PositionComponent.class).x = mapHeight / 2f;
-//        this.localEntity.getComponent(PositionComponent.class).y = mapHeight / 2f;
-//
-//        engine.addEntity(this.localEntity);
     }
 
     @Override
@@ -79,29 +62,27 @@ public class GameScreen extends ScreenAdapter {
 
         GameUtils.clearScreen(0, 0, 0, 100);
 
-        if (this.localEntity != null) {
-            PositionComponent localEntityPosition = this.localEntity.getComponent(PositionComponent.class);
+        if (this.clientGame.getClientManager().getPlayer() != null) {
+            Vector2 playerPosition = this.clientGame.getClientManager().getPlayer().getPosition();
 
-            if (localEntityPosition != null) {
-                this.camera.position.set(localEntityPosition.x, localEntityPosition.y, 0);
+            this.camera.position.set(playerPosition.x, playerPosition.y, 0);
 
-                float visibleW = viewport.getWorldWidth() / 2.0f +
-                        (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();
+            float visibleW = viewport.getWorldWidth() / 2.0f +
+                    (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();
 
-                float visibleH = viewport.getWorldHeight() / 2.0f +
-                        (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
+            float visibleH = viewport.getWorldHeight() / 2.0f +
+                    (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
 
-                WorldRenderSystem renderSystem = clientGame.getEngine().getSystem(WorldRenderSystem.class);
-                IWorld worldClient = renderSystem.getWorld();
+            WorldRenderSystem renderSystem = clientGame.getEngine().getSystem(WorldRenderSystem.class);
+            IWorld worldClient = renderSystem.getWorld();
 
-                this.camera.position.x = MathUtils
-                        .clamp(this.camera.position.x, visibleW, worldClient.getBounds().getWidth() - visibleW);
+            this.camera.position.x = MathUtils
+                    .clamp(this.camera.position.x, visibleW, worldClient.getBounds().getWidth() - visibleW);
 
-                this.camera.position.y = MathUtils
-                        .clamp(this.camera.position.y, visibleH, worldClient.getBounds().getHeight() - visibleH);
+            this.camera.position.y = MathUtils
+                    .clamp(this.camera.position.y, visibleH, worldClient.getBounds().getHeight() - visibleH);
 
-                this.camera.update();
-            }
+            this.camera.update();
         }
 
         clientGame.getEngine().update(delta);
@@ -111,52 +92,4 @@ public class GameScreen extends ScreenAdapter {
     public void dispose() {
     }
 
-//    private Player buildLocalPlayer(WorldClient world) {
-
-//        Texture texture = new Texture("rpg-pack/chars/gabe/gabe-idle-run.png");
-//        String username;
-//
-//        if (System.getProperty("username") != null) {
-//            username = System.getProperty("username");
-//        } else {
-//            username = String.format("Player%d", new Random().nextInt(1000));
-//        }
-//
-//        Player player = new Player(UUID.randomUUID(), username, world);
-//
-//        player.add(new VisualComponent());
-//        player.add(new FacingVisualFlipComponent());
-//
-//        // Animate
-//        {
-//            TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth() / 7, texture.getHeight());
-//
-//            TextureRegion[] idleFrames = new TextureRegion[1];
-//            TextureRegion[] walkFrames = new TextureRegion[6];
-//
-//            int index = 0;
-//            for (int i = 0; i < 7; i++) {
-//                if (i == 0) {
-//                    idleFrames[0] = tmp[0][i];
-//                    continue;
-//                }
-//                walkFrames[index++] = tmp[0][i];
-//            }
-//
-//            Animation<TextureRegion> idleAnimation = new Animation<>(0.135f, idleFrames);
-//            Animation<TextureRegion> walkAnimation = new Animation<>(0.135f, walkFrames);
-//            Animation<TextureRegion> runningAnimation = new Animation<>(0.105f, walkFrames);
-//
-//
-//            AnimateStateComponent animateStateComponent = new AnimateStateComponent();
-//
-//            animateStateComponent.animations.put(PlayerState.IDLE, idleAnimation);
-//            animateStateComponent.animations.put(PlayerState.WALK, walkAnimation);
-//            animateStateComponent.animations.put(PlayerState.RUNNING, runningAnimation);
-//
-//            player.add(animateStateComponent);
-//        }
-
-//        return null;
-//    }
 }

@@ -13,14 +13,12 @@ public class ClientGame extends Game implements IClientGame {
     @Getter
     private final ScreenManager screenManager;
 
-    //
-
     @Getter
     private final ClientManager clientManager;
 
     public ClientGame() {
         this.screenManager = new ScreenManager();
-        this.clientManager = new ClientManager();
+        this.clientManager = new ClientManager(GameUtils.buildLocalPlayer());
     }
 
     @Override

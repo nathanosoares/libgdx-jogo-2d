@@ -1,6 +1,7 @@
 package dev.game.test.core.entity;
 
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
+import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.net.packet.Packet;
@@ -43,6 +44,7 @@ public class Player extends Entity implements IPlayer {
     public void setName(String name) {
         NamedComponent.MAPPER.get(this).name = name;
     }
+
 
     /*
         Keybinds

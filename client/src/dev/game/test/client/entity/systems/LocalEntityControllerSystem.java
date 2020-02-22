@@ -1,21 +1,21 @@
 package dev.game.test.client.entity.systems;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import dev.game.test.client.screens.GameScreen;
+import dev.game.test.api.IClientGame;
 import dev.game.test.core.entity.components.MovementComponent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class LocalEntityControllerSystem extends EntitySystem {
 
-    private final GameScreen gameScreen;
+    private final IClientGame clientGame;
 
     @Override
     public void update(float deltaTime) {
-        MovementComponent movement = this.gameScreen.getLocalEntity()
-                .getComponent(MovementComponent.class);
+        MovementComponent movement = MovementComponent.MAPPER.get((Entity) this.clientGame.getClientManager().getPlayer());
 
         float walkSpeed = 4;
 

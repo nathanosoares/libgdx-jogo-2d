@@ -1,5 +1,6 @@
 package dev.game.test.core.entity;
 
+import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.components.EntityComponent;
@@ -25,6 +26,12 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
     @Override
     public com.badlogic.ashley.core.Entity getHandle() {
         return this;
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        PositionComponent position = PositionComponent.MAPPER.get(this);
+        return new Vector2(position.x, position.y);
     }
 
     @Override

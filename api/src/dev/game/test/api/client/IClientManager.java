@@ -10,8 +10,6 @@ public interface IClientManager extends IGameManager {
 
     void setCurrentWorld(IWorld world);
 
-    //
-
     IPlayer getPlayer();
 
 }
