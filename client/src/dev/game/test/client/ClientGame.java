@@ -16,11 +16,11 @@ public class ClientGame extends Game implements IClientGame {
     //
 
     @Getter
-    private final ClientManager gameManager;
+    private final ClientManager clientManager;
 
     public ClientGame() {
         this.screenManager = new ScreenManager();
-        this.gameManager = new ClientManager();
+        this.clientManager = new ClientManager();
     }
 
     @Override
