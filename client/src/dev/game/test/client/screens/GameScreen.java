@@ -42,19 +42,13 @@ public class GameScreen extends ScreenAdapter {
 
     public static final int VIEWPORT_SIZE = 20;
 
-    //
-
     private final IClientGame clientGame;
-
-    //
 
     private Viewport viewport;
 
     private OrthographicCamera camera;
 
     private SpriteBatch spriteBatch;
-
-    private Map<String, WorldClient> worlds = Maps.newHashMap();
 
     @Getter
     private Vector2 hover = new Vector2();
@@ -73,24 +67,24 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-        int mapWidth = 20;
-        int mapHeight = 20;
+//        int mapWidth = 20;
+//        int mapHeight = 20;
 
-        WorldClient world = new WorldClient("world", mapWidth, mapHeight);
-
-        Engine engine = clientGame.getEngine();
-
-        engine.addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
-        engine.addSystem(new VisualRenderSystem(this.spriteBatch));
-        engine.addSystem(new LocalEntityControllerSystem(this));
-        engine.addSystem(new CollisiveDebugSystem(this.spriteBatch));
-        engine.addSystem(new AnimateStateSystem());
-
-        this.localEntity = buildLocalPlayer(world);
-        this.localEntity.getComponent(PositionComponent.class).x = mapHeight / 2f;
-        this.localEntity.getComponent(PositionComponent.class).y = mapHeight / 2f;
-
-        engine.addEntity(this.localEntity);
+//        WorldClient world = new WorldClient("world", mapWidth, mapHeight);
+//
+//        Engine engine = clientGame.getEngine();
+//
+//        engine.addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
+//        engine.addSystem(new VisualRenderSystem(this.spriteBatch));
+//        engine.addSystem(new LocalEntityControllerSystem(this));
+//        engine.addSystem(new CollisiveDebugSystem(this.spriteBatch));
+//        engine.addSystem(new AnimateStateSystem());
+//
+//        this.localEntity = buildLocalPlayer(world);
+//        this.localEntity.getComponent(PositionComponent.class).x = mapHeight / 2f;
+//        this.localEntity.getComponent(PositionComponent.class).y = mapHeight / 2f;
+//
+//        engine.addEntity(this.localEntity);
     }
 
     @Override
@@ -103,27 +97,29 @@ public class GameScreen extends ScreenAdapter {
 
         GameUtils.clearScreen(0, 50, 0, 100);
 
-        PositionComponent localEntityPosition = this.localEntity.getComponent(PositionComponent.class);
+        if (this.localEntity != null) {
+            PositionComponent localEntityPosition = this.localEntity.getComponent(PositionComponent.class);
 
-        if (localEntityPosition != null) {
-            this.camera.position.set(localEntityPosition.x, localEntityPosition.y, 0);
+            if (localEntityPosition != null) {
+                this.camera.position.set(localEntityPosition.x, localEntityPosition.y, 0);
 
-            float visibleW = viewport.getWorldWidth() / 2.0f +
-                    (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();
+                float visibleW = viewport.getWorldWidth() / 2.0f +
+                        (float) viewport.getScreenX() / (float) viewport.getScreenWidth() * viewport.getWorldWidth();
 
-            float visibleH = viewport.getWorldHeight() / 2.0f +
-                    (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
+                float visibleH = viewport.getWorldHeight() / 2.0f +
+                        (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
 
-            WorldRenderSystem renderSystem = clientGame.getEngine().getSystem(WorldRenderSystem.class);
-            WorldClient worldClient = renderSystem.getWorldClient();
+                WorldRenderSystem renderSystem = clientGame.getEngine().getSystem(WorldRenderSystem.class);
+                WorldClient worldClient = renderSystem.getWorldClient();
 
-            this.camera.position.x = MathUtils
-                    .clamp(this.camera.position.x, visibleW, worldClient.getBounds().getWidth() - visibleW);
+                this.camera.position.x = MathUtils
+                        .clamp(this.camera.position.x, visibleW, worldClient.getBounds().getWidth() - visibleW);
 
-            this.camera.position.y = MathUtils
-                    .clamp(this.camera.position.y, visibleH, worldClient.getBounds().getHeight() - visibleH);
+                this.camera.position.y = MathUtils
+                        .clamp(this.camera.position.y, visibleH, worldClient.getBounds().getHeight() - visibleH);
 
-            this.camera.update();
+                this.camera.update();
+            }
         }
 
         clientGame.getEngine().update(delta);
