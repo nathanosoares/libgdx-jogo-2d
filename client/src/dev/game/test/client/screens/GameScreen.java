@@ -12,6 +12,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.GameUtils;
+import dev.game.test.client.entity.systems.AnimateStateSystem;
+import dev.game.test.client.entity.systems.CollisiveDebugSystem;
+import dev.game.test.client.entity.systems.LocalEntityControllerSystem;
+import dev.game.test.client.entity.systems.VisualRenderSystem;
 import dev.game.test.client.world.systems.WorldRenderSystem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +34,7 @@ public class GameScreen extends ScreenAdapter {
 
     private SpriteBatch spriteBatch;
 
+
     @Getter
     private Vector2 hover = new Vector2();
 
@@ -44,12 +49,12 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-        // TODO dar setup da engine do IGame
-//        engine.addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
-//        engine.addSystem(new VisualRenderSystem(this.spriteBatch));
-//        engine.addSystem(new LocalEntityControllerSystem(this));
-//        engine.addSystem(new CollisiveDebugSystem(this.spriteBatch));
-//        engine.addSystem(new AnimateStateSystem());
+        this.clientGame.getEngine().addSystem(new WorldRenderSystem(this.clientGame, this.camera, this.spriteBatch, this.viewport));
+        this.clientGame.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
+        this.clientGame.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
+        this.clientGame.getEngine().addSystem(new LocalEntityControllerSystem(this.clientGame));
+        this.clientGame.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
+        this.clientGame.getEngine().addSystem(new AnimateStateSystem());
     }
 
     @Override
@@ -62,7 +67,8 @@ public class GameScreen extends ScreenAdapter {
 
         GameUtils.clearScreen(0, 0, 0, 100);
 
-        if (this.clientGame.getClientManager().getPlayer() != null) {
+        if (clientGame.getClientManager().getCurrentWorld() != null
+                && this.clientGame.getClientManager().getPlayer() != null) {
             Vector2 playerPosition = this.clientGame.getClientManager().getPlayer().getPosition();
 
             this.camera.position.set(playerPosition.x, playerPosition.y, 0);
@@ -73,8 +79,7 @@ public class GameScreen extends ScreenAdapter {
             float visibleH = viewport.getWorldHeight() / 2.0f +
                     (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
 
-            WorldRenderSystem renderSystem = clientGame.getEngine().getSystem(WorldRenderSystem.class);
-            IWorld worldClient = renderSystem.getWorld();
+            IWorld worldClient = clientGame.getClientManager().getCurrentWorld();
 
             this.camera.position.x = MathUtils
                     .clamp(this.camera.position.x, visibleW, worldClient.getBounds().getWidth() - visibleW);
