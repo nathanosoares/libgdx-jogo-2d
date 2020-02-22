@@ -1,11 +1,12 @@
 package dev.game.test.core;
 
 import com.badlogic.ashley.core.Engine;
+import dev.game.test.api.IGame;
 import dev.game.test.core.event.EventManager;
 import dev.game.test.core.registry.RegistryManager;
 import lombok.Getter;
 
-public abstract class Game {
+public abstract class Game implements IGame {
 
     @Getter
     private final RegistryManager registryManager;

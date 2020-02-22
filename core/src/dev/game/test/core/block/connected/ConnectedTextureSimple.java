@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
+import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.core.block.Block;
-import dev.game.test.core.block.BlockState;
 
 public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
 
@@ -59,7 +59,7 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
         Public
      */
 
-    public TextureRegion getTexture(BlockState blockState) {
+    public TextureRegion getTexture(IBlockState blockState) {
         int code = blockState.getConnectedData();
         atlasRegion.setRegion(0, code * 16, 16, 16);
         return atlasRegion;
@@ -70,10 +70,12 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
      */
 
     @Override
-    public boolean shouldRender(BlockState blockState, TextureConnection facing) {
+    public boolean shouldRender(IBlockState blockState, TextureConnection facing) {
         if (facing instanceof SideTextureConnection) {
             SideTextureConnection textureConnection = (SideTextureConnection) facing;
-            BlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, textureConnection.getSide());
+
+            IBlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, textureConnection.getSide());
+
             return sideBlock == null || !blockState.getBlock().equals(sideBlock.getBlock());
         }
 
@@ -81,14 +83,15 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
             CornerTextureConnection textureConnection = (CornerTextureConnection) facing;
 
             for (EnumFacing facing1 : textureConnection.getSides()) {
-                BlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, facing1);
+                IBlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, facing1);
 
                 if (sideBlock == null || !blockState.getBlock().equals(sideBlock.getBlock())) {
                     return false;
                 }
             }
 
-            BlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, textureConnection.getSides());
+            IBlockState sideBlock = blockState.getLayer().getFacingBlock(blockState, textureConnection.getSides());
+
             return sideBlock == null || !blockState.getBlock().equals(sideBlock.getBlock());
         }
 
@@ -96,7 +99,7 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
     }
 
     @Override
-    public void updateNeighbours(BlockState blockState) {
+    public void updateNeighbours(IBlockState blockState) {
         this.block.neighbourUpdate(blockState);
     }
 

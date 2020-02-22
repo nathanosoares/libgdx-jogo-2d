@@ -4,10 +4,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import dev.game.test.client.block.BlockClient;
+import dev.game.test.api.block.IBlockState;
+import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
 
-public class BlockGrass extends BlockClient {
+public class BlockGrass extends Block {
 
     private TextureRegion texture;
 
@@ -20,7 +21,7 @@ public class BlockGrass extends BlockClient {
     }
 
     @Override
-    public TextureRegion getTexture(BlockState blockState) {
+    public TextureRegion getTexture(IBlockState blockState) {
         return texture;
     }
 }

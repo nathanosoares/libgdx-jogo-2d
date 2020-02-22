@@ -37,7 +37,7 @@ public class Block implements IBlock {
 
     public void neighbourUpdate(IBlockState blockState) {
         for (EnumFacing facing : EnumFacing.values()) {
-            BlockState targetData = blockState.getLayer().getFacingBlock(blockState, facing);
+            BlockState targetData = (BlockState) blockState.getLayer().getFacingBlock(blockState, facing);
 
             if (targetData != null) {
                 targetData.getBlock().onBlockNeighbourUpdate(targetData, facing.getOpposite());

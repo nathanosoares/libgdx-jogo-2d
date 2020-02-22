@@ -1,6 +1,7 @@
 package dev.game.test.core.world;
 
 import com.badlogic.gdx.math.Vector2;
+import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.core.block.BlockState;
@@ -27,7 +28,7 @@ public class WorldLayer implements IWorldLayer {
         return states[x][y];
     }
 
-    public BlockState getFacingBlock(BlockState blockState, EnumFacing... facings) {
+    public BlockState getFacingBlock(IBlockState blockState, EnumFacing... facings) {
         Vector2 position = blockState.getPosition();
         int x = (int) position.x;
         int y = (int) position.y;

@@ -7,7 +7,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
+import dev.game.test.api.world.IWorld;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.FacingComponent;
@@ -66,7 +68,7 @@ public class MovementSystem extends IteratingSystem {
             startY = (int) (box.y);
             endY = (int) (box.y + box.height);
 
-            BlockState found = findBlock(position.world, velocity.x < 0, startX, endX, startY, endY);
+            IBlockState found = findBlock(position.world, velocity.x < 0, startX, endX, startY, endY);
 
             if (found != null) {
                 if (movement.velocityX > 0) {
@@ -101,7 +103,7 @@ public class MovementSystem extends IteratingSystem {
             startX = (int) box.x;
             endX = (int) (box.x + box.width);
 
-            BlockState found = findBlock(position.world, velocity.y < 0, startX, endX, startY, endY);
+            IBlockState found = findBlock(position.world, velocity.y < 0, startX, endX, startY, endY);
 
             if (found != null) {
                 if (movement.velocityY > 0) {
@@ -123,7 +125,7 @@ public class MovementSystem extends IteratingSystem {
         updateFacing(entity, movement);
     }
 
-    private BlockState findBlock(World world, boolean reverse, int startX, int endX, int startY, int endY) {
+    private IBlockState findBlock(IWorld world, boolean reverse, int startX, int endX, int startY, int endY) {
 
         int minX = Math.min(startX, endX);
         int maxX = Math.max(startX, endX);
@@ -136,7 +138,7 @@ public class MovementSystem extends IteratingSystem {
                 for (int y = maxY; y >= minY; y--) {
                     debug.put(x, y);
 
-                    BlockState blockState = world.getLayers()[1].getBlockState(x, y);
+                    IBlockState blockState = world.getLayers()[1].getBlockState(x, y);
 
                     if (blockState != null) {
                         return blockState;
@@ -151,7 +153,7 @@ public class MovementSystem extends IteratingSystem {
             for (int y = minY; y <= maxY; y++) {
                 debug.put(x, y);
 
-                BlockState blockState = world.getLayers()[1].getBlockState(x, y);
+                IBlockState blockState = world.getLayers()[1].getBlockState(x, y);
 
                 if (blockState != null) {
                     return blockState;
