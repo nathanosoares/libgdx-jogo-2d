@@ -80,7 +80,7 @@ public class WorldRenderSystem extends EntitySystem {
                 }
 
                 BlockState blockState = (BlockState) layer.getBlockState(col, row);
-                TextureRegion region = ((Block) blockState.getBlock()).getTexture(blockState);
+                TextureRegion region = blockState.getBlock().getTexture(blockState);
 
                 if (x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
 
@@ -92,8 +92,10 @@ public class WorldRenderSystem extends EntitySystem {
                     batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
                 }
 
-                batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);
-                batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+                if (region != null) {
+                    batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);
+                    batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+                }
 
                 x += layerTileWidth;
             }
