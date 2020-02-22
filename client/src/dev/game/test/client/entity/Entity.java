@@ -6,7 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.world.WorldClient;
+
 import java.util.UUID;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
