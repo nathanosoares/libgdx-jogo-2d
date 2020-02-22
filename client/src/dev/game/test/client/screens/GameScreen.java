@@ -131,50 +131,50 @@ public class GameScreen extends ScreenAdapter {
 
     private Player buildLocalPlayer(WorldClient world) {
 
-        Texture texture = new Texture("rpg-pack/chars/gabe/gabe-idle-run.png");
-        String username;
+//        Texture texture = new Texture("rpg-pack/chars/gabe/gabe-idle-run.png");
+//        String username;
+//
+//        if (System.getProperty("username") != null) {
+//            username = System.getProperty("username");
+//        } else {
+//            username = String.format("Player%d", new Random().nextInt(1000));
+//        }
+//
+//        Player player = new Player(UUID.randomUUID(), username, world);
+//
+//        player.add(new VisualComponent());
+//        player.add(new FacingVisualFlipComponent());
+//
+//        // Animate
+//        {
+//            TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth() / 7, texture.getHeight());
+//
+//            TextureRegion[] idleFrames = new TextureRegion[1];
+//            TextureRegion[] walkFrames = new TextureRegion[6];
+//
+//            int index = 0;
+//            for (int i = 0; i < 7; i++) {
+//                if (i == 0) {
+//                    idleFrames[0] = tmp[0][i];
+//                    continue;
+//                }
+//                walkFrames[index++] = tmp[0][i];
+//            }
+//
+//            Animation<TextureRegion> idleAnimation = new Animation<>(0.135f, idleFrames);
+//            Animation<TextureRegion> walkAnimation = new Animation<>(0.135f, walkFrames);
+//            Animation<TextureRegion> runningAnimation = new Animation<>(0.105f, walkFrames);
+//
+//
+//            AnimateStateComponent animateStateComponent = new AnimateStateComponent();
+//
+//            animateStateComponent.animations.put(PlayerState.IDLE, idleAnimation);
+//            animateStateComponent.animations.put(PlayerState.WALK, walkAnimation);
+//            animateStateComponent.animations.put(PlayerState.RUNNING, runningAnimation);
+//
+//            player.add(animateStateComponent);
+//        }
 
-        if (System.getProperty("username") != null) {
-            username = System.getProperty("username");
-        } else {
-            username = String.format("Player%d", new Random().nextInt(1000));
-        }
-
-        Player player = new Player(UUID.randomUUID(), username, world);
-
-        player.add(new VisualComponent());
-        player.add(new FacingVisualFlipComponent());
-
-        // Animate
-        {
-            TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth() / 7, texture.getHeight());
-
-            TextureRegion[] idleFrames = new TextureRegion[1];
-            TextureRegion[] walkFrames = new TextureRegion[6];
-
-            int index = 0;
-            for (int i = 0; i < 7; i++) {
-                if (i == 0) {
-                    idleFrames[0] = tmp[0][i];
-                    continue;
-                }
-                walkFrames[index++] = tmp[0][i];
-            }
-
-            Animation<TextureRegion> idleAnimation = new Animation<>(0.135f, idleFrames);
-            Animation<TextureRegion> walkAnimation = new Animation<>(0.135f, walkFrames);
-            Animation<TextureRegion> runningAnimation = new Animation<>(0.105f, walkFrames);
-
-
-            AnimateStateComponent animateStateComponent = new AnimateStateComponent();
-
-            animateStateComponent.animations.put(PlayerState.IDLE, idleAnimation);
-            animateStateComponent.animations.put(PlayerState.WALK, walkAnimation);
-            animateStateComponent.animations.put(PlayerState.RUNNING, runningAnimation);
-
-            player.add(animateStateComponent);
-        }
-
-        return player;
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package dev.game.test.api.block;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import dev.game.test.api.util.EnumFacing;
 
 public interface IBlock {
 
@@ -23,4 +24,5 @@ public interface IBlock {
         Updates
      */
 
+    void onBlockNeighbourUpdate(IBlockState blockState, EnumFacing neighbourFacing);
 }
