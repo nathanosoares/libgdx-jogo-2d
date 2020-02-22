@@ -2,14 +2,10 @@ package dev.game.test.client.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.Disposable;
-import dev.game.test.client.ClientApplication;
+import dev.game.test.api.client.screens.IScreenManager;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public class ScreenManager implements Disposable {
-
-    private final ClientApplication application;
+public class ScreenManager implements IScreenManager, Disposable {
 
     //
 

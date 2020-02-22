@@ -90,9 +90,6 @@ project(":core") {
         api "kryonet:kryonet:$kryonetVersion"
         api "com.esotericsoftware:kryo:$kryoVersion"
 
-        api "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
-        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        api "com.google.dagger:dagger:$daggerVersion"
     }
 }
 
@@ -102,6 +99,8 @@ project(":api") {
     dependencies {
         api "com.google.guava:guava:$guavaVersion"
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
+        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
     }
 }
 

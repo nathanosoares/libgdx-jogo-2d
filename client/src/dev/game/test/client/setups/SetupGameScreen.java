@@ -1,20 +1,18 @@
 package dev.game.test.client.setups;
 
-import com.google.inject.Inject;
-import dev.game.test.client.ClientApplication;
+import dev.game.test.api.IClientGame;
 import dev.game.test.client.screens.GameScreen;
-import dev.game.test.core.GameApplication;
 import dev.game.test.core.setup.Setup;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class SetupGameScreen implements Setup {
 
-    @Inject
-    private GameApplication application;
+    private final IClientGame clientGame;
 
     @Override
     public void setup() {
-
-        GameScreen screenGame = new GameScreen((ClientApplication) application);
-        ((ClientApplication) application).getScreenManager().setCurrentScreen(screenGame);
+        GameScreen screenGame = new GameScreen(clientGame);
+        clientGame.getScreenManager().setCurrentScreen(screenGame);
     }
 }

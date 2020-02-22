@@ -1,6 +1,8 @@
 package dev.game.test.core.block;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import dev.game.test.api.block.IBlock;
+import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +19,23 @@ public class Block implements IBlock {
     @Getter
     protected int height = 1;
 
-    public void neighbourUpdate(BlockState blockState) {
+    /*
+
+     */
+
+    public void loadTextures() {
+
+    }
+
+    public TextureRegion getTexture(IBlockState state) {
+        return null;
+    }
+
+    /*
+
+     */
+
+    public void neighbourUpdate(IBlockState blockState) {
         for (EnumFacing facing : EnumFacing.values()) {
             BlockState targetData = blockState.getLayer().getFacingBlock(blockState, facing);
 
@@ -27,7 +45,7 @@ public class Block implements IBlock {
         }
     }
 
-    public void onBlockNeighbourUpdate(BlockState blockState, EnumFacing neighbourFacing) {
+    public void onBlockNeighbourUpdate(IBlockState blockState, EnumFacing neighbourFacing) {
 
     }
 }

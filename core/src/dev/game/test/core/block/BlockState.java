@@ -19,7 +19,8 @@ public class BlockState implements IBlockState {
 
     private Vector2 position;
 
-    public int connectedData;
+    @Setter
+    private int connectedData;
 
     public BlockState(Block block, World world, WorldLayer layer, Vector2 position) {
         this.block = block;

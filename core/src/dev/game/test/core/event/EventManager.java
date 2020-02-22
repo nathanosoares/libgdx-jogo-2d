@@ -3,10 +3,10 @@ package dev.game.test.core.event;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import dev.game.test.api.event.Event;
-import lombok.RequiredArgsConstructor;
+import dev.game.test.api.event.EventSubscriber;
+import dev.game.test.api.event.IEventManager;
 
-@RequiredArgsConstructor
-public class EventManager {
+public class EventManager implements IEventManager {
 
     private final Multimap<Class<? extends Event>, EventSubscriber> subscribers = HashMultimap.create();
 

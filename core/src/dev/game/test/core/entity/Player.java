@@ -2,19 +2,21 @@ package dev.game.test.core.entity;
 
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import dev.game.test.api.entity.IPlayer;
+import dev.game.test.api.keybind.Keybind;
+import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.components.*;
 import dev.game.test.core.entity.state.PlayerState;
-import dev.game.test.core.world.World;
 
 import java.util.UUID;
 
 public class Player extends Entity implements IPlayer {
 
-    public Player(String name, World world) {
-        this.add(new NamedComponent(name));
+    public Player(UUID uuid, String name, IWorld world) {
+        super(uuid, world);
 
+        this.add(new NamedComponent(name));
         this.add(new PositionComponent(0, 0, world));
     }
 
@@ -29,6 +31,8 @@ public class Player extends Entity implements IPlayer {
         DefaultStateMachine<Entity, PlayerState> defaultStateMachine = new DefaultStateMachine<>(this, PlayerState.WALK);
 
         this.add(new StateComponent<>(defaultStateMachine));
+
+        this.add(new KeybindComponent());
     }
 
     @Override
@@ -36,23 +40,33 @@ public class Player extends Entity implements IPlayer {
         return this.getComponent(NamedComponent.class).name;
     }
 
+    /*
+        Keybinds
+     */
+
     @Override
-    public boolean isValid() {
-        return false;
+    public void addActiveKeybind(Keybind keybind) {
+        KeybindComponent.MAPPER.get(this).activeKeybinds.add(keybind);
     }
 
     @Override
-    public IWorld getWorld() {
-        return null;
+    public void removeActiveKeybind(Keybind keybind) {
+        KeybindComponent.MAPPER.get(this).activeKeybinds.remove(keybind);
     }
 
     @Override
-    public void setWorld(IWorld world) {
-
+    public boolean hasActiveKeybind(Keybind keybind) {
+        return KeybindComponent.MAPPER.get(this).activeKeybinds.contains(keybind);
     }
 
+    /*
+        Networking
+     */
+
     @Override
-    public UUID getId() {
-        return null;
+    public void sendPacket(Packet packet) {
+        if(NetworkComponent.MAPPER.has(this)) {
+            NetworkComponent.MAPPER.get(this).packetHandler.sendPacket(packet);
+        }
     }
 }

@@ -1,23 +1,20 @@
 package dev.game.test.client.setups;
 
-import com.badlogic.gdx.Gdx;
+import dev.game.test.api.IGame;
 import dev.game.test.client.block.BlockClient;
 import dev.game.test.client.block.Blocks;
 import dev.game.test.client.registry.RegistryBlocks;
-import dev.game.test.core.registry.RegistryManager;
 import dev.game.test.core.setup.Setup;
+import lombok.RequiredArgsConstructor;
 
-import javax.inject.Inject;
-
+@RequiredArgsConstructor
 public class SetupBlocks implements Setup {
 
-    @Inject
-    protected RegistryManager registryManager;
+    private final IGame game;
 
     @Override
     public void setup() {
-        Gdx.app.debug("registryManager ", String.valueOf(registryManager));
-        RegistryBlocks registryBlocks = registryManager.getRegistry(BlockClient.class);
+        RegistryBlocks registryBlocks = game.getRegistryManager().getRegistry(BlockClient.class);
 
         registryBlocks.registerBlock(0, Blocks.AIR);
         registryBlocks.registerBlock(1, Blocks.DIRT);

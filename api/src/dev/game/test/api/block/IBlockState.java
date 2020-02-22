@@ -13,4 +13,8 @@ public interface IBlockState {
     IWorldLayer getLayer();
 
     Vector2 getPosition();
+
+    int getConnectedData();
+
+    void setConnectedData(int data);
 }

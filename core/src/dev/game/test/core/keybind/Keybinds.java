@@ -1,6 +1,7 @@
 package dev.game.test.core.keybind;
 
 import com.badlogic.gdx.Input;
+import dev.game.test.api.block.Keybind;
 
 public class Keybinds {
 

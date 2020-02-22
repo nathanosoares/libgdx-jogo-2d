@@ -1,5 +1,6 @@
 package dev.game.test.client.screens;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
@@ -14,7 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.Maps;
-import dev.game.test.client.ClientApplication;
+import dev.game.test.api.IClientGame;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.components.AnimateStateComponent;
 import dev.game.test.client.entity.components.FacingVisualFlipComponent;
@@ -29,19 +30,22 @@ import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.PositionComponent;
 import dev.game.test.core.entity.state.PlayerState;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import javax.inject.Inject;
 import java.util.Map;
+import java.util.Random;
 
 @Getter
+@RequiredArgsConstructor
 public class GameScreen extends ScreenAdapter {
 
     public static final int VIEWPORT_SIZE = 20;
 
-    @Getter
-    private static GameScreen instance;
+    //
 
-    private final ClientApplication application;
+    private final IClientGame clientGame;
+
+    //
 
     private Viewport viewport;
 
@@ -56,12 +60,6 @@ public class GameScreen extends ScreenAdapter {
 
     @Getter
     private Entity localEntity;
-
-    @Inject
-    public GameScreen(ClientApplication application) {
-        this.application = application;
-        instance = this;
-    }
 
     @Override
     public void show() {
@@ -79,17 +77,19 @@ public class GameScreen extends ScreenAdapter {
 
         WorldClient world = new WorldClient("world", mapWidth, mapHeight);
 
-        this.application.getEngine().addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
-        this.application.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
-        this.application.getEngine().addSystem(new LocalEntityControllerSystem(this));
-        this.application.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
-        this.application.getEngine().addSystem(new AnimateStateSystem());
+        Engine engine = clientGame.getEngine();
+
+        engine.addSystem(new WorldRenderSystem(world, this.camera, this.spriteBatch, this.viewport));
+        engine.addSystem(new VisualRenderSystem(this.spriteBatch));
+        engine.addSystem(new LocalEntityControllerSystem(this));
+        engine.addSystem(new CollisiveDebugSystem(this.spriteBatch));
+        engine.addSystem(new AnimateStateSystem());
 
         this.localEntity = buildLocalPlayer(world);
         this.localEntity.getComponent(PositionComponent.class).x = mapHeight / 2f;
         this.localEntity.getComponent(PositionComponent.class).y = mapHeight / 2f;
 
-        this.application.getEngine().addEntity(this.localEntity);
+        engine.addEntity(this.localEntity);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class GameScreen extends ScreenAdapter {
             float visibleH = viewport.getWorldHeight() / 2.0f +
                     (float) viewport.getScreenY() / (float) viewport.getScreenHeight() * viewport.getWorldHeight();
 
-            WorldRenderSystem renderSystem = this.application.getEngine().getSystem(WorldRenderSystem.class);
+            WorldRenderSystem renderSystem = clientGame.getEngine().getSystem(WorldRenderSystem.class);
             WorldClient worldClient = renderSystem.getWorldClient();
 
             this.camera.position.x = MathUtils
@@ -125,7 +125,7 @@ public class GameScreen extends ScreenAdapter {
             this.camera.update();
         }
 
-        this.application.getEngine().update(delta);
+        clientGame.getEngine().update(delta);
     }
 
     @Override
@@ -135,8 +135,15 @@ public class GameScreen extends ScreenAdapter {
     private Player buildLocalPlayer(WorldClient world) {
 
         Texture texture = new Texture("rpg-pack/chars/gabe/gabe-idle-run.png");
+        String username;
 
-        Player player = new Player(this.application.getUsername(), world);
+        if (System.getProperty("username") != null) {
+            username = System.getProperty("username");
+        } else {
+            username = String.format("Player%d", new Random().nextInt(1000));
+        }
+
+        Player player = new Player(username, world);
 
         player.add(new VisualComponent());
         player.add(new FacingVisualFlipComponent());

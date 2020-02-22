@@ -2,6 +2,7 @@ package dev.game.test.core.entity.components;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
+import dev.game.test.api.world.IWorld;
 import dev.game.test.core.world.World;
 import lombok.AllArgsConstructor;
 
@@ -12,5 +13,5 @@ public class PositionComponent implements Component {
 
     public float x, y;
 
-    public World world;
+    public IWorld world;
 }

@@ -2,7 +2,6 @@ package dev.game.test.core.setup;
 
 import com.badlogic.gdx.Gdx;
 import com.google.common.collect.Maps;
-import dev.game.test.core.GameApplication;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
@@ -11,8 +10,6 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class SetupPipeline {
-
-    private final GameApplication application;
 
     private final Map<Class<? extends Setup>, Setup> registry = Maps.newLinkedHashMap();
 
@@ -23,9 +20,6 @@ public class SetupPipeline {
         }
 
         this.registry.put(setup.getClass(), setup);
-
-        this.application.getInjector().injectMembers(setup);
-
         return this;
     }
 

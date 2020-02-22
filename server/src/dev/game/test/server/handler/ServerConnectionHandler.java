@@ -4,16 +4,23 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.google.common.collect.Maps;
-import dev.game.test.core.packet.Packet;
+import dev.game.test.api.IServerGame;
+import dev.game.test.api.net.packet.Packet;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class ServerConnectionHandler {
 
+    private final IServerGame serverGame;
+
+    //
+
     @Getter
-    private Map<Connection, ConnectionPacketHandler> connections = Maps.newHashMap();
+    private Map<Connection, PlayerPacketHandler> connections = Maps.newHashMap();
 
     private Server server;
 
@@ -31,7 +38,7 @@ public class ServerConnectionHandler {
         public void connected(Connection connection) {
             super.connected(connection);
 
-            ServerConnectionHandler.this.connections.put(connection, new ConnectionPacketHandler(connection));
+            ServerConnectionHandler.this.connections.put(connection, new PlayerPacketHandler(serverGame, connection));
         }
 
         @Override
@@ -45,10 +52,10 @@ public class ServerConnectionHandler {
         public void received(Connection connection, Object object) {
             super.received(connection, object);
 
-            ConnectionPacketHandler clientConnection = ServerConnectionHandler.this.connections.get(connection);
+            PlayerPacketHandler clientConnection = ServerConnectionHandler.this.connections.get(connection);
 
             if (clientConnection != null && object instanceof Packet) {
-
+                clientConnection.queuePacket((Packet) object);
             }
         }
     }

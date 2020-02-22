@@ -1,5 +1,6 @@
 package dev.game.test.core.keybind;
 
+import dev.game.test.api.block.Keybind;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

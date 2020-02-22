@@ -11,6 +11,6 @@ public class DesktopLauncher {
         config.setMaximized(false);
         config.useVsync(false);
 
-        new Lwjgl3Application(new ClientApplication(arg), config);
+        new Lwjgl3Application(new ClientApplication(), config);
     }
 }
