@@ -8,6 +8,10 @@ public interface IBlock {
 
     void setId(int id);
 
+    int getWidth();
+
+    int getHeight();
+
     /*
         Textures
      */
