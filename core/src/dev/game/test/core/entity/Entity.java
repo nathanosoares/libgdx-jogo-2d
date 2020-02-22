@@ -8,7 +8,7 @@ import dev.game.test.core.entity.components.PositionComponent;
 
 import java.util.UUID;
 
-public class Entity extends com.badlogic.ashley.core.Entity implements IEntity {
+public abstract class Entity extends com.badlogic.ashley.core.Entity implements IEntity {
 
     public Entity(UUID id) {
         this.add(new IdentifiableComponent(id));
