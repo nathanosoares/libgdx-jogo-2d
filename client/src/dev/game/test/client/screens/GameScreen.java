@@ -95,7 +95,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
 
-        GameUtils.clearScreen(0, 50, 0, 100);
+        GameUtils.clearScreen(0, 0, 0, 100);
 
         if (this.localEntity != null) {
             PositionComponent localEntityPosition = this.localEntity.getComponent(PositionComponent.class);
