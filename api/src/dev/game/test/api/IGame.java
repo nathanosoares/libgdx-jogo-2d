@@ -11,8 +11,6 @@ public interface IGame {
 
     IEventManager getEventManager();
 
-    IGameManager getGameManager();
-
     Engine getEngine();
 
     /*

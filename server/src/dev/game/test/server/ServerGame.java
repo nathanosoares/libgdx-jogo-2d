@@ -7,10 +7,10 @@ import lombok.Getter;
 public class ServerGame extends Game implements IServerGame {
 
     @Getter
-    private final ServerManager gameManager;
+    private final ServerManager serverManager;
 
     public ServerGame() {
-        this.gameManager = new ServerManager();
+        this.serverManager = new ServerManager();
     }
 
 }

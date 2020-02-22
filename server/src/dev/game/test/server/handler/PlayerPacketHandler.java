@@ -44,7 +44,7 @@ public class PlayerPacketHandler extends PacketHandler {
 
     @PacketEvent
     public void onWorldRequest(PacketWorldRequest worldRequest) {
-        IWorld world = serverGame.getDefaultWorld();
+        IWorld world = serverGame.getServerManager().getDefaultWorld();
 
         Packet worldSnapshot = new PacketWorldSnapshot(world.getName(), (int) world.getBounds().getWidth(), (int) world.getBounds().getHeight());
         sendPacket(worldSnapshot);
