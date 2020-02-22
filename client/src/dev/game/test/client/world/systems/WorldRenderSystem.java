@@ -8,9 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
-import dev.game.test.client.world.WorldClient;
-import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.entity.systems.MovementSystem;
 import lombok.Getter;
@@ -23,7 +22,7 @@ public class WorldRenderSystem extends EntitySystem {
     public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
 
     @Getter
-    protected final WorldClient worldClient;
+    protected final IWorld world;
     protected final OrthographicCamera camera;
     protected final Batch batch;
     private final Viewport viewport;
@@ -36,8 +35,8 @@ public class WorldRenderSystem extends EntitySystem {
 
         this.setView(this.camera);
 
-        for (int layerId = 0; layerId < worldClient.getLayers().length; layerId++) {
-            IWorldLayer layer = worldClient.getLayers()[layerId];
+        for (int layerId = 0; layerId < world.getLayers().length; layerId++) {
+            IWorldLayer layer = world.getLayers()[layerId];
             renderMapLayer(layer);
         }
 
@@ -62,10 +61,10 @@ public class WorldRenderSystem extends EntitySystem {
         float layerTileHeight = TILE_WIDTH * UNIT_PER_PIXEL;
 
         int col1 = Math.max(0, (int) ((viewBounds.x) / layerTileWidth));
-        int col2 = (int) Math.min(worldClient.getBounds().getWidth(), (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
+        int col2 = (int) Math.min(world.getBounds().getWidth(), (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
 
         int row1 = Math.max(0, (int) ((viewBounds.y) / layerTileHeight));
-        int row2 = (int) Math.min(worldClient.getBounds().getHeight(), (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
+        int row2 = (int) Math.min(world.getBounds().getHeight(), (int) ((viewBounds.y + viewBounds.height + layerTileHeight) / layerTileHeight));
 
         float y = row2 * layerTileHeight;
         float xStart = col1 * layerTileWidth;
