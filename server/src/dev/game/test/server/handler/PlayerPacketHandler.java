@@ -80,7 +80,7 @@ public class PlayerPacketHandler extends PacketHandler {
 
     @PacketEvent
     public void onWorldJoin(PacketWorldJoin worldReady) {
-        IWorld world = serverGame.getDefaultWorld();
+        IWorld world = serverGame.getServerManager().getDefaultWorld();
 
         player = new Player(worldReady.getId(), worldReady.getName(), world);
         player.add(new NetworkComponent(this));
