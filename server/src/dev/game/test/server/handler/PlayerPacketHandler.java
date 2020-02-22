@@ -2,6 +2,7 @@ package dev.game.test.server.handler;
 
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
+import dev.game.test.api.IEmbeddedServerGame;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.entity.IPlayer;
@@ -33,6 +34,15 @@ public class PlayerPacketHandler extends PacketHandler {
         super(connection);
 
         this.serverGame = serverGame;
+    }
+
+    @Override
+    public void sendPacket(Packet packet) {
+        if(serverGame instanceof IEmbeddedServerGame) {
+            ((IEmbeddedServerGame) serverGame).getHostGame().getConnectionHandler().queuePacket(packet);
+        }
+
+        super.sendPacket(packet);
     }
 
     @PacketEvent

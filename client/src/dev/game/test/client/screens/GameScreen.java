@@ -84,8 +84,6 @@ public class GameScreen extends ScreenAdapter {
 
             this.camera.update();
         }
-
-        clientGame.getEngine().update(delta);
     }
 
     @Override

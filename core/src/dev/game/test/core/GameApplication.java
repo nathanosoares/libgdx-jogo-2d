@@ -31,7 +31,7 @@ public abstract class GameApplication<G extends IGame> extends ApplicationAdapte
         try {
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-            this.game = gameClass.newInstance();
+            this.game = createGame();
 
             this.game.setupRegistries(this.game.getRegistryManager());
 
@@ -46,6 +46,21 @@ public abstract class GameApplication<G extends IGame> extends ApplicationAdapte
         }
     }
 
+    @Override
+    public void render() {
+        super.render();
+
+        game.getEngine().update(Gdx.graphics.getDeltaTime());
+    }
+
     protected void setupPipeline(SetupPipeline pipeline) {
+    }
+
+    /*
+
+     */
+
+    protected G createGame() throws Exception {
+        return gameClass.newInstance();
     }
 }

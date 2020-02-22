@@ -7,10 +7,10 @@ import dev.game.test.client.ClientApplication;
 public class DesktopLauncher {
 
     public static void main(String[] arg) {
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setMaximized(false);
-        config.useVsync(false);
+        Lwjgl3ApplicationConfiguration clientConfig = new Lwjgl3ApplicationConfiguration();
+        clientConfig.setMaximized(false);
+        clientConfig.useVsync(false);
 
-        new Lwjgl3Application(new ClientApplication(), config);
+        new Lwjgl3Application(new ClientApplication(), clientConfig);
     }
 }

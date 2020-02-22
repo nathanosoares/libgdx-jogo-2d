@@ -13,7 +13,8 @@ import dev.game.test.api.net.packet.handshake.PacketHandshake;
 import dev.game.test.api.net.packet.server.*;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
-import dev.game.test.client.ClientManager;
+import dev.game.test.client.ClientApplication;
+import dev.game.test.client.EmbeddedServerApplication;
 import dev.game.test.client.registry.RegistryBlocks;
 import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
@@ -22,7 +23,7 @@ import dev.game.test.core.net.PacketEvent;
 import dev.game.test.core.net.PacketHandler;
 import dev.game.test.core.world.World;
 
-public class ClientPacketHandler extends PacketHandler {
+public class ServerPacketHandler extends PacketHandler {
 
     private final IClientGame clientGame;
 
@@ -32,7 +33,7 @@ public class ClientPacketHandler extends PacketHandler {
 
     //
 
-    public ClientPacketHandler(IClientGame clientGame, Connection connection) {
+    public ServerPacketHandler(IClientGame clientGame, Connection connection) {
         super(connection);
 
         this.clientGame = clientGame;
@@ -44,15 +45,12 @@ public class ClientPacketHandler extends PacketHandler {
 
     @Override
     public void sendPacket(Packet packet) {
-        /*ServerManager serverManager = connectionHandler.application.getLocalServerManager();
+        EmbeddedServerApplication serverApplication = ClientApplication.EMBEDDED_SERVER;
 
-        if (serverManager != null) {
-            for (ServerPacketHandler packetHandler : serverManager.getConnectionHandler().getConnections().values()) {
-                packetHandler.queuePacket(packet);
-            }
-
+        if (packet != null) {
+            serverApplication.getGame().getConnectionHandler().getConnection(ClientApplication.DUMMY_CONNECTION).queuePacket(packet);
             return;
-        }*/
+        }
 
         super.sendPacket(packet);
     }

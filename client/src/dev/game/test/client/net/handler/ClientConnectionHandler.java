@@ -5,7 +5,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.entity.IPlayer;
+import dev.game.test.api.client.handler.IClientConnectionHandler;
 import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.net.packet.handshake.PacketHandshake;
 import dev.game.test.core.net.packet.EnumPacket;
@@ -14,17 +14,15 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class ClientConnectionHandler {
+public class ClientConnectionHandler implements IClientConnectionHandler {
 
     //
 
     private final IClientGame clientGame;
 
-    private final IPlayer player;
-
     //
 
-    private ClientPacketHandler packetHandler;
+    private ServerPacketHandler packetHandler;
 
     private Client client;
 
@@ -64,11 +62,15 @@ public class ClientConnectionHandler {
         this.client.connect(5000, hostname, port);
     }
 
+    public void queuePacket(Packet packet) {
+        this.packetHandler.queuePacket(packet);
+    }
+
     public void createHandler(Connection connection) {
-        ClientPacketHandler _packetHandler = new ClientPacketHandler(clientGame, connection);
+        ServerPacketHandler _packetHandler = new ServerPacketHandler(clientGame, connection);
         packetHandler = _packetHandler;
 
-        packetHandler.sendPacket(new PacketHandshake(player.getId()));
+        packetHandler.sendPacket(new PacketHandshake(clientGame.getClientManager().getPlayer().getId()));
     }
 
     /*

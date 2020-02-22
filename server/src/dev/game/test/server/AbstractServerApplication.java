@@ -1,9 +1,11 @@
 package dev.game.test.server;
 
-public class ServerApplication extends AbstractServerApplication<ServerGame> {
+import dev.game.test.core.GameApplication;
 
-    public ServerApplication() {
-        super(ServerGame.class);
+public class AbstractServerApplication<G extends ServerGame> extends GameApplication<G> {
+
+    public AbstractServerApplication(Class<G> gameClass) {
+        super(gameClass);
     }
 
     @Override
