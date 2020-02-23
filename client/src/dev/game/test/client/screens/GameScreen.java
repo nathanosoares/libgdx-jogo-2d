@@ -51,7 +51,6 @@ public class GameScreen extends ScreenAdapter {
 
         this.clientGame.getEngine().addSystem(new WorldRenderSystem(this.clientGame, this.camera, this.spriteBatch, this.viewport));
         this.clientGame.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
-        this.clientGame.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
         this.clientGame.getEngine().addSystem(new LocalEntityControllerSystem(this.clientGame));
         this.clientGame.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
         this.clientGame.getEngine().addSystem(new AnimateStateSystem());

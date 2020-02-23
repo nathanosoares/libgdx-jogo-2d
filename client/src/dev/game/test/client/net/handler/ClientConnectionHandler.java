@@ -66,6 +66,11 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
         this.packetHandler.queuePacket(packet);
     }
 
+    @Override
+    public void processQueue() {
+        this.packetHandler.processQueue();
+    }
+
     public void createHandler(Connection connection) {
         ServerPacketHandler _packetHandler = new ServerPacketHandler(clientGame, connection);
         packetHandler = _packetHandler;

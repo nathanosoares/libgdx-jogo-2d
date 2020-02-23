@@ -9,10 +9,6 @@ public class ServerApplication extends AbstractServerApplication<ServerGame> {
     @Override
     public void create() {
         super.create();
-
-        getGame().getServerManager().loadWorlds();
-
-        // getGame().getConnectionHandler().start();
     }
 
 }

@@ -1,10 +1,14 @@
 package dev.game.test.core.world;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.Maps;
+import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
+import dev.game.test.core.block.BlockState;
+import dev.game.test.core.block.Blocks;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -29,6 +33,66 @@ public class World implements IWorld {
     public World(String name, int width, int height) {
         this.name = name;
         this.bounds = new Rectangle(0, 0, width, height);
+        this.layers = new WorldLayer[2];
+
+        fillLayers();
+    }
+
+    private void fillLayers() {
+        WorldLayer ground = new WorldLayer(this);
+
+        for (int x = 0; x < getBounds().getWidth(); x++) {
+            for (int y = 0; y < getBounds().getHeight(); y++) {
+
+                ground.setBlockState(new BlockState(
+                        Blocks.GRASS, this, ground, new Vector2(x, y)
+                ));
+
+            }
+        }
+
+        for (int x = 4; x < 9; x++) {
+            ground.getBlockState(x, 5).setBlock(Blocks.DIRT);
+            ground.getBlockState(x, 6).setBlock(Blocks.DIRT);
+
+            if (x == 4 || x == 9) {
+                continue;
+            }
+
+            ground.getBlockState(x, 4).setBlock(Blocks.DIRT);
+            ground.getBlockState(x, 7).setBlock(Blocks.DIRT);
+        }
+
+        for (int x = 9; x < 12; x++) {
+            ground.getBlockState(x, 11).setBlock(Blocks.WATER);
+            ground.getBlockState(x, 12).setBlock(Blocks.WATER);
+
+            if (x == 9 || x == 12) {
+                continue;
+            }
+
+            ground.getBlockState(x, 9).setBlock(Blocks.WATER);
+            ground.getBlockState(x, 10).setBlock(Blocks.WATER);
+        }
+
+        ground.getBlockState(4, 10).setBlock(Blocks.WATER);
+        ground.getBlockState(4, 11).setBlock(Blocks.REINFORCED_DIRT);
+
+
+        for (int x = 0; x < this.getBounds().getWidth(); x++) {
+            for (int y = 0; y < this.getBounds().getHeight(); y++) {
+                IBlockState blockState = ground.getBlockState(x, y);
+                blockState.getBlock().onBlockNeighbourUpdate(blockState, null);
+            }
+        }
+
+        this.layers[0] = ground;
+
+        WorldLayer decoration = new WorldLayer(this);
+
+        decoration.setBlockState(new BlockState(Blocks.STONE, this, decoration, new Vector2(2, 4)));
+
+        this.layers[1] = decoration;
     }
 
     //

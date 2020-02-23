@@ -8,6 +8,7 @@ import dev.game.test.api.IApplication;
 import dev.game.test.api.IGame;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.registry.IRegistryManager;
+import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.systems.MovementSystem;
 import dev.game.test.core.entity.systems.PlayerStateSystem;
 import dev.game.test.core.registry.impl.RegistryKeybinds;

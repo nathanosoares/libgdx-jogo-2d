@@ -60,10 +60,14 @@ public class ClientApplication extends GameApplication<ClientGame> {
 
         EMBEDDED_SERVER.create();
         EMBEDDED_SERVER.getGame().getConnectionHandler().createHandler(DUMMY_CONNECTION);
+
+        getGame().getConnectionHandler().createHandler(DUMMY_CONNECTION);
     }
 
     @Override
     public void resize(int width, int height) {
+        super.resize(width, height);
+
         getGame().getScreenManager().getCurrentScreen().resize(width, height);
 
         EMBEDDED_SERVER.resize(width, height);
@@ -71,6 +75,8 @@ public class ClientApplication extends GameApplication<ClientGame> {
 
     @Override
     public void render() {
+        super.render();
+
         this.fpsLogger.log();
 
         getGame().getScreenManager().getCurrentScreen().render(Gdx.graphics.getDeltaTime());
@@ -79,18 +85,24 @@ public class ClientApplication extends GameApplication<ClientGame> {
 
     @Override
     public void pause() {
+        super.pause();
+
         getGame().getScreenManager().getCurrentScreen().pause();
         EMBEDDED_SERVER.pause();
     }
 
     @Override
     public void resume() {
+        super.resume();
+
         getGame().getScreenManager().getCurrentScreen().resume();
         EMBEDDED_SERVER.resume();
     }
 
     @Override
     public void dispose() {
+        super.dispose();
+
         getGame().getScreenManager().getCurrentScreen().dispose();
         EMBEDDED_SERVER.dispose();
     }

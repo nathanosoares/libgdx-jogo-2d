@@ -10,4 +10,6 @@ public interface IClientConnectionHandler {
 
     void queuePacket(Packet packet);
 
+    void processQueue();
+
 }

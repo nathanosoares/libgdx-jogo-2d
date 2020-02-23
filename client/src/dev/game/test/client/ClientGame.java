@@ -5,7 +5,7 @@ import dev.game.test.api.registry.IRegistryManager;
 import dev.game.test.client.net.handler.ClientConnectionHandler;
 import dev.game.test.client.registry.RegistryBlocks;
 import dev.game.test.client.screens.ScreenManager;
-import dev.game.test.client.systems.PlayerSystem;
+import dev.game.test.client.systems.ClientSystem;
 import dev.game.test.core.Game;
 import dev.game.test.core.block.Block;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class ClientGame extends Game implements IClientGame {
         this.clientManager = new ClientManager(GameUtils.buildLocalPlayer());
         this.connectionHandler = new ClientConnectionHandler(this);
 
-        this.getEngine().addSystem(new PlayerSystem());
+        this.getEngine().addSystem(new ClientSystem(this));
     }
 
     @Override

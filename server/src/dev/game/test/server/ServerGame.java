@@ -3,6 +3,7 @@ package dev.game.test.server;
 import dev.game.test.api.IServerGame;
 import dev.game.test.core.Game;
 import dev.game.test.server.handler.ServerConnectionHandler;
+import dev.game.test.server.systems.ServerSystem;
 import lombok.Getter;
 
 public class ServerGame extends Game implements IServerGame {
@@ -16,6 +17,8 @@ public class ServerGame extends Game implements IServerGame {
     public ServerGame() {
         this.serverManager = new ServerManager();
         this.connectionHandler = new ServerConnectionHandler(this);
+
+        this.getEngine().addSystem(new ServerSystem(this));
     }
 
 }

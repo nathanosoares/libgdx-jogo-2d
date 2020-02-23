@@ -40,6 +40,7 @@ public class PlayerPacketHandler extends PacketHandler {
     public void sendPacket(Packet packet) {
         if(serverGame instanceof IEmbeddedServerGame) {
             ((IEmbeddedServerGame) serverGame).getHostGame().getConnectionHandler().queuePacket(packet);
+            return;
         }
 
         super.sendPacket(packet);
