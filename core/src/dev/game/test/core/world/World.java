@@ -31,14 +31,22 @@ public class World implements IWorld {
     private final Map<UUID, IPlayer> players = Maps.newHashMap();
 
     public World(String name, int width, int height) {
-        this.name = name;
-        this.bounds = new Rectangle(0, 0, width, height);
-        this.layers = new WorldLayer[2];
-
-        fillLayers();
+        this(name, 0, width, height);
     }
 
-    private void fillLayers() {
+    public World(String name, int layersSize, int width, int height) {
+        this.name = name;
+        this.bounds = new Rectangle(0, 0, width, height);
+        this.layers = new WorldLayer[layersSize];
+
+        for (int i = 0; i < layersSize; i++) {
+            this.layers[i] = new WorldLayer(this);
+        }
+    }
+
+    public void fillLayers() {
+        this.layers = new WorldLayer[2];
+
         WorldLayer ground = new WorldLayer(this);
 
         for (int x = 0; x < getBounds().getWidth(); x++) {
@@ -127,7 +135,7 @@ public class World implements IWorld {
 
         this.entities.put(entity.getId(), entity);
 
-        if(entity instanceof IPlayer) {
+        if (entity instanceof IPlayer) {
             players.put(entity.getId(), (IPlayer) entity);
         }
     }
@@ -138,7 +146,7 @@ public class World implements IWorld {
 
         this.entities.remove(entity.getId());
 
-        if(entity instanceof IPlayer) {
+        if (entity instanceof IPlayer) {
             players.remove((IPlayer) entity);
         }
     }

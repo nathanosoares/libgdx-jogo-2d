@@ -77,14 +77,14 @@ public class VisualRenderSystem extends EntitySystem {
                 nameOffsetY = visual.region.getRegionHeight() / 16f;
             }
 
-            if (NamedComponent.MAPPER.has(entity)) {
-                this.font.getData().setScale(1f / 32f);
+//            if (NamedComponent.MAPPER.has(entity)) {
+//                this.font.getData().setScale(1f / 32f);
 //                this.font.draw(
 //                        this.batch,
 //                        namedMapper.get(entity).name,
 //                        position.x, position.y + nameOffsetY + 1
 //                );
-            }
+//            }
         }
 
         this.batch.end();

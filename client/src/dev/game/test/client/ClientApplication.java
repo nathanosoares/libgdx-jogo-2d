@@ -14,32 +14,21 @@ import lombok.Setter;
 
 public class ClientApplication extends GameApplication<ClientGame> {
 
+    @Getter
+    private static ClientApplication instance;
+
     public static EmbeddedServerApplication EMBEDDED_SERVER;
 
     public static final Connection DUMMY_CONNECTION = new DummyConnection();
 
-    //
-
-    @Setter
-    @Getter
-    private Screen gameScreen;
-
-    //
-
     private final FPSLogger fpsLogger = new FPSLogger(false, true);
-
-    //
-
-
-    //
 
     public ClientApplication() {
         super(ClientGame.class);
+        instance = this;
 
         EMBEDDED_SERVER = new EmbeddedServerApplication(this);
     }
-
-    //
 
     @Override
     protected void setupPipeline(SetupPipeline pipeline) {
@@ -49,10 +38,6 @@ public class ClientApplication extends GameApplication<ClientGame> {
                 .registerSetup(new SetupBlocks(this.getGame()))
                 .registerSetup(new SetupGameScreen(this.getGame()));
     }
-
-    /*
-
-     */
 
     @Override
     public void create() {

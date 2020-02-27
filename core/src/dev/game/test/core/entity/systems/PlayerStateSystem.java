@@ -9,9 +9,7 @@ public class PlayerStateSystem extends IteratingSystem {
 
 
     public PlayerStateSystem() {
-        super(Family.all(
-                StateComponent.class
-        ).get());
+        super(Family.all(StateComponent.class).get());
     }
 
     @Override

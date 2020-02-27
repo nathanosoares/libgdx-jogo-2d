@@ -5,17 +5,27 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.entity.IPlayer;
+import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.components.MovementComponent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class LocalEntityControllerSystem extends EntitySystem {
+public class LocalPlayerControllerSystem extends EntitySystem {
 
     private final IClientGame clientGame;
 
     @Override
     public void update(float deltaTime) {
-        MovementComponent movement = MovementComponent.MAPPER.get((Entity) this.clientGame.getClientManager().getPlayer());
+
+        IPlayer currentPlayer = this.clientGame.getClientManager().getPlayer();
+        IWorld currentWorld = this.clientGame.getClientManager().getCurrentWorld();
+
+        if (currentPlayer == null || currentWorld == null) {
+            return;
+        }
+
+        MovementComponent movement = MovementComponent.MAPPER.get((Entity) currentPlayer);
 
         float walkSpeed = 4;
 

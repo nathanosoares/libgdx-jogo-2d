@@ -2,7 +2,6 @@ package dev.game.test.api;
 
 import com.badlogic.ashley.core.Engine;
 import dev.game.test.api.event.IEventManager;
-import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.registry.IRegistryManager;
 
 public interface IGame {

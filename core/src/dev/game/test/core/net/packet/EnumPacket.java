@@ -26,7 +26,7 @@ public enum EnumPacket {
             register(2, PacketWorldRequest.class);
             register(3, PacketWorldSnapshot.class);
             register(4, PacketWorldLayerSnapshot.class);
-            register(5, PacketWorldLoaded.class);
+            register(5, PacketSpawnPosition.class);
             register(6, PacketWorldJoin.class);
             register(7, PacketPrepareFinished.class);
         }

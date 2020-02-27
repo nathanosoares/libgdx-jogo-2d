@@ -2,12 +2,16 @@ package dev.game.test.client.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.Disposable;
+import dev.game.test.api.IClientGame;
 import dev.game.test.api.client.screens.IScreenManager;
+import dev.game.test.client.ClientApplication;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class ScreenManager implements IScreenManager, Disposable {
 
-    //
+    private final IClientGame clientGame;
 
     @Getter
     private Screen currentScreen, lastScreen;

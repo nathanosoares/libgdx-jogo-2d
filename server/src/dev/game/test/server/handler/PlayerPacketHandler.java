@@ -1,6 +1,7 @@
 package dev.game.test.server.handler;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import dev.game.test.api.IEmbeddedServerGame;
 import dev.game.test.api.IServerGame;
@@ -38,7 +39,7 @@ public class PlayerPacketHandler extends PacketHandler {
 
     @Override
     public void sendPacket(Packet packet) {
-        if(serverGame instanceof IEmbeddedServerGame) {
+        if (serverGame instanceof IEmbeddedServerGame) {
             ((IEmbeddedServerGame) serverGame).getHostGame().getConnectionHandler().queuePacket(packet);
             return;
         }
@@ -55,15 +56,15 @@ public class PlayerPacketHandler extends PacketHandler {
 
     @PacketEvent
     public void onWorldRequest(PacketWorldRequest worldRequest) {
-        IWorld world = serverGame.getServerManager().getDefaultWorld();
+        // TODO criar evento para world padrão ou para spawn location
+        IWorld world = serverGame.getServerManager().getWorlds().get(0);
 
-        Packet worldSnapshot = new PacketWorldSnapshot(world.getName(), (int) world.getBounds().getWidth(), (int) world.getBounds().getHeight());
+        Packet worldSnapshot = new PacketWorldSnapshot(world.getName(), world.getLayers().length, (int) world.getBounds().getWidth(), (int) world.getBounds().getHeight());
         sendPacket(worldSnapshot);
 
-        PacketWorldLayerSnapshot worldLayerSnapshot = new PacketWorldLayerSnapshot(0, null);
+        for (int layerIndex = 0; layerIndex < world.getLayers().length; layerIndex++) {
 
-        for (int i = 0; i < world.getLayers().length; i++) {
-            IWorldLayer worldLayer = world.getLayers()[i];
+            IWorldLayer worldLayer = world.getLayers()[layerIndex];
 
             PacketWorldLayerSnapshot.LayerData[][] dataArray = new PacketWorldLayerSnapshot.LayerData[(int) world.getBounds().getWidth()][(int) world.getBounds().getHeight()];
 
@@ -80,18 +81,21 @@ public class PlayerPacketHandler extends PacketHandler {
                 }
             }
 
-            worldLayerSnapshot.setData(dataArray);
-            worldLayerSnapshot.setLayerId(i);
+            PacketWorldLayerSnapshot worldLayerSnapshot = new PacketWorldLayerSnapshot(world.getName(), layerIndex, dataArray);
             sendPacket(worldLayerSnapshot);
         }
 
-        PacketWorldLoaded worldLoaded = new PacketWorldLoaded();
-        sendPacket(worldLoaded);
+        PacketSpawnPosition spawnPosition = new PacketSpawnPosition(
+                world.getName(),
+                world.getBounds().getCenter(new Vector2())
+        );
+
+        sendPacket(spawnPosition);
     }
 
     @PacketEvent
     public void onWorldJoin(PacketWorldJoin worldReady) {
-        IWorld world = serverGame.getServerManager().getDefaultWorld();
+        IWorld world = serverGame.getServerManager().getWorlds().get(0);
 
         player = new Player(worldReady.getId(), worldReady.getName());
         player.add(new NetworkComponent(this));
@@ -100,7 +104,7 @@ public class PlayerPacketHandler extends PacketHandler {
 
         PacketPlayerInfo playerInfo = new PacketPlayerInfo(player.getId(), player.getName());
 
-        for(IPlayer worldPlayer : world.getPlayers()) {
+        for (IPlayer worldPlayer : world.getPlayers()) {
             worldPlayer.sendPacket(playerInfo);
         }
 
@@ -113,7 +117,7 @@ public class PlayerPacketHandler extends PacketHandler {
         RegistryKeybinds keybindRegistry = serverGame.getRegistryManager().getRegistry(Keybind.class);
         Keybind keybind = keybindRegistry.getKeybind(keybindActivate.getKeybindId());
 
-        if(keybind == null) {
+        if (keybind == null) {
             return;
         }
 
@@ -125,7 +129,7 @@ public class PlayerPacketHandler extends PacketHandler {
         RegistryKeybinds keybindRegistry = serverGame.getRegistryManager().getRegistry(Keybind.class);
         Keybind keybind = keybindRegistry.getKeybind(keybindDeactivate.getKeybindId());
 
-        if(keybind == null) {
+        if (keybind == null) {
             return;
         }
 

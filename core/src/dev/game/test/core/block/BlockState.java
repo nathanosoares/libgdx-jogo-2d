@@ -9,8 +9,10 @@ import dev.game.test.core.world.World;
 import dev.game.test.core.world.WorldLayer;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
+@ToString(of ={"block", "position", "connectedData"})
 public class BlockState implements IBlockState {
 
     @Setter

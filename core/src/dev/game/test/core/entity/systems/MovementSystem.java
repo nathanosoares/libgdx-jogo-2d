@@ -10,12 +10,10 @@ import com.google.common.collect.Multimap;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorld;
-import dev.game.test.core.block.BlockState;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.FacingComponent;
 import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
-import dev.game.test.core.world.World;
 
 public class MovementSystem extends IteratingSystem {
 
@@ -24,7 +22,6 @@ public class MovementSystem extends IteratingSystem {
     public MovementSystem() {
         super(Family.all(PositionComponent.class, MovementComponent.class).get());
     }
-
 
     public static Multimap<Integer, Integer> debug = HashMultimap.create();
 

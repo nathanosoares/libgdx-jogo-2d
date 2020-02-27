@@ -35,6 +35,21 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
     }
 
     @Override
+    public Vector2 setPosition(Vector2 vec) {
+        PositionComponent position = PositionComponent.MAPPER.get(this);
+
+        position.x = vec.x;
+        position.y = vec.y;
+
+        return new Vector2(position.x, position.y);
+    }
+
+    @Override
+    public void setWorld(IWorld world) {
+        PositionComponent.MAPPER.get(this).world = world;
+    }
+
+    @Override
     public boolean isSpawned() {
         return EntityComponent.MAPPER.get(this).spawned;
     }

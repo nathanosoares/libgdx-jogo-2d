@@ -1,5 +1,6 @@
 package dev.game.test.client;
 
+import com.badlogic.ashley.core.Engine;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.registry.IRegistryManager;
 import dev.game.test.client.net.handler.ClientConnectionHandler;
@@ -22,16 +23,21 @@ public class ClientGame extends Game implements IClientGame {
     private final ClientConnectionHandler connectionHandler;
 
     public ClientGame() {
-        this.screenManager = new ScreenManager();
+        this.screenManager = new ScreenManager(this);
         this.clientManager = new ClientManager(GameUtils.buildLocalPlayer());
         this.connectionHandler = new ClientConnectionHandler(this);
-
-        this.getEngine().addSystem(new ClientSystem(this));
     }
 
     @Override
     public void setupRegistries(IRegistryManager registryManager) {
         registryManager.addRegistry(Block.class, new RegistryBlocks());
+    }
+
+    @Override
+    public void setupEngine(Engine engine) {
+        engine.addSystem(new ClientSystem(this));
+
+        super.setupEngine(engine);
     }
 
 }

@@ -13,7 +13,11 @@ public interface IEntity extends Identifiable {
 
     IWorld getWorld();
 
+    void setWorld(IWorld world);
+
     Vector2 getPosition();
+
+    Vector2 setPosition(Vector2 vec);
 
     default void onSpawn(IWorld world) {}
 

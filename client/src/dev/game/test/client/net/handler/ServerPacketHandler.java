@@ -66,30 +66,35 @@ public class ServerPacketHandler extends PacketHandler {
 
     @PacketEvent
     public void onWorldLayerData(PacketWorldSnapshot packet) {
-        World world = new World(packet.getWorldName(), packet.getWidth(), packet.getHeight());
+        World world = new World(packet.getWorldName(), packet.getLayersSize(), packet.getWidth(), packet.getHeight());
 
-        clientGame.getClientManager().setCurrentWorld(world);
+        clientGame.getClientManager().addWorld(world);
     }
 
     @PacketEvent
     public void onWorldLayerData(PacketWorldLayerSnapshot packet) {
         RegistryBlocks blockRegistry = clientGame.getRegistryManager().getRegistry(Block.class);
 
-        IWorld world = clientGame.getClientManager().getCurrentWorld();
+        IWorld world = clientGame.getClientManager().getWorld(packet.getWorldName());
+
+        if (world == null) {
+            Gdx.app.error("LayerDecode", String.format("World %s not found", packet.getWorldName()));
+            return;
+        }
+
         IWorldLayer worldLayer = world.getLayers()[packet.getLayerId()];
 
         PacketWorldLayerSnapshot.LayerData[][] dataArray = packet.getData();
 
-        for (int x = 0; x < dataArray.length; x++) {
-            for (int y = 0; y < dataArray[x].length; y++) {
-                PacketWorldLayerSnapshot.LayerData data = dataArray[x][y];
-                if(data == null) {
+        for (PacketWorldLayerSnapshot.LayerData[] layerData : dataArray) {
+            for (PacketWorldLayerSnapshot.LayerData data : layerData) {
+                if (data == null) {
                     continue;
                 }
 
                 Block block = blockRegistry.getBlock(data.getBlockId());
 
-                if(block == null) {
+                if (block == null) {
                     Gdx.app.error("LayerDecode", String.format("Invalid block id: %d", data.getBlockId()));
                     continue;
                 }
@@ -103,10 +108,21 @@ public class ServerPacketHandler extends PacketHandler {
     }
 
     @PacketEvent
-    public void onWorldLoaded(PacketWorldLoaded packet) {
-        IPlayer player = clientGame.getClientManager().getPlayer();
-        PacketWorldJoin worldJoin = new PacketWorldJoin(player.getId(), player.getName());
-        sendPacket(worldJoin);
+    public void onSpawnPosition(PacketSpawnPosition packet) {
+        IWorld world = clientGame.getClientManager().getWorld(packet.getWorldName());
+
+        if (world == null) {
+            Gdx.app.error("SpawnPosition", String.format("World %s not found", packet.getWorldName()));
+            return;
+        }
+
+        clientGame.getClientManager().setCurrentWorld(world);
+
+        clientGame.getClientManager().getPlayer().setWorld(world);
+        clientGame.getClientManager().getPlayer().setPosition(packet.getPosition());
+
+//        PacketWorldJoin worldJoin = new PacketWorldJoin(player.getId(), player.getName());
+//        sendPacket(worldJoin);
     }
 
     @PacketEvent
@@ -116,9 +132,9 @@ public class ServerPacketHandler extends PacketHandler {
         IPlayer player = world.getPlayer(packet.getId());
         IClientManager clientManager = clientGame.getClientManager();
 
-        if(packet.getId().equals(clientManager.getPlayer().getId())) {
+        if (packet.getId().equals(clientManager.getPlayer().getId())) {
             player = clientManager.getPlayer();
-        } else if(player == null) {
+        } else if (player == null) {
             player = new Player(packet.getId(), "");
         }
 
@@ -132,7 +148,7 @@ public class ServerPacketHandler extends PacketHandler {
         IWorld world = clientGame.getClientManager().getCurrentWorld();
         IPlayer player = world.getPlayer(packet.getId());
 
-        if(player == null) {
+        if (player == null) {
             return;
         }
 
@@ -149,7 +165,7 @@ public class ServerPacketHandler extends PacketHandler {
         IWorld world = clientGame.getClientManager().getCurrentWorld();
         IEntity entity = world.getEntity(packet.getId());
 
-        if(entity != null) {
+        if (entity != null) {
             /*if(!entity.equals(connectionHandler.clientManager.getPlayer())) {
                 entity.beginInterpolation(packet.getPosition(), Constants.INTERPOLATION_TIME);
             } else {
@@ -163,7 +179,7 @@ public class ServerPacketHandler extends PacketHandler {
         IWorld world = clientGame.getClientManager().getCurrentWorld();
         IPlayer player = world.getPlayer(packet.getId());
 
-        if(player != null) {
+        if (player != null) {
             //player.move(packet.getMovement());
         }
     }

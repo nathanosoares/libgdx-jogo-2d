@@ -6,7 +6,9 @@ import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString(of = {"id"})
 public class Block implements IBlock {
 
     @Getter
@@ -19,21 +21,12 @@ public class Block implements IBlock {
     @Getter
     protected int height = 1;
 
-    /*
-
-     */
-
     public void loadTextures() {
-
     }
 
     public TextureRegion getTexture(IBlockState state) {
         return null;
     }
-
-    /*
-
-     */
 
     public void neighbourUpdate(IBlockState blockState) {
         for (EnumFacing facing : EnumFacing.values()) {

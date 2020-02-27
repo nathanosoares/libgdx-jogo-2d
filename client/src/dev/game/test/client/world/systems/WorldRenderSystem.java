@@ -12,7 +12,6 @@ import dev.game.test.api.IClientGame;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.core.block.BlockState;
-import dev.game.test.core.entity.systems.MovementSystem;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -36,12 +35,11 @@ public class WorldRenderSystem extends EntitySystem {
 
         if (clientGame.getClientManager().getCurrentWorld() != null) {
             IWorld world = clientGame.getClientManager().getCurrentWorld();
-            for (int layerId = 0; layerId < world.getLayers().length; layerId++) {
-                IWorldLayer layer = world.getLayers()[layerId];
-                renderMapLayer(world, layer);
+
+            for (int layerIndex = 0; layerIndex < world.getLayers().length; layerIndex++) {
+                renderMapLayer(world, world.getLayers()[layerIndex]);
             }
         }
-
 
         this.batch.end();
     }
@@ -84,14 +82,14 @@ public class WorldRenderSystem extends EntitySystem {
                 TextureRegion region = blockState.getBlock().getTexture(blockState);
 
                 if (x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
+                    float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
+                    batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
+                }
 
-                    float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
-                    batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
-                }
-                if (MovementSystem.debug.containsEntry(col, row)) {
-                    float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
-                    batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
-                }
+//                if (MovementSystem.debug.containsEntry(col, row)) {
+//                    float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
+//                    batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
+//                }
 
                 if (region != null) {
                     batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);

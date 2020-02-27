@@ -12,11 +12,12 @@ import lombok.Setter;
 public class PacketWorldLayerSnapshot implements Packet {
 
     @Getter
-    @Setter
+    private String worldName;
+
+    @Getter
     private int layerId;
 
     @Getter
-    @Setter
     private LayerData data[][];
 
     @AllArgsConstructor

@@ -4,6 +4,8 @@ import dev.game.test.api.IGameManager;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
 
+import java.util.List;
+
 public interface IClientManager extends IGameManager {
 
     IWorld getCurrentWorld();
