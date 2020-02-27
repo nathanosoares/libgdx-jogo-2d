@@ -176,6 +176,7 @@ public class ServerPacketHandler extends PacketHandler {
 
     @PacketEvent
     public void onEntityMovement(PacketEntityMovement packet) {
+        System.out.println("onEntityMovement");
         IWorld world = clientGame.getClientManager().getCurrentWorld();
         IPlayer player = world.getPlayer(packet.getId());
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import dev.game.test.client.entity.components.AnimateStateComponent;
 import dev.game.test.client.entity.components.FacingVisualFlipComponent;
 import dev.game.test.client.entity.components.VisualComponent;
+import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.state.PlayerState;
 
@@ -34,7 +35,7 @@ public class GameUtils {
             username = String.format("Player%d", new Random().nextInt(1000));
         }
 
-        Player player = new Player(UUID.randomUUID(), username);
+        Player player = PlayerUtils.buildLocalPlayer(UUID.randomUUID(), username);
 
         player.add(new VisualComponent());
         player.add(new FacingVisualFlipComponent());

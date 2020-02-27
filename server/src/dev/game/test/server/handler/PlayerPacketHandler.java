@@ -17,6 +17,7 @@ import dev.game.test.api.net.packet.handshake.PacketHandshake;
 import dev.game.test.api.net.packet.server.*;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
+import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.NetworkComponent;
 import dev.game.test.core.net.PacketEvent;
@@ -28,8 +29,6 @@ public class PlayerPacketHandler extends PacketHandler {
     private final IServerGame serverGame;
 
     private Player player;
-
-    //
 
     public PlayerPacketHandler(IServerGame serverGame, Connection connection) {
         super(connection);
@@ -97,7 +96,7 @@ public class PlayerPacketHandler extends PacketHandler {
     public void onWorldJoin(PacketWorldJoin worldReady) {
         IWorld world = serverGame.getServerManager().getWorlds().get(0);
 
-        player = new Player(worldReady.getId(), worldReady.getName());
+        player = PlayerUtils.buildLocalPlayer(worldReady.getId(), worldReady.getName());
         player.add(new NetworkComponent(this));
 
         world.spawnEntity(player, world.getBounds().getWidth() / 2.0f, world.getBounds().getHeight() / 2.0f);

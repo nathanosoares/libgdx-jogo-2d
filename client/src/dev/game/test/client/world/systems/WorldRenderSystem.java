@@ -17,7 +17,7 @@ import dev.game.test.core.block.Blocks;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class WorldRenderSystem {
+public class WorldRenderSystem extends EntitySystem {
 
     public static final float TILE_WIDTH = 16.0f;
     public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
@@ -29,8 +29,10 @@ public class WorldRenderSystem {
 
     private final Rectangle viewBounds = new Rectangle();
 
-    public void render() {
+    @Override
+    public void update(float deltaTime) {
 
+        this.batch.begin();
         this.setView(this.camera);
 
         if (clientGame.getClientManager().getCurrentWorld() != null) {
@@ -41,6 +43,7 @@ public class WorldRenderSystem {
             }
         }
 
+        this.batch.end();
     }
 
     private void setView(OrthographicCamera camera) {

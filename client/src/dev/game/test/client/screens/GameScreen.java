@@ -1,8 +1,10 @@
 package dev.game.test.client.screens;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,17 +12,23 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.Lists;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.IPlayer;
+import dev.game.test.api.keybind.Keybind;
+import dev.game.test.api.net.packet.client.PacketKeybindActivate;
+import dev.game.test.api.net.packet.client.PacketKeybindDeactivate;
 import dev.game.test.api.world.IWorld;
-import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.systems.AnimateStateSystem;
 import dev.game.test.client.entity.systems.CollisiveDebugSystem;
-import dev.game.test.client.entity.systems.LocalPlayerControllerSystem;
 import dev.game.test.client.entity.systems.VisualRenderSystem;
 import dev.game.test.client.world.systems.WorldRenderSystem;
+import dev.game.test.core.entity.components.KeybindComponent;
+import dev.game.test.core.registry.impl.RegistryKeybinds;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
@@ -39,8 +47,14 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private Vector2 hover = new Vector2();
 
-    WorldRenderSystem renderSystem;
-    VisualRenderSystem visualRenderSystem;
+    private List<EntitySystem> systems = Lists.newArrayList();
+
+    private EntitySystem registerSystem(EntitySystem system) {
+        this.systems.add(system);
+        this.clientGame.getEngine().addSystem(system);
+
+        return system;
+    }
 
     @Override
     public void show() {
@@ -54,14 +68,19 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-        this.clientGame.getEngine().addSystem(new LocalPlayerControllerSystem(this.clientGame));
-//        this.clientGame.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
-        this.clientGame.getEngine().addSystem(new AnimateStateSystem());
+        this.registerSystem(new WorldRenderSystem(this.clientGame, this.camera, this.spriteBatch, this.viewport));
+        this.registerSystem(new VisualRenderSystem(this.spriteBatch));
+        this.registerSystem(new CollisiveDebugSystem(this.spriteBatch));
+        this.registerSystem(new AnimateStateSystem());
 
         this.clientGame.getEngine().addEntity((Entity) this.clientGame.getClientManager().getPlayer());
 
-        this.renderSystem = new WorldRenderSystem(this.clientGame, this.camera, this.spriteBatch, this.viewport);
-        this.visualRenderSystem = new VisualRenderSystem(this.spriteBatch);
+        Gdx.input.setInputProcessor(new PlayerControllerInputAdapter());
+    }
+
+    @Override
+    public void hide() {
+        Gdx.input.setInputProcessor(null);
     }
 
     @Override
@@ -71,8 +90,6 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        GameUtils.clearScreen(255, 255, 255, 100);
-
         IWorld currentWorld = this.clientGame.getClientManager().getCurrentWorld();
         IPlayer currentPlayer = this.clientGame.getClientManager().getPlayer();
 
@@ -94,18 +111,46 @@ public class GameScreen extends ScreenAdapter {
                     .clamp(this.camera.position.y, visibleH, currentWorld.getBounds().getHeight() - visibleH);
 
             this.camera.update();
-
-            this.spriteBatch.begin();
-            this.renderSystem.render();
-//            this.visualRenderSystem.update(delta);
-
-            this.spriteBatch.end();
         }
     }
 
     @Override
     public void dispose() {
-
+        this.systems.forEach(this.clientGame.getEngine()::removeSystem);
     }
 
+    private class PlayerControllerInputAdapter extends InputAdapter {
+        KeybindComponent activatedKeybinds = KeybindComponent.MAPPER
+                .get((Entity) GameScreen.this.clientGame.getClientManager().getPlayer());
+
+        @Override
+        public boolean keyDown(int keycode) {
+            RegistryKeybinds keybindRegistry = GameScreen.this.clientGame.getRegistryManager().getRegistry(Keybind.class);
+            Keybind keybind = keybindRegistry.getKeybindFromKey(keycode);
+
+            if (keybind != null) {
+                this.activatedKeybinds.activeKeybinds.add(keybind);
+
+                GameScreen.this.clientGame.getConnectionHandler().queuePacket(new PacketKeybindActivate(keybind.getId()));
+                return true;
+            }
+
+            return super.keyDown(keycode);
+        }
+
+        @Override
+        public boolean keyUp(int keycode) {
+            RegistryKeybinds keybindRegistry = GameScreen.this.clientGame.getRegistryManager().getRegistry(Keybind.class);
+            Keybind keybind = keybindRegistry.getKeybindFromKey(keycode);
+
+            if (keybind != null) {
+                this.activatedKeybinds.activeKeybinds.remove(keybind);
+
+                GameScreen.this.clientGame.getConnectionHandler().queuePacket(new PacketKeybindDeactivate(keybind.getId()));
+                return true;
+            }
+
+            return super.keyDown(keycode);
+        }
+    }
 }

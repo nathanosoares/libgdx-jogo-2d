@@ -1,18 +1,12 @@
 package dev.game.test.core;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import dev.game.test.api.IApplication;
 import dev.game.test.api.IGame;
-import dev.game.test.api.keybind.Keybind;
-import dev.game.test.api.registry.IRegistryManager;
-import dev.game.test.core.entity.Player;
-import dev.game.test.core.entity.systems.MovementSystem;
-import dev.game.test.core.entity.systems.PlayerStateSystem;
-import dev.game.test.core.registry.impl.RegistryKeybinds;
 import dev.game.test.core.setup.SetupPipeline;
+import dev.game.test.core.setup.impl.SetupKeybinds;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 public abstract class GameApplication<G extends IGame> extends ApplicationAdapter implements IApplication<G> {
 
     protected final Class<G> gameClass;
-
-    //
 
     @Getter
     private G game;
@@ -41,7 +33,6 @@ public abstract class GameApplication<G extends IGame> extends ApplicationAdapte
             setupPipeline.runAll();
 
             this.game.setupEngine(this.game.getEngine());
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -51,17 +42,14 @@ public abstract class GameApplication<G extends IGame> extends ApplicationAdapte
     public void render() {
         super.render();
 
-        game.getEngine().update(Gdx.graphics.getDeltaTime());
+        this.game.getEngine().update(Gdx.graphics.getDeltaTime());
     }
 
     protected void setupPipeline(SetupPipeline pipeline) {
+        pipeline.registerSetup(new SetupKeybinds(this.game));
     }
 
-    /*
-
-     */
-
     protected G createGame() throws Exception {
-        return gameClass.newInstance();
+        return this.gameClass.newInstance();
     }
 }

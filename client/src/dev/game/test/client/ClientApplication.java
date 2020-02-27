@@ -1,16 +1,13 @@
 package dev.game.test.client;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.esotericsoftware.kryonet.Connection;
-import dev.game.test.api.IClientGame;
 import dev.game.test.client.setups.SetupBlocks;
 import dev.game.test.client.setups.SetupGameScreen;
 import dev.game.test.core.GameApplication;
 import dev.game.test.core.setup.SetupPipeline;
 import dev.game.test.core.utils.DummyConnection;
 import lombok.Getter;
-import lombok.Setter;
 
 public class ClientApplication extends GameApplication<ClientGame> {
 
@@ -60,11 +57,13 @@ public class ClientApplication extends GameApplication<ClientGame> {
 
     @Override
     public void render() {
+        GameUtils.clearScreen(0, 0, 0, 0);
         super.render();
 
         this.fpsLogger.log();
 
         getGame().getScreenManager().getCurrentScreen().render(Gdx.graphics.getDeltaTime());
+
         EMBEDDED_SERVER.render();
     }
 
@@ -73,6 +72,7 @@ public class ClientApplication extends GameApplication<ClientGame> {
         super.pause();
 
         getGame().getScreenManager().getCurrentScreen().pause();
+
         EMBEDDED_SERVER.pause();
     }
 
@@ -81,6 +81,7 @@ public class ClientApplication extends GameApplication<ClientGame> {
         super.resume();
 
         getGame().getScreenManager().getCurrentScreen().resume();
+
         EMBEDDED_SERVER.resume();
     }
 
@@ -89,6 +90,7 @@ public class ClientApplication extends GameApplication<ClientGame> {
         super.dispose();
 
         getGame().getScreenManager().getCurrentScreen().dispose();
+
         EMBEDDED_SERVER.dispose();
     }
 }

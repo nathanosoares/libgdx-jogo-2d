@@ -7,20 +7,29 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import dev.game.test.api.IEmbeddedServerGame;
+import dev.game.test.api.IServerGame;
 import dev.game.test.api.block.IBlockState;
+import dev.game.test.api.net.packet.server.PacketEntityMovement;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorld;
-import dev.game.test.core.entity.components.CollisiveComponent;
-import dev.game.test.core.entity.components.FacingComponent;
-import dev.game.test.core.entity.components.MovementComponent;
-import dev.game.test.core.entity.components.PositionComponent;
+import dev.game.test.core.Game;
+import dev.game.test.core.entity.components.*;
 
 public class MovementSystem extends IteratingSystem {
 
+    private final Game game;
+
+    private Vector2 positionCache = new Vector2();
     private Vector2 velocity = new Vector2();
 
-    public MovementSystem() {
-        super(Family.all(PositionComponent.class, MovementComponent.class).get());
+    public MovementSystem(Game game) {
+        super(Family.all(
+                PositionComponent.class,
+                MovementComponent.class
+        ).get());
+
+        this.game = game;
     }
 
     public static Multimap<Integer, Integer> debug = HashMultimap.create();
@@ -31,95 +40,113 @@ public class MovementSystem extends IteratingSystem {
         PositionComponent position = PositionComponent.MAPPER.get(entity);
         MovementComponent movement = MovementComponent.MAPPER.get(entity);
 
+        positionCache.set(position.x, position.y);
+
         if (!CollisiveComponent.MAPPER.has(entity)) {
+
             position.x += movement.velocityX * deltaTime;
             position.y += movement.velocityY * deltaTime;
 
-            updateFacing(entity, movement);
-            return;
-        }
+        } else {
 
-        velocity.set(movement.velocityX, movement.velocityY);
-        velocity.scl(5);
+            velocity.set(movement.velocityX, movement.velocityY);
+            velocity.scl(5);
 
-        Rectangle box = CollisiveComponent.MAPPER.get(entity).box;
+            Rectangle box = CollisiveComponent.MAPPER.get(entity).box;
 
-        box.setPosition(position.x, position.y);
+            box.setPosition(position.x, position.y);
 
-        int startX, startY, endX, endY;
+            int startX, startY, endX, endY;
 
-        debug.clear();
-        // Velocity X
-        VELOCITY_X:
-        {
-            if (velocity.x > 0) {
+            debug.clear();
+            // Velocity X
+            VELOCITY_X:
+            {
+                if (velocity.x > 0) {
+                    startX = (int) box.x;
+                    endX = (int) (box.x + box.width + velocity.x);
+                } else if (velocity.x < 0) {
+                    startX = (int) (box.x + velocity.x);
+                    endX = (int) box.x;
+                } else {
+                    break VELOCITY_X;
+                }
+
+                startY = (int) (box.y);
+                endY = (int) (box.y + box.height);
+
+                IBlockState found = findBlock(position.world, velocity.x < 0, startX, endX, startY, endY);
+
+                if (found != null) {
+                    if (movement.velocityX > 0) {
+                        position.x = Math.min(
+                                found.getPosition().x - box.width - 0.01f,
+                                position.x + movement.velocityX * deltaTime
+                        );
+                    } else if (movement.velocityX < 0) {
+                        position.x = Math.max(
+                                found.getPosition().x + found.getBlock().getWidth(),
+                                position.x + movement.velocityX * deltaTime
+                        );
+                    }
+                } else {
+                    position.x += movement.velocityX * deltaTime;
+                }
+            }
+
+            // Velocity Y
+            VELOCITY_Y:
+            {
+                if (velocity.y > 0) {
+                    startY = (int) box.y;
+                    endY = (int) (box.y + box.height + velocity.y);
+                } else if (velocity.y < 0) {
+                    startY = (int) (box.y + velocity.y);
+                    endY = (int) box.y;
+                } else {
+                    break VELOCITY_Y;
+                }
+
                 startX = (int) box.x;
-                endX = (int) (box.x + box.width + velocity.x);
-            } else if (velocity.x < 0) {
-                startX = (int) (box.x + velocity.x);
-                endX = (int) box.x;
-            } else {
-                break VELOCITY_X;
-            }
+                endX = (int) (box.x + box.width);
 
-            startY = (int) (box.y);
-            endY = (int) (box.y + box.height);
+                IBlockState found = findBlock(position.world, velocity.y < 0, startX, endX, startY, endY);
 
-            IBlockState found = findBlock(position.world, velocity.x < 0, startX, endX, startY, endY);
-
-            if (found != null) {
-                if (movement.velocityX > 0) {
-                    position.x = Math.min(
-                            found.getPosition().x - box.width - 0.01f,
-                            position.x + movement.velocityX * deltaTime
-                    );
-                } else if (movement.velocityX < 0) {
-                    position.x = Math.max(
-                            found.getPosition().x + found.getBlock().getWidth(),
-                            position.x + movement.velocityX * deltaTime
-                    );
+                if (found != null) {
+                    if (movement.velocityY > 0) {
+                        position.y = Math.min(
+                                found.getPosition().y - box.height - 0.01f,
+                                position.y + movement.velocityY * deltaTime
+                        );
+                    } else if (movement.velocityY < 0) {
+                        position.y = Math.max(
+                                found.getPosition().y + found.getBlock().getHeight(),
+                                position.y + movement.velocityY * deltaTime
+                        );
+                    }
+                } else {
+                    position.y += movement.velocityY * deltaTime;
                 }
-            } else {
-                position.x += movement.velocityX * deltaTime;
             }
         }
 
-        // Velocity Y
-        VELOCITY_Y:
-        {
-            if (velocity.y > 0) {
-                startY = (int) box.y;
-                endY = (int) (box.y + box.height + velocity.y);
-            } else if (velocity.y < 0) {
-                startY = (int) (box.y + velocity.y);
-                endY = (int) box.y;
-            } else {
-                break VELOCITY_Y;
-            }
 
-            startX = (int) box.x;
-            endX = (int) (box.x + box.width);
+        if (this.positionCache.x != position.x || this.positionCache.y != position.y) {
+            updateFacing(entity, movement);
 
-            IBlockState found = findBlock(position.world, velocity.y < 0, startX, endX, startY, endY);
+            System.out.println("movement");
 
-            if (found != null) {
-                if (movement.velocityY > 0) {
-                    position.y = Math.min(
-                            found.getPosition().y - box.height - 0.01f,
-                            position.y + movement.velocityY * deltaTime
-                    );
-                } else if (movement.velocityY < 0) {
-                    position.y = Math.max(
-                            found.getPosition().y + found.getBlock().getHeight(),
-                            position.y + movement.velocityY * deltaTime
-                    );
-                }
-            } else {
-                position.y += movement.velocityY * deltaTime;
+            System.out.println(this.game.getClass().getSimpleName());
+
+            if (this.game instanceof IEmbeddedServerGame) {
+                System.out.println("IServer");
+                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
+
+//                ((IEmbeddedServerGame) this.game).getServerManager().broadcastPacket(new PacketEntityMovement(
+//                        identifiable.uuid, new Vector2(position.x, position.y)
+//                ));
             }
         }
-
-        updateFacing(entity, movement);
     }
 
     private IBlockState findBlock(IWorld world, boolean reverse, int startX, int endX, int startY, int endY) {

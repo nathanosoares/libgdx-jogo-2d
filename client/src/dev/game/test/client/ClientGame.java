@@ -30,6 +30,7 @@ public class ClientGame extends Game implements IClientGame {
 
     @Override
     public void setupRegistries(IRegistryManager registryManager) {
+        super.setupRegistries(registryManager);
         registryManager.addRegistry(Block.class, new RegistryBlocks());
     }
 

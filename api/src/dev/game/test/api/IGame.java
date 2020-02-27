@@ -12,13 +12,14 @@ public interface IGame {
 
     Engine getEngine();
 
-    /*
 
-     */
+    default void setupRegistries(IRegistryManager registryManager) {
+    }
 
+    default void setupEngine(Engine engine) {
+    }
 
-    default void setupRegistries(IRegistryManager registryManager) {}
-
-    default void setupEngine(Engine engine){}
-
+    default boolean isClientSide() {
+        return this instanceof IEmbeddedServerGame;
+    }
 }
