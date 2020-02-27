@@ -35,7 +35,7 @@ public class VisualRenderSystem extends EntitySystem {
         PositionComponent position;
         VisualComponent visual;
 
-        this.batch.begin();
+//        this.batch.begin();
 
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
@@ -87,6 +87,6 @@ public class VisualRenderSystem extends EntitySystem {
 //            }
         }
 
-        this.batch.end();
+//        this.batch.end();
     }
 }

@@ -3,6 +3,7 @@ package dev.game.test.client.world.systems;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -12,10 +13,11 @@ import dev.game.test.api.IClientGame;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.core.block.BlockState;
+import dev.game.test.core.block.Blocks;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class WorldRenderSystem extends EntitySystem {
+public class WorldRenderSystem {
 
     public static final float TILE_WIDTH = 16.0f;
     public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
@@ -27,9 +29,7 @@ public class WorldRenderSystem extends EntitySystem {
 
     private final Rectangle viewBounds = new Rectangle();
 
-    @Override
-    public void update(float deltaTime) {
-        this.batch.begin();
+    public void render() {
 
         this.setView(this.camera);
 
@@ -41,7 +41,6 @@ public class WorldRenderSystem extends EntitySystem {
             }
         }
 
-        this.batch.end();
     }
 
     private void setView(OrthographicCamera camera) {
@@ -54,6 +53,7 @@ public class WorldRenderSystem extends EntitySystem {
     }
 
     private void renderMapLayer(IWorld world, IWorldLayer layer) {
+
         Vector2 mouseScreenPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
 

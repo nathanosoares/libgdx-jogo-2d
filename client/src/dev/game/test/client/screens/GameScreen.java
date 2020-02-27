@@ -39,6 +39,9 @@ public class GameScreen extends ScreenAdapter {
     @Getter
     private Vector2 hover = new Vector2();
 
+    WorldRenderSystem renderSystem;
+    VisualRenderSystem visualRenderSystem;
+
     @Override
     public void show() {
         this.camera = new OrthographicCamera();
@@ -51,13 +54,14 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-        this.clientGame.getEngine().addSystem(new WorldRenderSystem(this.clientGame, this.camera, this.spriteBatch, this.viewport));
-//        this.clientGame.getEngine().addSystem(new VisualRenderSystem(this.spriteBatch));
         this.clientGame.getEngine().addSystem(new LocalPlayerControllerSystem(this.clientGame));
 //        this.clientGame.getEngine().addSystem(new CollisiveDebugSystem(this.spriteBatch));
         this.clientGame.getEngine().addSystem(new AnimateStateSystem());
 
         this.clientGame.getEngine().addEntity((Entity) this.clientGame.getClientManager().getPlayer());
+
+        this.renderSystem = new WorldRenderSystem(this.clientGame, this.camera, this.spriteBatch, this.viewport);
+        this.visualRenderSystem = new VisualRenderSystem(this.spriteBatch);
     }
 
     @Override
@@ -90,6 +94,12 @@ public class GameScreen extends ScreenAdapter {
                     .clamp(this.camera.position.y, visibleH, currentWorld.getBounds().getHeight() - visibleH);
 
             this.camera.update();
+
+            this.spriteBatch.begin();
+            this.renderSystem.render();
+//            this.visualRenderSystem.update(delta);
+
+            this.spriteBatch.end();
         }
     }
 
