@@ -2,6 +2,7 @@ package dev.game.test.api.client;
 
 import dev.game.test.api.IGameManager;
 import dev.game.test.api.entity.IPlayer;
+import dev.game.test.api.net.IConnectionManager;
 import dev.game.test.api.world.IWorld;
 
 import java.util.List;
@@ -13,5 +14,7 @@ public interface IClientManager extends IGameManager {
     void setCurrentWorld(IWorld world);
 
     IPlayer getPlayer();
+
+    void setPlayer(IPlayer player);
 
 }

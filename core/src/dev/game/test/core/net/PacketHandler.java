@@ -14,22 +14,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PacketHandler implements IPacketHandler {
 
     protected final Connection connection;
 
-    //
-
     private final Multimap<Class<? extends Packet>, PacketListener> listeners = HashMultimap.create();
 
-    private final List<Map.Entry<Packet, Long>> queue = Collections.synchronizedList(Lists.newLinkedList());
+    private final ConcurrentLinkedQueue<Map.Entry<Packet, Long>> queue = new ConcurrentLinkedQueue<Map.Entry<Packet, Long>>();
 
-    /*
-     */
+    String debugTag;
+    String debugColor;
 
-    public PacketHandler(Connection connection) {
+    public PacketHandler(Connection connection, String debugTag, String debugColor) {
         this.connection = connection;
+        this.debugColor = debugColor;
+        this.debugTag = debugTag;
 
         loadListeners();
     }
@@ -63,12 +64,11 @@ public class PacketHandler implements IPacketHandler {
         }
     }
 
-    /*
-
-     */
-
     public void queuePacket(Packet packet) {
-        Gdx.app.debug(getClass().getSimpleName(), String.format("Received packet: %s", packet.getClass().getSimpleName()));
+        Gdx.app.debug(
+                String.format("%s%s received packet\033[0m", debugColor, debugTag),
+                String.format("%s%s\033[0m", debugColor, packet.getClass().getSimpleName())
+        );
 
         queue.add(new AbstractMap.SimpleEntry<>(packet, System.currentTimeMillis()));
     }
@@ -78,6 +78,7 @@ public class PacketHandler implements IPacketHandler {
 
         while (iterator.hasNext()) {
             Map.Entry<Packet, Long> entry = iterator.next();
+
             if (System.currentTimeMillis() - entry.getValue() > CoreConstants.INDUCED_LAG) {
                 iterator.remove();
 

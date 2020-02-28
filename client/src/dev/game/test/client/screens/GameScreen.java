@@ -18,6 +18,7 @@ import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.net.packet.client.PacketKeybindActivate;
 import dev.game.test.api.net.packet.client.PacketKeybindDeactivate;
+import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.entity.systems.AnimateStateSystem;
 import dev.game.test.client.entity.systems.CollisiveDebugSystem;
@@ -36,7 +37,7 @@ public class GameScreen extends ScreenAdapter {
 
     public static final int VIEWPORT_SIZE = 20;
 
-    private final IClientGame clientGame;
+    private final IClientGame game;
 
     private Viewport viewport;
 
@@ -51,7 +52,7 @@ public class GameScreen extends ScreenAdapter {
 
     private EntitySystem registerSystem(EntitySystem system) {
         this.systems.add(system);
-        this.clientGame.getEngine().addSystem(system);
+        this.game.getEngine().addSystem(system);
 
         return system;
     }
@@ -68,12 +69,10 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-        this.registerSystem(new WorldRenderSystem(this.clientGame, this.camera, this.spriteBatch, this.viewport));
-        this.registerSystem(new VisualRenderSystem(this.spriteBatch));
-        this.registerSystem(new CollisiveDebugSystem(this.spriteBatch));
-        this.registerSystem(new AnimateStateSystem());
-
-        this.clientGame.getEngine().addEntity((Entity) this.clientGame.getClientManager().getPlayer());
+        this.registerSystem(new WorldRenderSystem(this.game, this.camera, this.spriteBatch, this.viewport));
+        this.registerSystem(new VisualRenderSystem(this.game, this.spriteBatch));
+        this.registerSystem(new CollisiveDebugSystem(this.game, this.spriteBatch));
+        this.registerSystem(new AnimateStateSystem(this.game));
 
         Gdx.input.setInputProcessor(new PlayerControllerInputAdapter());
     }
@@ -90,8 +89,12 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        IWorld currentWorld = this.clientGame.getClientManager().getCurrentWorld();
-        IPlayer currentPlayer = this.clientGame.getClientManager().getPlayer();
+        if (this.game.getConnectionHandler().getConnectionManager().getState() != PacketConnectionState.State.INGAME) {
+            return;
+        }
+
+        IWorld currentWorld = this.game.getClientManager().getCurrentWorld();
+        IPlayer currentPlayer = this.game.getClientManager().getPlayer();
 
         if (currentWorld != null && currentPlayer != null) {
             Vector2 playerPosition = currentPlayer.getPosition();
@@ -116,22 +119,28 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        this.systems.forEach(this.clientGame.getEngine()::removeSystem);
+        this.systems.forEach(this.game.getEngine()::removeSystem);
     }
 
     private class PlayerControllerInputAdapter extends InputAdapter {
-        KeybindComponent activatedKeybinds = KeybindComponent.MAPPER
-                .get((Entity) GameScreen.this.clientGame.getClientManager().getPlayer());
+
 
         @Override
         public boolean keyDown(int keycode) {
-            RegistryKeybinds keybindRegistry = GameScreen.this.clientGame.getRegistryManager().getRegistry(Keybind.class);
+            if (GameScreen.this.game.getClientManager().getPlayer() == null) {
+                return super.keyDown(keycode);
+            }
+
+            KeybindComponent activatedKeybinds = KeybindComponent.MAPPER
+                    .get((Entity) GameScreen.this.game.getClientManager().getPlayer());
+
+            RegistryKeybinds keybindRegistry = GameScreen.this.game.getRegistryManager().getRegistry(Keybind.class);
             Keybind keybind = keybindRegistry.getKeybindFromKey(keycode);
 
             if (keybind != null) {
-                this.activatedKeybinds.activeKeybinds.add(keybind);
+                activatedKeybinds.activeKeybinds.add(keybind);
 
-                GameScreen.this.clientGame.getConnectionHandler().queuePacket(new PacketKeybindActivate(keybind.getId()));
+                GameScreen.this.game.getConnectionHandler().queuePacket(new PacketKeybindActivate(keybind.getId()));
                 return true;
             }
 
@@ -140,17 +149,24 @@ public class GameScreen extends ScreenAdapter {
 
         @Override
         public boolean keyUp(int keycode) {
-            RegistryKeybinds keybindRegistry = GameScreen.this.clientGame.getRegistryManager().getRegistry(Keybind.class);
+            if (GameScreen.this.game.getClientManager().getPlayer() == null) {
+                return super.keyUp(keycode);
+            }
+
+            KeybindComponent activatedKeybinds = KeybindComponent.MAPPER
+                    .get((Entity) GameScreen.this.game.getClientManager().getPlayer());
+
+            RegistryKeybinds keybindRegistry = GameScreen.this.game.getRegistryManager().getRegistry(Keybind.class);
             Keybind keybind = keybindRegistry.getKeybindFromKey(keycode);
 
             if (keybind != null) {
-                this.activatedKeybinds.activeKeybinds.remove(keybind);
+                activatedKeybinds.activeKeybinds.remove(keybind);
 
-                GameScreen.this.clientGame.getConnectionHandler().queuePacket(new PacketKeybindDeactivate(keybind.getId()));
+                GameScreen.this.game.getConnectionHandler().queuePacket(new PacketKeybindDeactivate(keybind.getId()));
                 return true;
             }
 
-            return super.keyDown(keycode);
+            return super.keyUp(keycode);
         }
     }
 }

@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.server.handler.IServerConnectionHandler;
+import dev.game.test.server.handler.listeners.HandshakeListener;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,12 +17,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ServerConnectionHandler implements IServerConnectionHandler {
 
-    private final IServerGame serverGame;
-
-    //
+    private final IServerGame game;
 
     @Getter
-    private Map<Connection, PlayerPacketHandler> connections = Maps.newHashMap();
+    private Map<Connection, PlayerConnectionManager> connections = Maps.newHashMap();
 
     private Server server;
 
@@ -36,21 +35,23 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
     @Override
     public void processQueue() {
-        for(PlayerPacketHandler packetHandler : connections.values()) {
-            packetHandler.processQueue();
+        for (PlayerConnectionManager playerConnectionManager : connections.values()) {
+
+            if (playerConnectionManager.getPacketListener() != null) {
+                playerConnectionManager.getPacketListener().processQueue();
+            }
         }
     }
 
-    /*
-
-     */
-
-    public PlayerPacketHandler getConnection(Connection connection) {
+    public PlayerConnectionManager getConnectionManager(Connection connection) {
         return this.connections.get(connection);
     }
 
     public void createHandler(Connection connection) {
-        ServerConnectionHandler.this.connections.put(connection, new PlayerPacketHandler(serverGame, connection));
+        PlayerConnectionManager playerConnectionManager = new PlayerConnectionManager(connection);
+        playerConnectionManager.setPacketListener(new HandshakeListener(game, playerConnectionManager));
+
+        ServerConnectionHandler.this.connections.put(connection, playerConnectionManager);
     }
 
     private class ServerListener extends Listener {
@@ -73,10 +74,10 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
         public void received(Connection connection, Object object) {
             super.received(connection, object);
 
-            PlayerPacketHandler clientConnection = ServerConnectionHandler.this.connections.get(connection);
+            PlayerConnectionManager playerConnectionManager = ServerConnectionHandler.this.connections.get(connection);
 
-            if (clientConnection != null && object instanceof Packet) {
-                clientConnection.queuePacket((Packet) object);
+            if (playerConnectionManager != null && object instanceof Packet) {
+                playerConnectionManager.queuePacket((Packet) object);
             }
         }
     }

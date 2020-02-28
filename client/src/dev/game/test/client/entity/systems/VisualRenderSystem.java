@@ -4,22 +4,28 @@ import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import dev.game.test.api.IClientGame;
+import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.client.entity.components.FacingVisualFlipComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.entity.components.FacingComponent;
 import dev.game.test.core.entity.components.NamedComponent;
 import dev.game.test.core.entity.components.PositionComponent;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class VisualRenderSystem extends EntitySystem {
 
     private final BitmapFont font = new BitmapFont();
 
     private ImmutableArray<Entity> entities;
 
+    private final IClientGame game;
     private final Batch batch;
 
-    public VisualRenderSystem(Batch batch) {
-        this.batch = batch;
+    @Override
+    public boolean checkProcessing() {
+        return this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
     }
 
     @Override

@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketWorldRequest implements Packet {
+public class PacketLogin implements Packet {
 
     @Getter
-    private int viewDistance;
+    private String username;
 
 }

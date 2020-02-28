@@ -3,17 +3,16 @@ package dev.game.test.client.world.systems;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.core.block.BlockState;
-import dev.game.test.core.block.Blocks;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class WorldRenderSystem extends EntitySystem {
     public static final float TILE_WIDTH = 16.0f;
     public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
 
-    private final IClientGame clientGame;
+    private final IClientGame game;
     protected final OrthographicCamera camera;
     protected final Batch batch;
     private final Viewport viewport;
@@ -30,13 +29,18 @@ public class WorldRenderSystem extends EntitySystem {
     private final Rectangle viewBounds = new Rectangle();
 
     @Override
+    public boolean checkProcessing () {
+        return this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
+    }
+
+    @Override
     public void update(float deltaTime) {
 
         this.batch.begin();
         this.setView(this.camera);
 
-        if (clientGame.getClientManager().getCurrentWorld() != null) {
-            IWorld world = clientGame.getClientManager().getCurrentWorld();
+        if (game.getClientManager().getCurrentWorld() != null) {
+            IWorld world = game.getClientManager().getCurrentWorld();
 
             for (int layerIndex = 0; layerIndex < world.getLayers().length; layerIndex++) {
                 renderMapLayer(world, world.getLayers()[layerIndex]);

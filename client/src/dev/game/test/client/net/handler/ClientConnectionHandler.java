@@ -9,6 +9,7 @@ import dev.game.test.api.client.handler.IClientConnectionHandler;
 import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.net.packet.handshake.PacketHandshake;
 import dev.game.test.core.net.packet.EnumPacket;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -16,17 +17,12 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ClientConnectionHandler implements IClientConnectionHandler {
 
-    //
+    private final IClientGame game;
 
-    private final IClientGame clientGame;
-
-    //
-
-    private ServerPacketHandler packetHandler;
+    @Getter
+    private ServerConnectionManager connectionManager;
 
     private Client client;
-
-    //
 
     public void connect(String hostname, int port) throws IOException {
         this.client = new Client();
@@ -47,15 +43,14 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
             public void disconnected(Connection connection) {
                 super.disconnected(connection);
 
-                packetHandler = null;
             }
 
             @Override
             public void received(Connection connection, Object o) {
                 super.received(connection, o);
 
-                if (packetHandler != null && o instanceof Packet) {
-                    packetHandler.queuePacket((Packet) o);
+                if (ClientConnectionHandler.this.connectionManager.getPacketListener() != null && o instanceof Packet) {
+                    ClientConnectionHandler.this.connectionManager.getPacketListener().queuePacket((Packet) o);
                 }
             }
         });
@@ -63,23 +58,18 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
     }
 
     public void queuePacket(Packet packet) {
-        this.packetHandler.queuePacket(packet);
+        this.connectionManager.getPacketListener().queuePacket(packet);
     }
 
     @Override
     public void processQueue() {
-        this.packetHandler.processQueue();
+        this.connectionManager.getPacketListener().processQueue();
     }
 
     public void createHandler(Connection connection) {
-        ServerPacketHandler _packetHandler = new ServerPacketHandler(clientGame, connection);
-        packetHandler = _packetHandler;
-
-        packetHandler.sendPacket(new PacketHandshake(clientGame.getClientManager().getPlayer().getId()));
+        this.connectionManager = new ServerConnectionManager(connection);
+        this.connectionManager.setPacketListener(new ServerPacketListener(this.game, this.connectionManager));
+        this.connectionManager.getPacketListener().sendPacket(new PacketHandshake(this.game.getUsername()));
     }
-
-    /*
-
-     */
 
 }

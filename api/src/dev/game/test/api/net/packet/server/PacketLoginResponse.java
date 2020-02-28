@@ -1,4 +1,4 @@
-package dev.game.test.api.net.packet.client;
+package dev.game.test.api.net.packet.server;
 
 import dev.game.test.api.net.packet.Packet;
 import lombok.AllArgsConstructor;
@@ -9,12 +9,9 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketWorldJoin implements Packet {
+public class PacketLoginResponse implements Packet {
 
     @Getter
-    private UUID id;
-
-    @Getter
-    private String name;
+    private UUID uuid;
 
 }

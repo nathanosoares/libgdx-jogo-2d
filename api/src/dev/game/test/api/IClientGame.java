@@ -12,4 +12,6 @@ public interface IClientGame extends IGame {
 
     IClientConnectionHandler getConnectionHandler();
 
+    String getUsername();
+
 }

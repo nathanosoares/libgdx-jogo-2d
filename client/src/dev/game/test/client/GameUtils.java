@@ -24,18 +24,11 @@ public class GameUtils {
     }
 
 
-    public static Player buildLocalPlayer() {
+    public static Player buildClientPlayer(UUID uuid, String username) {
 
         Texture texture = new Texture("rpg-pack/chars/gabe/gabe-idle-run.png");
-        String username;
 
-        if (System.getProperty("username") != null) {
-            username = System.getProperty("username");
-        } else {
-            username = String.format("Player%d", new Random().nextInt(1000));
-        }
-
-        Player player = PlayerUtils.buildLocalPlayer(UUID.randomUUID(), username);
+        Player player = PlayerUtils.buildLocalPlayer(uuid, username);
 
         player.add(new VisualComponent());
         player.add(new FacingVisualFlipComponent());

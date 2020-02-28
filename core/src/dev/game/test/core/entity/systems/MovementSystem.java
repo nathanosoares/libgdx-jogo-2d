@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import dev.game.test.api.IEmbeddedServerGame;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.net.packet.server.PacketEntityMovement;
@@ -50,7 +49,6 @@ public class MovementSystem extends IteratingSystem {
         } else {
 
             velocity.set(movement.velocityX, movement.velocityY);
-            velocity.scl(5);
 
             Rectangle box = CollisiveComponent.MAPPER.get(entity).box;
 
@@ -130,26 +128,29 @@ public class MovementSystem extends IteratingSystem {
             }
         }
 
+//        System.out.println("== " + this.game.getClass().getSimpleName());
+//        System.out.println(this.positionCache);
+//        System.out.println(new Vector2(position.x, position.y));
+//        System.out.println("==");
 
-        if (this.positionCache.x != position.x || this.positionCache.y != position.y) {
+//        if (this.positionCache.x != position.x || this.positionCache.y != position.y) {
             updateFacing(entity, movement);
 
-            System.out.println("movement");
-
-            System.out.println(this.game.getClass().getSimpleName());
-
-            if (this.game instanceof IEmbeddedServerGame) {
-                System.out.println("IServer");
-                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
-
-//                ((IEmbeddedServerGame) this.game).getServerManager().broadcastPacket(new PacketEntityMovement(
+//            if (this.game instanceof IServerGame) {
+//                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
+//
+//                ((IServerGame) this.game).getServerManager().broadcastPacket(new PacketEntityMovement(
 //                        identifiable.uuid, new Vector2(position.x, position.y)
 //                ));
-            }
-        }
+//            }
+//        }
     }
 
     private IBlockState findBlock(IWorld world, boolean reverse, int startX, int endX, int startY, int endY) {
+
+        if (world == null || world.getLayers()[1] == null) {
+            return  null;
+        }
 
         int minX = Math.min(startX, endX);
         int maxX = Math.max(startX, endX);

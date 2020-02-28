@@ -11,6 +11,8 @@ import dev.game.test.core.Game;
 import dev.game.test.core.block.Block;
 import lombok.Getter;
 
+import java.util.Random;
+
 public class ClientGame extends Game implements IClientGame {
 
     @Getter
@@ -22,9 +24,19 @@ public class ClientGame extends Game implements IClientGame {
     @Getter
     private final ClientConnectionHandler connectionHandler;
 
+    @Getter
+    private final String username;
+
     public ClientGame() {
+
+        if (System.getProperty("username") != null) {
+            this.username = System.getProperty("username");
+        } else {
+            this.username = String.format("Player%d", new Random().nextInt(1000));
+        }
+
         this.screenManager = new ScreenManager(this);
-        this.clientManager = new ClientManager(GameUtils.buildLocalPlayer());
+        this.clientManager = new ClientManager(this);
         this.connectionHandler = new ClientConnectionHandler(this);
     }
 

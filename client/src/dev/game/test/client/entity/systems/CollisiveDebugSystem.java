@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import dev.game.test.api.IClientGame;
+import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
@@ -14,21 +16,24 @@ public class CollisiveDebugSystem extends EntitySystem {
 
     private ImmutableArray<Entity> entities;
 
-
+    private final IClientGame game;
     private final Batch batch;
     private final ShapeRenderer shapeRenderer;
 
-    public CollisiveDebugSystem(Batch batch) {
+    public CollisiveDebugSystem(IClientGame game, Batch batch) {
+        this.game = game;
         this.batch = batch;
         this.shapeRenderer = new ShapeRenderer();
     }
 
     @Override
+    public boolean checkProcessing() {
+        return this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
+    }
+
+    @Override
     public void addedToEngine(Engine engine) {
-        entities = engine.getEntitiesFor(Family.all(
-                CollisiveComponent.class,
-                PositionComponent.class
-        ).get());
+        entities = engine.getEntitiesFor(Family.all(CollisiveComponent.class, PositionComponent.class).get());
     }
 
     @Override

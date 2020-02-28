@@ -48,11 +48,10 @@ public class ServerManager implements IServerManager {
         ImmutableArray<Entity> entities = this.game.getEngine().getEntitiesFor(Family.all(NetworkComponent.class).get());
 
         List<IPlayer> players = Lists.newArrayList(entities).stream()
-                .map(entity -> (IPlayer) entities)
+                .map(entity -> (IPlayer) entity)
                 .collect(Collectors.toList());
 
         for (IPlayer player : players) {
-            System.out.println("broadcast " + player.getName());
             player.sendPacket(packet);
         }
     }

@@ -1,5 +1,6 @@
 package dev.game.test.api.client.handler;
 
+import dev.game.test.api.net.IConnectionManager;
 import dev.game.test.api.net.packet.Packet;
 
 import java.io.IOException;
@@ -11,5 +12,7 @@ public interface IClientConnectionHandler {
     void queuePacket(Packet packet);
 
     void processQueue();
+
+    IConnectionManager getConnectionManager();
 
 }
