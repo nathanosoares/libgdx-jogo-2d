@@ -101,6 +101,7 @@ project(":api") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        api "org.mini2Dx:universal-tween-engine:6.3.3"
     }
 }
 

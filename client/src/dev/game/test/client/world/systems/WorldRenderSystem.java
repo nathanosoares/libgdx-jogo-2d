@@ -1,5 +1,6 @@
 package dev.game.test.client.world.systems;
 
+import aurelienribon.tweenengine.Tween;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,12 +9,20 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.Maps;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
+import dev.game.test.client.ClientApplication;
+import dev.game.test.client.entity.components.VisualComponent;
+import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.block.BlockState;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RequiredArgsConstructor
 public class WorldRenderSystem extends EntitySystem {
@@ -26,10 +35,13 @@ public class WorldRenderSystem extends EntitySystem {
     protected final Batch batch;
     private final Viewport viewport;
 
+    private final Rectangle blockArea = new Rectangle();
     private final Rectangle viewBounds = new Rectangle();
 
+    private final Map<BlockState, AtomicReference<Float>> opacity = Maps.newHashMap();
+
     @Override
-    public boolean checkProcessing () {
+    public boolean checkProcessing() {
         return this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
     }
 
@@ -43,7 +55,7 @@ public class WorldRenderSystem extends EntitySystem {
             IWorld world = game.getClientManager().getCurrentWorld();
 
             for (int layerIndex = 0; layerIndex < world.getLayers().length; layerIndex++) {
-                renderMapLayer(world, world.getLayers()[layerIndex]);
+                renderMapLayer(world, layerIndex);
             }
         }
 
@@ -59,7 +71,9 @@ public class WorldRenderSystem extends EntitySystem {
         this.viewBounds.set(camera.position.x - w / 2, camera.position.y - h / 2, w, h);
     }
 
-    private void renderMapLayer(IWorld world, IWorldLayer layer) {
+    private void renderMapLayer(IWorld world, int layerIndex) {
+
+        IWorldLayer layer = world.getLayers()[layerIndex];
 
         Vector2 mouseScreenPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
@@ -88,6 +102,9 @@ public class WorldRenderSystem extends EntitySystem {
                 BlockState blockState = (BlockState) layer.getBlockState(col, row);
                 TextureRegion region = blockState.getBlock().getTexture(blockState);
 
+
+                batch.setColor(1.0f, 1.0f, 1.0f, 1);
+
                 if (x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
                     float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
                     batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
@@ -99,8 +116,55 @@ public class WorldRenderSystem extends EntitySystem {
 //                }
 
                 if (region != null) {
+
+                    float alpha = batch.getColor().a;
+
+                    IPlayer player = this.game.getClientManager().getPlayer();
+
+                    if (player != null && layerIndex > 0) {
+                        blockArea.set(x, y, blockState.getBlock().getWidth(), blockState.getBlock().getHeight());
+
+                        if (blockArea.overlaps(new Rectangle(player.getPosition().x, player.getPosition().y, 1.5f, 1.5f))) {
+
+                            AtomicReference<Float> reference;
+
+                            if ((reference = opacity.get(blockState)) == null) {
+                                opacity.put(blockState, new AtomicReference<>(0.5f));
+                            } else {
+                                Tween.set(reference, OpacityAccessor.ALPHA).kill();
+                                reference.set(0.5f);
+                            }
+
+                            alpha = 0.5f;
+
+                        } else {
+                            AtomicReference<Float> reference;
+
+                            if ((reference = opacity.get(blockState)) != null) {
+                                alpha = reference.get();
+
+                                if (alpha == 0.5f) {
+                                    Tween.to(reference, OpacityAccessor.ALPHA, 1f)
+                                            .target(1f)
+                                            .start(ClientApplication.getInstance().getTweenManager());
+                                }
+
+                                if (alpha >= 1) {
+                                    Tween.set(reference, OpacityAccessor.ALPHA).kill();
+                                    opacity.remove(blockState);
+                                }
+                            }
+                        }
+                    }
+
+                    batch.setColor(
+                            batch.getColor().r,
+                            batch.getColor().g,
+                            batch.getColor().b,
+                            alpha
+                    );
+
                     batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);
-                    batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
                 }
 
                 x += layerTileWidth;

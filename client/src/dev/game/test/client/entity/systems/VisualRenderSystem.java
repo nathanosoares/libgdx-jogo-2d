@@ -67,6 +67,8 @@ public class VisualRenderSystem extends EntitySystem {
                     }
                 }
 
+
+                batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
                 this.batch.draw(
                         visual.region,
                         position.x,

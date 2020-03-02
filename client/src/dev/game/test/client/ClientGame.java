@@ -27,6 +27,7 @@ public class ClientGame extends Game implements IClientGame {
     @Getter
     private final String username;
 
+
     public ClientGame() {
 
         if (System.getProperty("username") != null) {

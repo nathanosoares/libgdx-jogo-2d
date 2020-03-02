@@ -148,7 +148,7 @@ public class MovementSystem extends IteratingSystem {
 
     private IBlockState findBlock(IWorld world, boolean reverse, int startX, int endX, int startY, int endY) {
 
-        if (world == null || world.getLayers()[1] == null) {
+        if (true || world == null || world.getLayers()[1] == null) {
             return  null;
         }
 
