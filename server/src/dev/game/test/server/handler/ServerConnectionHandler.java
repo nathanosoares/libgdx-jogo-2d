@@ -34,12 +34,9 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
     }
 
     @Override
-    public void processQueue() {
+    public void processQueues() {
         for (PlayerConnectionManager playerConnectionManager : connections.values()) {
-
-            if (playerConnectionManager.getPacketListener() != null) {
-                playerConnectionManager.getPacketListener().processQueue();
-            }
+            playerConnectionManager.processQueue();
         }
     }
 
@@ -48,8 +45,9 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
     }
 
     public void createHandler(Connection connection) {
-        PlayerConnectionManager playerConnectionManager = new PlayerConnectionManager(connection);
-        playerConnectionManager.setPacketListener(new HandshakeListener(game, playerConnectionManager));
+        PlayerConnectionManager playerConnectionManager = new PlayerConnectionManager(this.game, connection);
+
+        playerConnectionManager.registerListener(new HandshakeListener(this.game, playerConnectionManager));
 
         ServerConnectionHandler.this.connections.put(connection, playerConnectionManager);
     }

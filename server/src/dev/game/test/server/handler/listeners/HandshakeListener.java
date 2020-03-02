@@ -4,20 +4,19 @@ import com.badlogic.gdx.Gdx;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.net.packet.handshake.PacketHandshake;
-import dev.game.test.core.net.PacketEvent;
 import dev.game.test.server.handler.PlayerConnectionManager;
-import dev.game.test.server.handler.PlayerPacketListener;
+import org.greenrobot.eventbus.Subscribe;
 
-public class HandshakeListener extends PlayerPacketListener {
+public class HandshakeListener extends AbstractPlayerPacketListener {
 
-    public HandshakeListener(IServerGame game, PlayerConnectionManager playerConnectionManager) {
-        super(game, playerConnectionManager);
+    public HandshakeListener(IServerGame game, PlayerConnectionManager connectionManager) {
+        super(game, connectionManager);
     }
 
-    @PacketEvent
+    @Subscribe
     public void on(PacketHandshake handshake) {
 
-        if (this.playerConnectionManager.getState() != PacketConnectionState.State.DISCONNECTED) {
+        if (this.connectionManager.getState() != PacketConnectionState.State.DISCONNECTED) {
             return;
         }
 
@@ -25,9 +24,10 @@ public class HandshakeListener extends PlayerPacketListener {
 
         // TODO check if is ping
 
-        this.playerConnectionManager.setState(PacketConnectionState.State.HANDSHAKE);
-        sendPacket(new PacketConnectionState(this.playerConnectionManager.getState()));
+        this.connectionManager.setState(PacketConnectionState.State.HANDSHAKE);
+        this.connectionManager.sendPacket(new PacketConnectionState(this.connectionManager.getState()));
 
-        this.playerConnectionManager.setPacketListener(new LoginListener(this.game, this.playerConnectionManager));
+        this.connectionManager.unregisterListener(HandshakeListener.class);
+        this.connectionManager.registerListener(new LoginListener(this.game, this.connectionManager));
     }
 }

@@ -1,28 +1,27 @@
 package dev.game.test.client.net.handler;
 
 import com.esotericsoftware.kryonet.Connection;
-import dev.game.test.api.net.IConnectionManager;
 import dev.game.test.api.net.packet.Packet;
-import dev.game.test.api.net.packet.handshake.PacketConnectionState;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import dev.game.test.client.ClientApplication;
+import dev.game.test.client.EmbeddedServerApplication;
+import dev.game.test.core.net.packet.AbstractConnectionManager;
 
-@Getter
-@RequiredArgsConstructor
-public class ServerConnectionManager implements IConnectionManager {
+public class ServerConnectionManager extends AbstractConnectionManager {
 
-    private final Connection connection;
+    public ServerConnectionManager(Connection connection) {
+        super(connection);
+    }
 
-    @Setter
-    private PacketConnectionState.State state = PacketConnectionState.State.DISCONNECTED;
+    @Override
+    public void sendPacket(Packet packet) {
+        EmbeddedServerApplication serverApplication = ClientApplication.EMBEDDED_SERVER;
 
-    @Setter
-    private ServerPacketListener packetListener;
-
-    public void queuePacket(Packet packet) {
-        if (packetListener != null) {
-            packetListener.queuePacket(packet);
+        if (packet != null) {
+            serverApplication.getGame().getConnectionHandler().getConnectionManager(ClientApplication.DUMMY_CONNECTION)
+                    .queuePacket(packet);
+            return;
         }
+
+        super.sendPacket(packet);
     }
 }

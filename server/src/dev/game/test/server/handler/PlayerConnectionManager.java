@@ -1,21 +1,20 @@
 package dev.game.test.server.handler;
 
 import com.esotericsoftware.kryonet.Connection;
-import dev.game.test.api.net.IConnectionManager;
+import dev.game.test.api.IEmbeddedServerGame;
+import dev.game.test.api.IServerGame;
 import dev.game.test.api.net.packet.Packet;
-import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.core.entity.Player;
+import dev.game.test.core.net.packet.AbstractConnectionManager;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
 
 @Getter
-@RequiredArgsConstructor
-public class PlayerConnectionManager implements IConnectionManager {
+public class PlayerConnectionManager extends AbstractConnectionManager {
 
-    private final Connection connection;
+    private final IServerGame game;
 
     @Setter
     private String username;
@@ -26,15 +25,18 @@ public class PlayerConnectionManager implements IConnectionManager {
     @Setter
     private Player player;
 
-    @Setter
-    private PacketConnectionState.State state = PacketConnectionState.State.DISCONNECTED;
+    public PlayerConnectionManager(IServerGame game, Connection connection) {
+        super(connection);
+        this.game = game;
+    }
 
-    @Setter
-    private PlayerPacketListener packetListener;
-
-    public void queuePacket(Packet packet) {
-        if (packetListener != null) {
-            packetListener.queuePacket(packet);
+    @Override
+    public void sendPacket(Packet packet) {
+        if (game instanceof IEmbeddedServerGame) {
+            ((IEmbeddedServerGame) game).getHostGame().getConnectionHandler().queuePacket(packet);
+            return;
         }
+
+        super.sendPacket(packet);
     }
 }

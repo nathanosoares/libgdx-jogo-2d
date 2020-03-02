@@ -1,22 +1,16 @@
 package dev.game.test.server;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.server.IServerManager;
 import dev.game.test.api.world.IWorld;
-import dev.game.test.core.entity.components.NetworkComponent;
 import dev.game.test.core.world.World;
+import dev.game.test.server.handler.PlayerConnectionManager;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ServerManager implements IServerManager {
@@ -45,14 +39,8 @@ public class ServerManager implements IServerManager {
 
     @Override
     public void broadcastPacket(Packet packet) {
-        ImmutableArray<Entity> entities = this.game.getEngine().getEntitiesFor(Family.all(NetworkComponent.class).get());
-
-        List<IPlayer> players = Lists.newArrayList(entities).stream()
-                .map(entity -> (IPlayer) entity)
-                .collect(Collectors.toList());
-
-        for (IPlayer player : players) {
-            player.sendPacket(packet);
+        for (PlayerConnectionManager connectionManager : this.game.getConnectionHandler().getConnections().values()) {
+            connectionManager.sendPacket(packet);
         }
     }
 

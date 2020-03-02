@@ -4,36 +4,36 @@ import dev.game.test.api.IServerGame;
 import dev.game.test.api.net.packet.client.PacketLogin;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.net.packet.server.PacketLoginResponse;
-import dev.game.test.core.net.PacketEvent;
 import dev.game.test.server.handler.PlayerConnectionManager;
-import dev.game.test.server.handler.PlayerPacketListener;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.UUID;
 
-public class LoginListener extends PlayerPacketListener {
+public class LoginListener extends AbstractPlayerPacketListener {
 
-    public LoginListener(IServerGame game, PlayerConnectionManager playerConnectionManager) {
-        super(game, playerConnectionManager);
+    public LoginListener(IServerGame game, PlayerConnectionManager connectionManager) {
+        super(game, connectionManager);
     }
 
-    @PacketEvent
+    @Subscribe
     public void on(PacketLogin packet) {
-        if (this.playerConnectionManager.getState() != PacketConnectionState.State.HANDSHAKE) {
+        if (this.connectionManager.getState() != PacketConnectionState.State.HANDSHAKE) {
             return;
         }
 
         new Thread(() -> {
 
-            this.playerConnectionManager.setUsername(packet.getUsername());
+            this.connectionManager.setUsername(packet.getUsername());
 
             // TODO fazer as coisas async
 
-            sendPacket(new PacketLoginResponse(UUID.randomUUID()));
+            this.connectionManager.sendPacket(new PacketLoginResponse(UUID.randomUUID()));
 
-            this.playerConnectionManager.setPacketListener(new PreparingListener(this.game, this.playerConnectionManager));
+            this.connectionManager.unregisterListener(LoginListener.class);
+            this.connectionManager.registerListener(new PreparingListener(this.game, this.connectionManager));
 
-            this.playerConnectionManager.setState(PacketConnectionState.State.PREPARING);
-            sendPacket(new PacketConnectionState(this.playerConnectionManager.getState()));
+            this.connectionManager.setState(PacketConnectionState.State.PREPARING);
+            this.connectionManager.sendPacket(new PacketConnectionState(this.connectionManager.getState()));
         }).start();
     }
 }

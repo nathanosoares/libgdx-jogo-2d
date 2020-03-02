@@ -6,6 +6,6 @@ public interface IServerConnectionHandler {
 
     void start(int port) throws IOException;
 
-    void processQueue();
+    void processQueues();
 
 }

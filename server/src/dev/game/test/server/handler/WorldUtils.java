@@ -10,9 +10,9 @@ import dev.game.test.api.world.IWorldLayer;
 
 public class WorldUtils {
 
-    public static void sendWorld(PlayerPacketListener listener, IWorld world) {
+    public static void sendWorld(PlayerConnectionManager connectionManager, IWorld world) {
         Packet worldSnapshot = new PacketWorldSnapshot(world.getName(), world.getLayers().length, (int) world.getBounds().getWidth(), (int) world.getBounds().getHeight());
-        listener.sendPacket(worldSnapshot);
+        connectionManager.sendPacket(worldSnapshot);
 
         for (int layerIndex = 0; layerIndex < world.getLayers().length; layerIndex++) {
 
@@ -34,9 +34,9 @@ public class WorldUtils {
             }
 
             PacketWorldLayerSnapshot worldLayerSnapshot = new PacketWorldLayerSnapshot(world.getName(), layerIndex, dataArray);
-            listener.sendPacket(worldLayerSnapshot);
+            connectionManager.sendPacket(worldLayerSnapshot);
         }
 
-        listener.sendPacket(new PacketWorldSnapshotFinish(world.getName()));
+        connectionManager.sendPacket(new PacketWorldSnapshotFinish(world.getName()));
     }
 }

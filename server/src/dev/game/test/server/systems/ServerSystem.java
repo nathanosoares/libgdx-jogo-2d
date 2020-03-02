@@ -16,6 +16,6 @@ public class ServerSystem extends IntervalSystem {
 
     @Override
     protected void updateInterval() {
-        this.serverGame.getConnectionHandler().processQueue();
+        this.serverGame.getConnectionHandler().processQueues();
     }
 }

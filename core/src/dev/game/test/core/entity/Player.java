@@ -1,12 +1,9 @@
 package dev.game.test.core.entity;
 
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
-import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.keybind.Keybind;
-import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.util.EnumFacing;
-import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.components.*;
 import dev.game.test.core.entity.state.PlayerState;
 
@@ -46,10 +43,6 @@ public class Player extends Entity implements IPlayer {
     }
 
 
-    /*
-        Keybinds
-     */
-
     @Override
     public void addActiveKeybind(Keybind keybind) {
         KeybindComponent.MAPPER.get(this).activeKeybinds.add(keybind);
@@ -63,16 +56,5 @@ public class Player extends Entity implements IPlayer {
     @Override
     public boolean hasActiveKeybind(Keybind keybind) {
         return KeybindComponent.MAPPER.get(this).activeKeybinds.contains(keybind);
-    }
-
-    /*
-        Networking
-     */
-
-    @Override
-    public void sendPacket(Packet packet) {
-        if(NetworkComponent.MAPPER.has(this)) {
-            NetworkComponent.MAPPER.get(this).packetHandler.sendPacket(packet);
-        }
     }
 }
