@@ -1,19 +1,24 @@
 package dev.game.test.client.systems;
 
 import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.ashley.systems.IntervalSystem;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ClientSystem extends EntitySystem {
 
-    private final IClientGame clientGame;
+    private final IClientGame game;
 
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        clientGame.getConnectionHandler().processQueue();
+        game.getConnectionHandler().processQueue();
+    }
+
+    @Override
+    public boolean checkProcessing() {
+        return this.game.getConnectionHandler().getConnectionManager() != null;
     }
 }

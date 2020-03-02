@@ -18,7 +18,7 @@ public class PacketWorldLayerSnapshot implements Packet {
     private int layerId;
 
     @Getter
-    private LayerData data[][];
+    private LayerData[][] data;
 
     @AllArgsConstructor
     @NoArgsConstructor

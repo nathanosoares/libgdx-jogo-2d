@@ -90,7 +90,7 @@ public class World implements IWorld {
         for (int x = 0; x < this.getBounds().getWidth(); x++) {
             for (int y = 0; y < this.getBounds().getHeight(); y++) {
                 IBlockState blockState = ground.getBlockState(x, y);
-                blockState.getBlock().onBlockNeighbourUpdate(blockState, null);
+//                blockState.getBlock().onBlockNeighbourUpdate(blockState, null);
             }
         }
 

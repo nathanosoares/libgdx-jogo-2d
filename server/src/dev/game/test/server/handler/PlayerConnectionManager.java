@@ -32,10 +32,10 @@ public class PlayerConnectionManager extends AbstractConnectionManager {
 
     @Override
     public void sendPacket(Packet packet) {
-        if (game instanceof IEmbeddedServerGame) {
-            ((IEmbeddedServerGame) game).getHostGame().getConnectionHandler().queuePacket(packet);
-            return;
-        }
+//        if (game instanceof IEmbeddedServerGame) {
+//            ((IEmbeddedServerGame) game).getHostGame().getConnectionHandler().queuePacket(packet);
+//            return;
+//        }
 
         super.sendPacket(packet);
     }

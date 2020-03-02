@@ -89,6 +89,9 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        if (this.game.getConnectionHandler().getConnectionManager() == null) {
+            return;
+        }
         if (this.game.getConnectionHandler().getConnectionManager().getState() != PacketConnectionState.State.INGAME) {
             return;
         }

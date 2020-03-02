@@ -25,7 +25,8 @@ public class VisualRenderSystem extends EntitySystem {
 
     @Override
     public boolean checkProcessing() {
-        return this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
+        return this.game.getConnectionHandler().getConnectionManager() != null
+                && this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
     }
 
     @Override

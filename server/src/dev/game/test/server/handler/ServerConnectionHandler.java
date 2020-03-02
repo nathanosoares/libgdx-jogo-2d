@@ -1,5 +1,6 @@
 package dev.game.test.server.handler;
 
+import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -29,8 +30,8 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
         this.server = new Server();
 
         this.server.start();
-        this.server.bind(port);
         this.server.addListener(new ServerListener());
+        this.server.bind(port);
     }
 
     @Override
@@ -56,6 +57,7 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
         @Override
         public void connected(Connection connection) {
+            Gdx.app.debug("ServerConnectionHandler", "Connected");
             super.connected(connection);
 
             createHandler(connection);
@@ -63,6 +65,7 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
         @Override
         public void disconnected(Connection connection) {
+            Gdx.app.debug("ServerConnectionHandler", "disconnected");
             super.disconnected(connection);
 
             ServerConnectionHandler.this.connections.remove(connection);
@@ -70,6 +73,7 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
         @Override
         public void received(Connection connection, Object object) {
+            Gdx.app.debug("ServerConnectionHandler", "received");
             super.received(connection, object);
 
             PlayerConnectionManager playerConnectionManager = ServerConnectionHandler.this.connections.get(connection);

@@ -14,7 +14,6 @@ public class AbstractServerApplication<G extends ServerGame> extends GameApplica
 
         getGame().getServerManager().loadWorlds();
 
-        // getGame().getConnectionHandler().start();
     }
 
 }

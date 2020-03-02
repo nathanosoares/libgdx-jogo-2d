@@ -35,6 +35,8 @@ public class AbstractConnectionManager implements IConnectionManager {
 
     @Override
     public void sendPacket(Packet packet) {
+        System.out.println("SendPacket " + this.getClass().getSimpleName());
+
         if (connection != null) {
             connection.sendTCP(packet);
         }

@@ -1,5 +1,6 @@
 package dev.game.test.client.net.handler;
 
+import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -25,16 +26,21 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
     @Getter
     private ServerConnectionManager connectionManager;
 
+    private Client client;
+
     public void connect(String hostname, int port) throws IOException {
-        Client client = new Client();
+        client = new Client();
 
         Kryo kyro = client.getKryo();
-        EnumPacket.registry.forEach((id, packet) -> kyro.register(packet, id));
+
+        EnumPacket.registry.forEach((id, packet) -> kyro.register(packet));
 
         client.start();
+
         client.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
+                Gdx.app.debug("ClientConnectionHandler", "Connected");
                 super.connected(connection);
 
                 createHandler(connection);
@@ -42,12 +48,13 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
 
             @Override
             public void disconnected(Connection connection) {
+                Gdx.app.debug("ClientConnectionHandler", "Disconnected");
                 super.disconnected(connection);
-
             }
 
             @Override
             public void received(Connection connection, Object o) {
+                Gdx.app.debug("ClientConnectionHandler", "Received");
                 super.received(connection, o);
 
                 if (o instanceof Packet) {
@@ -69,7 +76,7 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
     }
 
     public void createHandler(Connection connection) {
-        this.connectionManager = new ServerConnectionManager(connection);
+        this.connectionManager = new ServerConnectionManager(this.game, connection);
 
         this.connectionManager.registerListener(new ConnectionStatePacketListener(this.game, this.connectionManager));
         this.connectionManager.registerListener(new GenericPacketListener(this.game, this.connectionManager));
