@@ -41,12 +41,6 @@ public class WorldRenderSystem extends EntitySystem {
     private final Map<BlockState, AtomicReference<Float>> opacity = Maps.newHashMap();
 
     @Override
-    public boolean checkProcessing() {
-        return this.game.getConnectionHandler().getConnectionManager() != null
-                && this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
-    }
-
-    @Override
     public void update(float deltaTime) {
 
         this.batch.begin();
@@ -100,9 +94,8 @@ public class WorldRenderSystem extends EntitySystem {
                     continue;
                 }
 
-                BlockState blockState = (BlockState) layer.getBlockState(col, row);
-                TextureRegion region = blockState.getBlock().getTexture(blockState);
-
+                BlockState state = (BlockState) layer.getBlockState(col, row);
+                TextureRegion region = state.getBlock().getTexture(state);
 
                 batch.setColor(1.0f, 1.0f, 1.0f, 1);
 
@@ -123,14 +116,14 @@ public class WorldRenderSystem extends EntitySystem {
                     IPlayer player = this.game.getClientManager().getPlayer();
 
                     if (player != null && layerIndex > 0) {
-                        blockArea.set(x, y, blockState.getBlock().getWidth(), blockState.getBlock().getHeight());
+                        blockArea.set(x, y, state.getBlock().getWidth(), state.getBlock().getHeight());
 
                         if (blockArea.overlaps(new Rectangle(player.getPosition().x, player.getPosition().y, 1.5f, 1.5f))) {
 
                             AtomicReference<Float> reference;
 
-                            if ((reference = opacity.get(blockState)) == null) {
-                                opacity.put(blockState, new AtomicReference<>(0.5f));
+                            if ((reference = opacity.get(state)) == null) {
+                                opacity.put(state, new AtomicReference<>(0.5f));
                             } else {
                                 Tween.set(reference, OpacityAccessor.ALPHA).kill();
                                 reference.set(0.5f);
@@ -141,7 +134,7 @@ public class WorldRenderSystem extends EntitySystem {
                         } else {
                             AtomicReference<Float> reference;
 
-                            if ((reference = opacity.get(blockState)) != null) {
+                            if ((reference = opacity.get(state)) != null) {
                                 alpha = reference.get();
 
                                 if (alpha == 0.5f) {
@@ -152,7 +145,7 @@ public class WorldRenderSystem extends EntitySystem {
 
                                 if (alpha >= 1) {
                                     Tween.set(reference, OpacityAccessor.ALPHA).kill();
-                                    opacity.remove(blockState);
+                                    opacity.remove(state);
                                 }
                             }
                         }

@@ -1,5 +1,6 @@
 package dev.game.test.client.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.Disposable;
 import dev.game.test.api.IClientGame;
@@ -29,6 +30,7 @@ public class ScreenManager implements IScreenManager, Disposable {
 
         this.currentScreen = newScreen;
         this.currentScreen.show();
+        this.currentScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     public void rollbackScreen() {

@@ -5,15 +5,16 @@ import dev.game.test.api.block.IBlock;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @ToString(of = {"id"})
-public class Block implements IBlock {
+@RequiredArgsConstructor
+public abstract class Block implements IBlock {
 
     @Getter
-    @Setter
-    protected int id;
+    protected final int id;
 
     @Getter
     protected int width = 1;

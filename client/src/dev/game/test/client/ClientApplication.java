@@ -3,13 +3,10 @@ package dev.game.test.client;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
-import com.esotericsoftware.kryonet.Connection;
 import dev.game.test.client.setups.SetupBlocks;
-import dev.game.test.client.setups.SetupGameScreen;
 import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.GameApplication;
 import dev.game.test.core.setup.SetupPipeline;
-import dev.game.test.core.utils.DummyConnection;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -23,25 +20,18 @@ public class ClientApplication extends GameApplication<ClientGame> {
     @Getter
     private TweenManager tweenManager;
 
-    public static EmbeddedServerApplication EMBEDDED_SERVER;
-
-//    public static final Connection DUMMY_CONNECTION = new DummyConnection();
-
     private final FPSLogger fpsLogger = new FPSLogger(false, true);
 
     public ClientApplication() {
         super(ClientGame.class);
         instance = this;
-
-//        EMBEDDED_SERVER = new EmbeddedServerApplication(this);
     }
 
     @Override
     protected void setupPipeline(SetupPipeline pipeline) {
         super.setupPipeline(pipeline);
 
-        pipeline.registerSetup(new SetupBlocks(this.getGame()))
-                .registerSetup(new SetupGameScreen(this.getGame()));
+        pipeline.registerSetup(new SetupBlocks(this.getGame()));
     }
 
     @Override
@@ -50,10 +40,6 @@ public class ClientApplication extends GameApplication<ClientGame> {
 
         Tween.registerAccessor(AtomicReference.class, new OpacityAccessor());
         this.tweenManager = new TweenManager();
-
-
-//        EMBEDDED_SERVER.create();
-//        EMBEDDED_SERVER.getGame().getConnectionHandler().createHandler(DUMMY_CONNECTION);
 
         try {
             getGame().getConnectionHandler().connect("127.0.0.1", 25565);
@@ -67,9 +53,9 @@ public class ClientApplication extends GameApplication<ClientGame> {
     public void resize(int width, int height) {
         super.resize(width, height);
 
-        getGame().getScreenManager().getCurrentScreen().resize(width, height);
-
-//        EMBEDDED_SERVER.resize(width, height);
+        if (getGame().getScreenManager().getCurrentScreen() != null) {
+            getGame().getScreenManager().getCurrentScreen().resize(width, height);
+        }
     }
 
     @Override
@@ -81,27 +67,27 @@ public class ClientApplication extends GameApplication<ClientGame> {
 
         this.fpsLogger.log();
 
-        getGame().getScreenManager().getCurrentScreen().render(Gdx.graphics.getDeltaTime());
-
-//        EMBEDDED_SERVER.render();
+        if (getGame().getScreenManager().getCurrentScreen() != null) {
+            getGame().getScreenManager().getCurrentScreen().render(Gdx.graphics.getDeltaTime());
+        }
     }
 
     @Override
     public void pause() {
         super.pause();
 
-        getGame().getScreenManager().getCurrentScreen().pause();
-
-//        EMBEDDED_SERVER.pause();
+        if (getGame().getScreenManager().getCurrentScreen() != null) {
+            getGame().getScreenManager().getCurrentScreen().pause();
+        }
     }
 
     @Override
     public void resume() {
         super.resume();
 
-        getGame().getScreenManager().getCurrentScreen().resume();
-
-//        EMBEDDED_SERVER.resume();
+        if (getGame().getScreenManager().getCurrentScreen() != null) {
+            getGame().getScreenManager().getCurrentScreen().resume();
+        }
     }
 
     @Override
@@ -109,7 +95,5 @@ public class ClientApplication extends GameApplication<ClientGame> {
         super.dispose();
 
         getGame().getScreenManager().getCurrentScreen().dispose();
-
-//        EMBEDDED_SERVER.dispose();
     }
 }

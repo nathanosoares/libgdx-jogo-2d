@@ -24,12 +24,6 @@ public class VisualRenderSystem extends EntitySystem {
     private final Batch batch;
 
     @Override
-    public boolean checkProcessing() {
-        return this.game.getConnectionHandler().getConnectionManager() != null
-                && this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
-    }
-
-    @Override
     public void addedToEngine(Engine engine) {
         entities = engine.getEntitiesFor(Family.all(
                 PositionComponent.class,

@@ -13,7 +13,8 @@ public class PacketConnectionState implements Packet {
     @Getter
     private State state;
 
-    @RequiredArgsConstructor
+    @NoArgsConstructor
+    @AllArgsConstructor
     public enum State {
 
         DISCONNECTED(-1),
@@ -22,6 +23,6 @@ public class PacketConnectionState implements Packet {
         INGAME(2);
 
         @Getter
-        private final int id;
+        private int id;
     }
 }

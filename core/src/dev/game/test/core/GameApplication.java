@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import dev.game.test.api.IApplication;
 import dev.game.test.api.IGame;
 import dev.game.test.core.setup.SetupPipeline;
+import dev.game.test.core.setup.impl.PacketPayloadSetup;
 import dev.game.test.core.setup.impl.SetupKeybinds;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,7 @@ public abstract class GameApplication<G extends IGame> extends ApplicationAdapte
 
     protected void setupPipeline(SetupPipeline pipeline) {
         pipeline.registerSetup(new SetupKeybinds(this.game));
+        pipeline.registerSetup(new PacketPayloadSetup(this.game));
     }
 
     protected G createGame() throws Exception {

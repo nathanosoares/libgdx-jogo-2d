@@ -25,7 +25,7 @@ import dev.game.test.client.entity.systems.CollisiveDebugSystem;
 import dev.game.test.client.entity.systems.VisualRenderSystem;
 import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.components.KeybindComponent;
-import dev.game.test.core.registry.impl.RegistryKeybinds;
+import dev.game.test.core.registry.impl.KeybindsRegistry;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -89,13 +89,6 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        if (this.game.getConnectionHandler().getConnectionManager() == null) {
-            return;
-        }
-        if (this.game.getConnectionHandler().getConnectionManager().getState() != PacketConnectionState.State.INGAME) {
-            return;
-        }
-
         IWorld currentWorld = this.game.getClientManager().getCurrentWorld();
         IPlayer currentPlayer = this.game.getClientManager().getPlayer();
 
@@ -127,7 +120,6 @@ public class GameScreen extends ScreenAdapter {
 
     private class PlayerControllerInputAdapter extends InputAdapter {
 
-
         @Override
         public boolean keyDown(int keycode) {
             if (GameScreen.this.game.getClientManager().getPlayer() == null) {
@@ -137,7 +129,7 @@ public class GameScreen extends ScreenAdapter {
             KeybindComponent activatedKeybinds = KeybindComponent.MAPPER
                     .get((Entity) GameScreen.this.game.getClientManager().getPlayer());
 
-            RegistryKeybinds keybindRegistry = GameScreen.this.game.getRegistryManager().getRegistry(Keybind.class);
+            KeybindsRegistry keybindRegistry = GameScreen.this.game.getRegistryManager().getRegistry(Keybind.class);
             Keybind keybind = keybindRegistry.getKeybindFromKey(keycode);
 
             if (keybind != null) {
@@ -159,7 +151,7 @@ public class GameScreen extends ScreenAdapter {
             KeybindComponent activatedKeybinds = KeybindComponent.MAPPER
                     .get((Entity) GameScreen.this.game.getClientManager().getPlayer());
 
-            RegistryKeybinds keybindRegistry = GameScreen.this.game.getRegistryManager().getRegistry(Keybind.class);
+            KeybindsRegistry keybindRegistry = GameScreen.this.game.getRegistryManager().getRegistry(Keybind.class);
             Keybind keybind = keybindRegistry.getKeybindFromKey(keycode);
 
             if (keybind != null) {

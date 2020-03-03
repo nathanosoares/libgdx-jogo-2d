@@ -22,12 +22,6 @@ public class AnimateStateSystem extends IteratingSystem {
     }
 
     @Override
-    public boolean checkProcessing() {
-        return this.game.getConnectionHandler().getConnectionManager() != null
-                && this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
-    }
-
-    @Override
     protected void processEntity(Entity entity, float deltaTime) {
         AnimateStateComponent animateState = AnimateStateComponent.MAPPER.get(entity);
         StateComponent state = StateComponent.MAPPER.get(entity);

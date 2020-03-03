@@ -12,11 +12,14 @@ public class BlockStone extends Block {
 
     private TextureRegion texture;
 
+    public BlockStone() {
+        super(1);
+    }
+
     @Override
     public void loadTextures() {
         this.texture = new TextureRegion(new Texture(Gdx.files.internal("map/stone.png")));
     }
-
 
     @Override
     public TextureRegion getTexture(IBlockState blockState) {

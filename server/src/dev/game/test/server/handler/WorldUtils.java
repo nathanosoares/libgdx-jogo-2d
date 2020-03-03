@@ -28,7 +28,12 @@ public class WorldUtils {
                         continue;
                     }
 
-                    PacketWorldLayerSnapshot.LayerData data = new PacketWorldLayerSnapshot.LayerData(blockState.getBlock().getId(), blockState.getPosition(), blockState.getConnectedData());
+                    PacketWorldLayerSnapshot.LayerData data = new PacketWorldLayerSnapshot.LayerData(
+                            blockState.getBlock().getId(),
+                            blockState.getPosition(),
+                            blockState.getConnectedData()
+                    );
+                    
                     dataArray[x][y] = data;
                 }
             }

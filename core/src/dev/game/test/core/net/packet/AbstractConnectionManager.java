@@ -1,6 +1,5 @@
 package dev.game.test.core.net.packet;
 
-import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.google.common.collect.Maps;
 import dev.game.test.api.net.IConnectionManager;
@@ -35,8 +34,6 @@ public class AbstractConnectionManager implements IConnectionManager {
 
     @Override
     public void sendPacket(Packet packet) {
-        System.out.println("SendPacket " + this.getClass().getSimpleName());
-
         if (connection != null) {
             connection.sendTCP(packet);
         }
@@ -44,11 +41,6 @@ public class AbstractConnectionManager implements IConnectionManager {
 
     @Override
     public void queuePacket(Packet packet) {
-        Gdx.app.debug(
-                String.format("%s%s received packet\033[0m", "\033[1;33m", "Server"),
-                String.format("%s%s\033[0m", "\033[1;33m", packet.getClass().getSimpleName())
-        );
-
         queue.add(new AbstractMap.SimpleEntry<>(packet, System.currentTimeMillis()));
     }
 

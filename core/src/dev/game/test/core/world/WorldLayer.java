@@ -48,6 +48,8 @@ public class WorldLayer implements IWorldLayer {
                 int x = (int) blockState.getPosition().x + additionalX;
                 int y = (int) blockState.getPosition().y + additionalY;
                 this.states[x][y] = blockState;
+
+                blockState.getBlock().onBlockNeighbourUpdate(blockState, null);
             }
         }
     }

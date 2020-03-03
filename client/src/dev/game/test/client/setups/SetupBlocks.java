@@ -7,6 +7,7 @@ import dev.game.test.core.block.Blocks;
 import dev.game.test.core.setup.Setup;
 import lombok.RequiredArgsConstructor;
 
+@Deprecated
 @RequiredArgsConstructor
 public class SetupBlocks implements Setup {
 

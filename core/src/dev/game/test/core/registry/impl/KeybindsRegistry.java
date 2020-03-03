@@ -6,7 +6,7 @@ import dev.game.test.api.registry.IRegistry;
 
 import java.util.Map;
 
-public class RegistryKeybinds implements IRegistry<Keybind> {
+public class KeybindsRegistry implements IRegistry<Keybind> {
 
     private final Map<String, Keybind> keybinds = Maps.newHashMap();
 

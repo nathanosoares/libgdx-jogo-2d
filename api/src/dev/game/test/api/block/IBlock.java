@@ -7,8 +7,6 @@ public interface IBlock {
 
     int getId();
 
-    void setId(int id);
-
     int getWidth();
 
     int getHeight();

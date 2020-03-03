@@ -12,6 +12,10 @@ public class BlockWater extends Block {
 
     private ConnectedTextureSimple texture;
 
+    public BlockWater() {
+        super(6);
+    }
+
     @Override
     public void loadTextures() {
         this.texture = new ConnectedTextureSimple(this, Gdx.files.internal("map/water.png"));

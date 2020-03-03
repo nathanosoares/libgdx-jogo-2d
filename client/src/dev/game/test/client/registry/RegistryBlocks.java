@@ -6,6 +6,7 @@ import dev.game.test.core.block.Block;
 
 import java.util.Map;
 
+@Deprecated
 public class RegistryBlocks implements IRegistry<Block> {
 
     private final Map<Integer, Block> blockId = Maps.newHashMap();
@@ -15,9 +16,8 @@ public class RegistryBlocks implements IRegistry<Block> {
     }
 
     public void registerBlock(int id, Block block) {
-        block.setId(id);
         block.loadTextures();
 
-        blockId.put(id, block);
+        blockId.put(block.getId(), block);
     }
 }

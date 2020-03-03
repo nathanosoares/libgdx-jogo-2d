@@ -1,7 +1,7 @@
 package dev.game.test.client.net.handler;
 
 import com.badlogic.gdx.Gdx;
-import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -12,7 +12,7 @@ import dev.game.test.api.net.packet.handshake.PacketHandshake;
 import dev.game.test.client.net.handler.listeners.ConnectionStatePacketListener;
 import dev.game.test.client.net.handler.listeners.GenericPacketListener;
 import dev.game.test.client.net.handler.listeners.WorldPacketListener;
-import dev.game.test.core.net.packet.EnumPacket;
+import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -29,18 +29,16 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
     private Client client;
 
     public void connect(String hostname, int port) throws IOException {
-        client = new Client();
+        client = new Client(16384, 2048 * 4);
 
-        Kryo kyro = client.getKryo();
-
-        EnumPacket.registry.forEach((id, packet) -> kyro.register(packet));
+        PacketPayloadSerializerRegistry registry = this.game.getRegistryManager().getRegistry(Serializer.class);
+        registry.apply(client.getKryo());
 
         client.start();
 
         client.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                Gdx.app.debug("ClientConnectionHandler", "Connected");
                 super.connected(connection);
 
                 createHandler(connection);
@@ -48,13 +46,11 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
 
             @Override
             public void disconnected(Connection connection) {
-                Gdx.app.debug("ClientConnectionHandler", "Disconnected");
                 super.disconnected(connection);
             }
 
             @Override
             public void received(Connection connection, Object o) {
-                Gdx.app.debug("ClientConnectionHandler", "Received");
                 super.received(connection, o);
 
                 if (o instanceof Packet) {

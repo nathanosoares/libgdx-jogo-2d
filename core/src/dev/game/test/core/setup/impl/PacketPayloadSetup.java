@@ -1,0 +1,66 @@
+package dev.game.test.core.setup.impl;
+
+import com.badlogic.gdx.math.Vector2;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import dev.game.test.api.IGame;
+import dev.game.test.api.net.packet.client.*;
+import dev.game.test.api.net.packet.handshake.PacketConnectionState;
+import dev.game.test.api.net.packet.handshake.PacketHandshake;
+import dev.game.test.api.net.packet.server.*;
+import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
+import dev.game.test.core.setup.Setup;
+import lombok.RequiredArgsConstructor;
+
+import java.util.UUID;
+
+@RequiredArgsConstructor
+public class PacketPayloadSetup implements Setup {
+
+    private final IGame game;
+
+    @Override
+    public void setup() {
+        PacketPayloadSerializerRegistry registry = this.game.getRegistryManager().getRegistry(Serializer.class);
+
+        // Packets
+        registry.registerSerializer(1000, PacketHandshake.class);
+        registry.registerSerializer(1020, PacketConnectionState.class);
+        registry.registerSerializer(1021, PacketConnectionState.State.class);
+        registry.registerSerializer(1030, PacketLogin.class);
+        registry.registerSerializer(1040, PacketLoginResponse.class);
+        registry.registerSerializer(1050, PacketGameInfoRequest.class);
+        registry.registerSerializer(1051, PacketGameInfoResponse.class);
+        registry.registerSerializer(1060, PacketGameInfoReady.class);
+        registry.registerSerializer(1080, PacketWorldSnapshot.class);
+        registry.registerSerializer(1081, PacketWorldSnapshotFinish.class);
+        registry.registerSerializer(1090, PacketWorldLayerSnapshot.class);
+        registry.registerSerializer(1091, PacketWorldLayerSnapshot.LayerData.class);
+        registry.registerSerializer(1092, PacketWorldLayerSnapshot.LayerData[].class);
+        registry.registerSerializer(1093, PacketWorldLayerSnapshot.LayerData[][].class);
+        registry.registerSerializer(1100, PacketWorldReady.class);
+        registry.registerSerializer(1110, PacketSpawnPosition.class);
+        registry.registerSerializer(1120, PacketKeybindActivate.class);
+        registry.registerSerializer(1140, PacketKeybindDeactivate.class);
+        registry.registerSerializer(1150, PacketEntityPosition.class);
+        registry.registerSerializer(1160, PacketEntityMovement.class);
+
+        // Simple Objects
+        registry.registerSerializer(2000, Vector2.class);
+
+        // Complex Objects
+        registry.registerSerializer(3000, UUID.class, kryo -> new Serializer<UUID>() {
+            @Override
+            public void write(Kryo kryo, Output output, UUID object) {
+                output.writeString(object.toString());
+            }
+
+            @Override
+            public UUID read(Kryo kryo, Input input, Class<? extends UUID> type) {
+                return UUID.fromString(input.readString());
+            }
+        });
+    }
+}

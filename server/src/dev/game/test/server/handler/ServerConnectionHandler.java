@@ -1,6 +1,7 @@
 package dev.game.test.server.handler;
 
 import com.badlogic.gdx.Gdx;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -8,6 +9,7 @@ import com.google.common.collect.Maps;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.server.handler.IServerConnectionHandler;
+import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
 import dev.game.test.server.handler.listeners.HandshakeListener;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,10 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
     @Override
     public void start(int port) throws IOException {
-        this.server = new Server();
+        this.server = new Server(16384, 2048 * 4);
+
+        PacketPayloadSerializerRegistry registry = this.game.getRegistryManager().getRegistry(Serializer.class);
+        registry.apply(this.server.getKryo());
 
         this.server.start();
         this.server.addListener(new ServerListener());
@@ -65,7 +70,7 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
         @Override
         public void disconnected(Connection connection) {
-            Gdx.app.debug("ServerConnectionHandler", "disconnected");
+            Gdx.app.debug("ServerConnectionHandler", "Disconnected");
             super.disconnected(connection);
 
             ServerConnectionHandler.this.connections.remove(connection);
@@ -73,7 +78,7 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
         @Override
         public void received(Connection connection, Object object) {
-            Gdx.app.debug("ServerConnectionHandler", "received");
+            Gdx.app.debug("ServerConnectionHandler", "Received");
             super.received(connection, object);
 
             PlayerConnectionManager playerConnectionManager = ServerConnectionHandler.this.connections.get(connection);

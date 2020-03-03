@@ -2,8 +2,7 @@ package dev.game.test.core;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
-import dev.game.test.api.IApplication;
-import dev.game.test.api.IEmbeddedServerGame;
+import com.esotericsoftware.kryo.Serializer;
 import dev.game.test.api.IGame;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.registry.IRegistryManager;
@@ -12,7 +11,8 @@ import dev.game.test.core.entity.systems.PlayerMovementControllerSystem;
 import dev.game.test.core.entity.systems.PlayerStateSystem;
 import dev.game.test.core.event.EventManager;
 import dev.game.test.core.registry.RegistryManager;
-import dev.game.test.core.registry.impl.RegistryKeybinds;
+import dev.game.test.core.registry.impl.KeybindsRegistry;
+import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
 import lombok.Getter;
 
 public abstract class Game implements IGame {
@@ -38,7 +38,8 @@ public abstract class Game implements IGame {
     public void setupRegistries(IRegistryManager registryManager) {
         Gdx.app.debug(this.getClass().getSimpleName(), "Setup Registries");
 
-        registryManager.addRegistry(Keybind.class, new RegistryKeybinds());
+        registryManager.addRegistry(Keybind.class, new KeybindsRegistry());
+        registryManager.addRegistry(Serializer.class, new PacketPayloadSerializerRegistry());
     }
 
 

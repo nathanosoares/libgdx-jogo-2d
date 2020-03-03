@@ -27,12 +27,6 @@ public class CollisiveDebugSystem extends EntitySystem {
     }
 
     @Override
-    public boolean checkProcessing() {
-        return this.game.getConnectionHandler().getConnectionManager() != null
-                && this.game.getConnectionHandler().getConnectionManager().getState() == PacketConnectionState.State.INGAME;
-    }
-
-    @Override
     public void addedToEngine(Engine engine) {
         entities = engine.getEntitiesFor(Family.all(CollisiveComponent.class, PositionComponent.class).get());
     }

@@ -12,6 +12,10 @@ public class BlockReinforcedDirt extends Block {
 
     private ConnectedTextureSimple texture;
 
+    public BlockReinforcedDirt() {
+        super(5);
+    }
+
     @Override
     public void loadTextures() {
         this.texture = new ConnectedTextureSimple(this, Gdx.files.internal("map/reinforced_dirt.png"));

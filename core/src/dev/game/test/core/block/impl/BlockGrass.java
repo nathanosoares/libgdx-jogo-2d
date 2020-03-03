@@ -13,6 +13,10 @@ public class BlockGrass extends Block {
 
     private TextureRegion texture;
 
+    public BlockGrass() {
+        super(3);
+    }
+
     @Override
     public void loadTextures() {
         Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);

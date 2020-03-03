@@ -6,6 +6,7 @@ import dev.game.test.api.net.packet.client.PacketGameInfoRequest;
 import dev.game.test.api.net.packet.client.PacketLogin;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.client.net.handler.ServerConnectionManager;
+import dev.game.test.client.screens.GameScreen;
 import org.greenrobot.eventbus.Subscribe;
 
 public class ConnectionStatePacketListener extends AbstractServerPacketListener {
@@ -29,6 +30,10 @@ public class ConnectionStatePacketListener extends AbstractServerPacketListener 
             case INGAME:
                 this.game.getEngine().addEntity((Entity) this.game.getClientManager().getPlayer());
                 this.game.getClientManager().setCurrentWorld(this.game.getClientManager().getPlayer().getWorld());
+
+                GameScreen screenGame = new GameScreen(this.game);
+                this.game.getScreenManager().setCurrentScreen(screenGame);
+
                 break;
             case DISCONNECTED:
                 // close connection
