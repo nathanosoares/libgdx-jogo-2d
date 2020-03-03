@@ -23,7 +23,7 @@ public class KeybindListeners extends AbstractPlayerPacketListener {
             return;
         }
 
-        this.connectionManager.getPlayer().addActiveKeybind(keybind);
+        this.manager.getPlayer().addActiveKeybind(keybind);
     }
 
     @Subscribe
@@ -35,7 +35,7 @@ public class KeybindListeners extends AbstractPlayerPacketListener {
             return;
         }
 
-        this.connectionManager.getPlayer().removeActiveKeybind(keybind);
+        this.manager.getPlayer().removeActiveKeybind(keybind);
     }
 
 }

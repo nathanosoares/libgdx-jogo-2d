@@ -9,5 +9,5 @@ import lombok.RequiredArgsConstructor;
 public class AbstractPacketListener<G extends IGame, M extends IConnectionManager> implements IPacketListener {
 
     protected final G game;
-    protected final M connectionManager;
+    protected final M manager;
 }

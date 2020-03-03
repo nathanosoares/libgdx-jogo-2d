@@ -16,7 +16,7 @@ public class HandshakeListener extends AbstractPlayerPacketListener {
     @Subscribe
     public void on(PacketHandshake handshake) {
 
-        if (this.connectionManager.getState() != PacketConnectionState.State.DISCONNECTED) {
+        if (this.manager.getState() != PacketConnectionState.State.DISCONNECTED) {
             return;
         }
 
@@ -24,9 +24,9 @@ public class HandshakeListener extends AbstractPlayerPacketListener {
 
         // TODO check if is ping
 
-        this.connectionManager.unregisterListener(HandshakeListener.class);
-        this.connectionManager.registerListener(new LoginListener(this.game, this.connectionManager));
+        this.manager.unregisterListener(HandshakeListener.class);
+        this.manager.registerListener(new LoginListener(this.game, this.manager));
 
-        this.connectionManager.setState(PacketConnectionState.State.HANDSHAKE);
+        this.manager.setState(PacketConnectionState.State.HANDSHAKE);
     }
 }

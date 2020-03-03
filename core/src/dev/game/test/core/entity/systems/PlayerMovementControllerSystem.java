@@ -7,8 +7,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IPlayer;
+import dev.game.test.api.net.packet.server.PacketEntityMovement;
+import dev.game.test.api.net.packet.server.PacketEntityPosition;
 import dev.game.test.core.Game;
+import dev.game.test.core.entity.components.IdentifiableComponent;
 import dev.game.test.core.entity.components.KeybindComponent;
 import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.keybind.Keybinds;
@@ -77,6 +81,14 @@ public class PlayerMovementControllerSystem extends IteratingSystem {
             movement.velocityY = walkSpeed;
         } else {
             movement.velocityY = -walkSpeed;
+        }
+
+        if (this.game instanceof IServerGame) {
+            IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
+
+            ((IServerGame) this.game).getConnectionHandler().broadcastPacket(new PacketEntityMovement(
+                    identifiable.uuid, new Vector2(movement.velocityX, movement.velocityY)
+            ));
         }
     }
 }

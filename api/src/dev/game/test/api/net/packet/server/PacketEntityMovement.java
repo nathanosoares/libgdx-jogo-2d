@@ -15,10 +15,10 @@ public class PacketEntityMovement implements Packet {
 
     @Getter
     @Setter
-    private UUID id;
+    private UUID entityId;
 
     @Getter
     @Setter
-    private Vector2 movement;
+    private Vector2 velocity;
 
 }

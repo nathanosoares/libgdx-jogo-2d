@@ -19,6 +19,8 @@ public interface IEntity extends Identifiable {
 
     Vector2 setPosition(Vector2 vec);
 
+    void setVelocity(Vector2 vec);
+
     default void onSpawn(IWorld world) {}
 
     default void onDestroy(IWorld world) {}

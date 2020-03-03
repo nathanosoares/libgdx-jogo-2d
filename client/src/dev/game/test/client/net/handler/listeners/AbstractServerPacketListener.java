@@ -6,7 +6,7 @@ import dev.game.test.core.net.packet.AbstractPacketListener;
 
 public abstract class AbstractServerPacketListener extends AbstractPacketListener<IClientGame, ServerConnectionManager> {
 
-    public AbstractServerPacketListener(IClientGame game, ServerConnectionManager connectionManager) {
-        super(game, connectionManager);
+    public AbstractServerPacketListener(IClientGame game, ServerConnectionManager manager) {
+        super(game, manager);
     }
 }

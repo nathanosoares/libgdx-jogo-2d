@@ -66,6 +66,6 @@ public class WorldPacketListener extends AbstractServerPacketListener {
 
     @Subscribe
     public void on(PacketWorldSnapshotFinish packet) {
-        this.connectionManager.sendPacket(new PacketWorldReady());
+        this.manager.sendPacket(new PacketWorldReady());
     }
 }

@@ -17,8 +17,6 @@ import dev.game.test.server.handler.ServerConnectionHandler;
 import dev.game.test.server.handler.WorldUtils;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.UUID;
-
 public class PreparingListener extends AbstractPlayerPacketListener {
 
     public PreparingListener(IServerGame game, PlayerConnectionManager connectionManager) {
@@ -27,31 +25,31 @@ public class PreparingListener extends AbstractPlayerPacketListener {
 
     @Subscribe
     public void on(PacketGameInfoRequest packet) {
-        if (this.connectionManager.getState() != PacketConnectionState.State.PREPARING) {
+        if (this.manager.getState() != PacketConnectionState.State.PREPARING) {
             return;
         }
 
         // TODO enviar keybinds, texturas, etc..
         // Async?
-        this.connectionManager.sendPacket(new PacketGameInfoResponse());
+        this.manager.sendPacket(new PacketGameInfoResponse());
     }
 
     @Subscribe
     public void on(PacketGameInfoReady packet) {
 
-        if (this.connectionManager.getState() != PacketConnectionState.State.PREPARING) {
+        if (this.manager.getState() != PacketConnectionState.State.PREPARING) {
             return;
         }
 
         if (this.game.getServerManager().getWorlds().size() < 1) {
-            this.connectionManager.getConnection().close();
+            this.manager.getConnection().close();
             // TODO nenhum mundo para entrar
             return;
         }
 
         Player player = PlayerUtils.buildLocalPlayer(
-                this.connectionManager.getPlayerUUID(),
-                this.connectionManager.getUsername()
+                this.manager.getPlayerUUID(),
+                this.manager.getUsername()
         );
 
         // TODO mundar para config de default world
@@ -59,42 +57,42 @@ public class PreparingListener extends AbstractPlayerPacketListener {
 
         player.setWorld(world);
 
-        this.connectionManager.setPlayer(player);
+        this.manager.setPlayer(player);
 
-        WorldUtils.sendWorld(this.connectionManager, world);
+        WorldUtils.sendWorld(this.manager, world);
     }
 
     @Subscribe
     public void on(PacketWorldReady packet) {
 
-        if (this.connectionManager.getState() != PacketConnectionState.State.PREPARING) {
+        if (this.manager.getState() != PacketConnectionState.State.PREPARING) {
             return;
         }
 
-        this.connectionManager.unregisterListener(PreparingListener.class);
-        this.connectionManager.registerListener(new KeybindListeners(game, connectionManager));
+        this.manager.unregisterListener(PreparingListener.class);
+        this.manager.registerListener(new KeybindListeners(game, manager));
 
-        this.game.getEngine().addEntity(this.connectionManager.getPlayer());
+        this.game.getEngine().addEntity(this.manager.getPlayer());
 
-        IWorld world = this.connectionManager.getPlayer().getWorld();
+        IWorld world = this.manager.getPlayer().getWorld();
 
         Vector2 vector2 = world.getBounds().getCenter(new Vector2());
 
-        this.connectionManager.getPlayer().setPosition(vector2);
-        this.connectionManager.getPlayer().setWorld(world);
+        this.manager.getPlayer().setPosition(vector2);
+        this.manager.getPlayer().setWorld(world);
 
-        this.connectionManager.sendPacket(new PacketSpawnPosition(world.getName(), vector2));
+        this.manager.sendPacket(new PacketSpawnPosition(world.getName(), vector2));
 
-        this.connectionManager.setState(PacketConnectionState.State.INGAME);
+        this.manager.setState(PacketConnectionState.State.INGAME);
 
         this.game.getConnectionHandler().broadcastPacket(new PacketEntitySpawn(
-                this.connectionManager.getPlayer().getId(),
+                this.manager.getPlayer().getId(),
                 vector2
         ));
 
         for (PlayerConnectionManager manager : ((ServerConnectionHandler) this.game.getConnectionHandler()).getConnections().values()) {
             if (manager.getState() == PacketConnectionState.State.INGAME) {
-                this.connectionManager.sendPacket(new PacketEntitySpawn(
+                this.manager.sendPacket(new PacketEntitySpawn(
                         manager.getPlayer().getId(),
                         manager.getPlayer().getPosition()
                 ));
