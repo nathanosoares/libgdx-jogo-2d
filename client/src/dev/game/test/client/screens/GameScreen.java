@@ -18,7 +18,6 @@ import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.net.packet.client.PacketKeybindActivate;
 import dev.game.test.api.net.packet.client.PacketKeybindDeactivate;
-import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.entity.systems.AnimateStateSystem;
 import dev.game.test.client.entity.systems.CollisiveDebugSystem;
@@ -135,7 +134,7 @@ public class GameScreen extends ScreenAdapter {
             if (keybind != null) {
                 activatedKeybinds.activeKeybinds.add(keybind);
 
-                GameScreen.this.game.getConnectionHandler().queuePacket(new PacketKeybindActivate(keybind.getId()));
+                GameScreen.this.game.getConnectionHandler().getManager().sendPacket(new PacketKeybindActivate(keybind.getId()));
                 return true;
             }
 
@@ -157,7 +156,7 @@ public class GameScreen extends ScreenAdapter {
             if (keybind != null) {
                 activatedKeybinds.activeKeybinds.remove(keybind);
 
-                GameScreen.this.game.getConnectionHandler().queuePacket(new PacketKeybindDeactivate(keybind.getId()));
+                GameScreen.this.game.getConnectionHandler().getManager().sendPacket(new PacketKeybindDeactivate(keybind.getId()));
                 return true;
             }
 

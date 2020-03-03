@@ -24,10 +24,9 @@ public class HandshakeListener extends AbstractPlayerPacketListener {
 
         // TODO check if is ping
 
-        this.connectionManager.setState(PacketConnectionState.State.HANDSHAKE);
-        this.connectionManager.sendPacket(new PacketConnectionState(this.connectionManager.getState()));
-
         this.connectionManager.unregisterListener(HandshakeListener.class);
         this.connectionManager.registerListener(new LoginListener(this.game, this.connectionManager));
+
+        this.connectionManager.setState(PacketConnectionState.State.HANDSHAKE);
     }
 }

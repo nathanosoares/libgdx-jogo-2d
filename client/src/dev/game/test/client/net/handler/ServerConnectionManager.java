@@ -18,10 +18,10 @@ public class ServerConnectionManager extends AbstractConnectionManager {
 
     @Override
     public void queuePacket(Packet packet) {
-        Gdx.app.debug(
-                String.format("%s%s received packet\033[0m", "\033[1;33m", "Client"),
-                String.format("%s%s\033[0m", "\033[1;33m", packet.getClass().getSimpleName())
-        );
+//        Gdx.app.debug(
+//                String.format("%s%s received packet\033[0m", "\033[1;33m", "Client"),
+//                String.format("%s%s\033[0m", "\033[1;33m", packet.getClass().getSimpleName())
+//        );
 
         super.queuePacket(packet);
     }

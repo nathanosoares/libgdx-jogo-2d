@@ -13,7 +13,7 @@ import java.util.UUID;
 public class PacketEntitySpawn implements Packet {
 
     @Getter
-    private UUID id;
+    private UUID entityId;
 
     @Getter
     private Vector2 position;

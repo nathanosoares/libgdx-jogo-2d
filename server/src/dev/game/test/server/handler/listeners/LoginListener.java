@@ -24,16 +24,16 @@ public class LoginListener extends AbstractPlayerPacketListener {
         new Thread(() -> {
 
             this.connectionManager.setUsername(packet.getUsername());
+            this.connectionManager.setPlayerUUID(UUID.randomUUID());
 
             // TODO fazer as coisas async
 
-            this.connectionManager.sendPacket(new PacketLoginResponse(UUID.randomUUID()));
+            this.connectionManager.sendPacket(new PacketLoginResponse(this.connectionManager.getPlayerUUID()));
 
             this.connectionManager.unregisterListener(LoginListener.class);
             this.connectionManager.registerListener(new PreparingListener(this.game, this.connectionManager));
 
             this.connectionManager.setState(PacketConnectionState.State.PREPARING);
-            this.connectionManager.sendPacket(new PacketConnectionState(this.connectionManager.getState()));
         }).start();
     }
 }

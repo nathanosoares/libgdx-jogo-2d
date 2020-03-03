@@ -2,6 +2,7 @@ package dev.game.test.client.net.handler.listeners;
 
 import com.badlogic.ashley.core.Entity;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.client.PacketGameInfoRequest;
 import dev.game.test.api.net.packet.client.PacketLogin;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
@@ -34,6 +35,7 @@ public class ConnectionStatePacketListener extends AbstractServerPacketListener 
                 GameScreen screenGame = new GameScreen(this.game);
                 this.game.getScreenManager().setCurrentScreen(screenGame);
 
+                this.game.getClientManager().addEntity(this.game.getClientManager().getPlayer());
                 break;
             case DISCONNECTED:
                 // close connection

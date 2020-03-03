@@ -2,11 +2,9 @@ package dev.game.test.server;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.server.IServerManager;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.world.World;
-import dev.game.test.server.handler.PlayerConnectionManager;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -34,13 +32,6 @@ public class ServerManager implements IServerManager {
             world.fillLayers(); // TODO temp
 
             addWorld(world);
-        }
-    }
-
-    @Override
-    public void broadcastPacket(Packet packet) {
-        for (PlayerConnectionManager connectionManager : this.game.getConnectionHandler().getConnections().values()) {
-            connectionManager.sendPacket(packet);
         }
     }
 

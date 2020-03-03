@@ -1,12 +1,11 @@
 package dev.game.test.client.net.handler;
 
-import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.client.handler.IClientConnectionHandler;
+import dev.game.test.api.net.handler.IClientConnectionHandler;
 import dev.game.test.api.net.packet.Packet;
 import dev.game.test.api.net.packet.handshake.PacketHandshake;
 import dev.game.test.client.net.handler.listeners.ConnectionStatePacketListener;
@@ -24,7 +23,7 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
     private final IClientGame game;
 
     @Getter
-    private ServerConnectionManager connectionManager;
+    private ServerConnectionManager manager;
 
     private Client client;
 
@@ -54,7 +53,7 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
                 super.received(connection, o);
 
                 if (o instanceof Packet) {
-                    ClientConnectionHandler.this.connectionManager.queuePacket((Packet) o);
+                    ClientConnectionHandler.this.manager.queuePacket((Packet) o);
                 }
             }
         });
@@ -62,23 +61,14 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
         client.connect(5000, hostname, port);
     }
 
-    public void queuePacket(Packet packet) {
-        this.connectionManager.queuePacket(packet);
-    }
-
-    @Override
-    public void processQueue() {
-        this.connectionManager.processQueue();
-    }
-
     public void createHandler(Connection connection) {
-        this.connectionManager = new ServerConnectionManager(this.game, connection);
+        this.manager = new ServerConnectionManager(this.game, connection);
 
-        this.connectionManager.registerListener(new ConnectionStatePacketListener(this.game, this.connectionManager));
-        this.connectionManager.registerListener(new GenericPacketListener(this.game, this.connectionManager));
-        this.connectionManager.registerListener(new WorldPacketListener(this.game, this.connectionManager));
+        this.manager.registerListener(new ConnectionStatePacketListener(this.game, this.manager));
+        this.manager.registerListener(new GenericPacketListener(this.game, this.manager));
+        this.manager.registerListener(new WorldPacketListener(this.game, this.manager));
 
-        this.connectionManager.sendPacket(new PacketHandshake(this.game.getUsername()));
+        this.manager.sendPacket(new PacketHandshake(this.game.getUsername()));
     }
 
 }

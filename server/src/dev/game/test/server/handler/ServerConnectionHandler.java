@@ -1,14 +1,13 @@
 package dev.game.test.server.handler;
 
-import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.google.common.collect.Maps;
 import dev.game.test.api.IServerGame;
+import dev.game.test.api.net.handler.IServerConnectionHandler;
 import dev.game.test.api.net.packet.Packet;
-import dev.game.test.api.server.handler.IServerConnectionHandler;
 import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
 import dev.game.test.server.handler.listeners.HandshakeListener;
 import lombok.Getter;
@@ -41,13 +40,16 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
     @Override
     public void processQueues() {
-        for (PlayerConnectionManager playerConnectionManager : connections.values()) {
-            playerConnectionManager.processQueue();
+        for (PlayerConnectionManager manager : connections.values()) {
+            manager.processQueue();
         }
     }
 
-    public PlayerConnectionManager getConnectionManager(Connection connection) {
-        return this.connections.get(connection);
+    @Override
+    public void broadcastPacket(Packet packet) {
+        for (PlayerConnectionManager connectionManager : connections.values()) {
+            connectionManager.sendPacket(packet);
+        }
     }
 
     public void createHandler(Connection connection) {
@@ -62,7 +64,6 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
         @Override
         public void connected(Connection connection) {
-            Gdx.app.debug("ServerConnectionHandler", "Connected");
             super.connected(connection);
 
             createHandler(connection);
@@ -70,15 +71,21 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
         @Override
         public void disconnected(Connection connection) {
-            Gdx.app.debug("ServerConnectionHandler", "Disconnected");
             super.disconnected(connection);
 
-            ServerConnectionHandler.this.connections.remove(connection);
+            PlayerConnectionManager manager = ServerConnectionHandler.this.connections.remove(connection);
+
+            if (manager != null) {
+
+                if (manager.getPlayer() != null) {
+
+                    ServerConnectionHandler.this.game.getEngine().removeEntity(manager.getPlayer());
+                }
+            }
         }
 
         @Override
         public void received(Connection connection, Object object) {
-            Gdx.app.debug("ServerConnectionHandler", "Received");
             super.received(connection, object);
 
             PlayerConnectionManager playerConnectionManager = ServerConnectionHandler.this.connections.get(connection);

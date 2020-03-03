@@ -10,7 +10,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class KeybindListeners extends AbstractPlayerPacketListener {
 
-
     public KeybindListeners(IServerGame game, PlayerConnectionManager connectionManager) {
         super(game, connectionManager);
     }
