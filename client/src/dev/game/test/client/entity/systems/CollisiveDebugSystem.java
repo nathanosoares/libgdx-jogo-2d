@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
@@ -58,8 +57,8 @@ public class CollisiveDebugSystem extends EntitySystem {
                 this.shapeRenderer.line(
                         position.x + size.x / 2,
                         position.y + size.y / 2,
-                        position.x + movement.velocityX + size.x / 2,
-                        position.y + movement.velocityY + size.y / 2
+                        position.x + movement.deltaX + size.x / 2,
+                        position.y + movement.deltaY + size.y / 2
                 );
 //
 //                if (transformComponent.originCenter) {

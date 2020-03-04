@@ -9,6 +9,6 @@ public class MovementComponent implements Component {
 
     public static final ComponentMapper<MovementComponent> MAPPER = ComponentMapper.getFor(MovementComponent.class);
 
-    public float velocityX;
-    public float velocityY;
+    public float deltaX;
+    public float deltaY;
 }

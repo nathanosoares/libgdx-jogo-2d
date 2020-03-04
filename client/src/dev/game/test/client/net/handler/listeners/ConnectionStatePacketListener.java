@@ -43,6 +43,11 @@ public class ConnectionStatePacketListener extends AbstractServerPacketListener 
                         (ServerConnectionManager) this.game.getConnectionHandler().getManager()
                 ));
 
+                this.game.getConnectionHandler().getManager().registerListener(new PlayerMovementPacketListener(
+                        this.game,
+                        (ServerConnectionManager) this.game.getConnectionHandler().getManager()
+                ));
+
                 break;
             case DISCONNECTED:
                 // close connection

@@ -19,15 +19,12 @@ public class MovementSystem extends IteratingSystem {
 
     private final Game game;
 
-    private Vector2 fromPosition = new Vector2();
-    private Vector2 toPosition = new Vector2();
-    private Vector2 velocity = new Vector2();
+    private static final Vector2 fromPosition = new Vector2();
+    private static final Vector2 toPosition = new Vector2();
+    private static final Vector2 velocity = new Vector2();
 
     public MovementSystem(Game game) {
-        super(Family.all(
-                PositionComponent.class,
-                MovementComponent.class
-        ).get());
+        super(Family.all(PositionComponent.class, MovementComponent.class).get());
 
         this.game = game;
     }
@@ -36,6 +33,31 @@ public class MovementSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+        PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
+
+        Vector2 fromPosition = new Vector2(positionComponent.x, positionComponent.y);
+        Vector2 toPosition = processEntity(this.game, entity);
+
+        if (game instanceof IServerGame) {
+            if (fromPosition.x != toPosition.x || fromPosition.y != toPosition.y) {
+
+                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
+
+                EnumFacing facing = null;
+
+                if (FacingComponent.MAPPER.has(entity)) {
+                    facing = FacingComponent.MAPPER.get(entity).facing;
+                }
+
+                ((IServerGame) game).getConnectionHandler().broadcastPacket(new PacketEntityPosition(
+                        identifiable.uuid, new Vector2(toPosition.x, toPosition.y), facing
+                ));
+            }
+        }
+    }
+
+    public synchronized static Vector2 processEntity(Game game, Entity entity) {
+        float speed = 4;
 
         MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
         PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
@@ -45,12 +67,12 @@ public class MovementSystem extends IteratingSystem {
 
         if (!CollisiveComponent.MAPPER.has(entity)) {
 
-            toPosition.x += movementComponent.velocityX * deltaTime;
-            toPosition.y += movementComponent.velocityY * deltaTime;
+            toPosition.x += movementComponent.deltaX * speed;
+            toPosition.y += movementComponent.deltaY * speed;
 
         } else {
 
-            velocity.set(movementComponent.velocityX, movementComponent.velocityY);
+            velocity.set(movementComponent.deltaX * speed, movementComponent.deltaY * speed);
 
             Rectangle box = CollisiveComponent.MAPPER.get(entity).box;
 
@@ -78,19 +100,19 @@ public class MovementSystem extends IteratingSystem {
                 IBlockState found = findBlock(positionComponent.world, velocity.x < 0, startX, endX, startY, endY);
 
                 if (found != null) {
-                    if (movementComponent.velocityX > 0) {
+                    if (movementComponent.deltaX > 0) {
                         toPosition.x = Math.min(
                                 found.getPosition().x - box.width - 0.01f,
-                                fromPosition.x + movementComponent.velocityX * deltaTime
+                                fromPosition.x + movementComponent.deltaX * speed
                         );
-                    } else if (movementComponent.velocityX < 0) {
+                    } else if (movementComponent.deltaX < 0) {
                         toPosition.x = Math.max(
                                 found.getPosition().x + found.getBlock().getWidth(),
-                                fromPosition.x + movementComponent.velocityX * deltaTime
+                                fromPosition.x + movementComponent.deltaX * speed
                         );
                     }
                 } else {
-                    toPosition.x += movementComponent.velocityX * deltaTime;
+                    toPosition.x += movementComponent.deltaX * speed;
                 }
             }
 
@@ -113,19 +135,19 @@ public class MovementSystem extends IteratingSystem {
                 IBlockState found = findBlock(positionComponent.world, velocity.y < 0, startX, endX, startY, endY);
 
                 if (found != null) {
-                    if (movementComponent.velocityY > 0) {
+                    if (movementComponent.deltaY > 0) {
                         toPosition.y = Math.min(
                                 found.getPosition().y - box.height - 0.01f,
-                                fromPosition.y + movementComponent.velocityY * deltaTime
+                                fromPosition.y + movementComponent.deltaY * speed
                         );
-                    } else if (movementComponent.velocityY < 0) {
+                    } else if (movementComponent.deltaY < 0) {
                         toPosition.y = Math.max(
                                 found.getPosition().y + found.getBlock().getHeight(),
-                                fromPosition.y + movementComponent.velocityY * deltaTime
+                                fromPosition.y + movementComponent.deltaY * speed
                         );
                     }
                 } else {
-                    toPosition.y += movementComponent.velocityY * deltaTime;
+                    toPosition.y += movementComponent.deltaY * speed;
                 }
             }
         }
@@ -135,33 +157,16 @@ public class MovementSystem extends IteratingSystem {
 
         updateFacing(entity, movementComponent);
 
+        movementComponent.deltaX = 0;
+        movementComponent.deltaY = 0;
+
         positionComponent.x = toPosition.x;
         positionComponent.y = toPosition.y;
 
-//        double delta = Math.pow(fromPosition.x - toPosition.x, 2) + Math.pow(fromPosition.y - toPosition.y, 2);
-
-//        if (delta > 1f / 256) {
-
-        if (fromPosition.x != toPosition.x || fromPosition.y != toPosition.y) {
-            if (this.game instanceof IServerGame) {
-
-                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
-
-                EnumFacing facing = null;
-
-                if (FacingComponent.MAPPER.has(entity)) {
-                    facing = FacingComponent.MAPPER.get(entity).facing;
-                }
-
-                ((IServerGame) this.game).getConnectionHandler().broadcastPacket(new PacketEntityPosition(
-                        identifiable.uuid, new Vector2(positionComponent.x, positionComponent.y), facing
-                ));
-            }
-        }
-//        }
+        return new Vector2(positionComponent.x, positionComponent.y);
     }
 
-    private IBlockState findBlock(IWorld world, boolean reverse, int startX, int endX, int startY, int endY) {
+    private static IBlockState findBlock(IWorld world, boolean reverse, int startX, int endX, int startY, int endY) {
 
         if (world == null || world.getLayers()[1] == null) {
             return null;
@@ -204,13 +209,13 @@ public class MovementSystem extends IteratingSystem {
         return null;
     }
 
-    private void updateFacing(Entity entity, MovementComponent movement) {
+    private static void updateFacing(Entity entity, MovementComponent movement) {
         if (FacingComponent.MAPPER.has(entity)) {
             FacingComponent facing = FacingComponent.MAPPER.get(entity);
 
-            if (movement.velocityX > 0) {
+            if (movement.deltaX > 0) {
                 facing.facing = EnumFacing.EAST;
-            } else if (movement.velocityX < 0) {
+            } else if (movement.deltaX < 0) {
                 facing.facing = EnumFacing.WEST;
             }
         }

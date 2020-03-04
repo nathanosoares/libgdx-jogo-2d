@@ -48,6 +48,8 @@ public class PacketPayloadSetup implements Setup {
         registry.registerSerializer(1150, PacketEntityPosition.class);
         registry.registerSerializer(1160, PacketEntityMovement.class);
         registry.registerSerializer(1170, PacketEntitySpawn.class);
+        registry.registerSerializer(1180, PacketPlayerMovement.class);
+        registry.registerSerializer(1181, PacketPlayerMovementResponse.class);
 
         // Simple Objects
         registry.registerSerializer(2000, Vector2.class);

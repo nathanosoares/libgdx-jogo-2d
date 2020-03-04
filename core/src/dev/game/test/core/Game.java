@@ -7,7 +7,6 @@ import dev.game.test.api.IGame;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.registry.IRegistryManager;
 import dev.game.test.core.entity.systems.MovementSystem;
-import dev.game.test.core.entity.systems.PlayerMovementControllerSystem;
 import dev.game.test.core.entity.systems.PlayerStateSystem;
 import dev.game.test.core.event.EventManager;
 import dev.game.test.core.registry.RegistryManager;
@@ -47,7 +46,6 @@ public abstract class Game implements IGame {
     public void setupEngine(Engine engine) {
         Gdx.app.debug(this.getClass().getSimpleName(), "Setup Engine");
 
-        engine.addSystem(new PlayerMovementControllerSystem(this));
         engine.addSystem(new MovementSystem(this));
         engine.addSystem(new PlayerStateSystem());
     }

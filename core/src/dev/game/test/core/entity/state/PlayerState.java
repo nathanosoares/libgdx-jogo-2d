@@ -24,12 +24,12 @@ public enum PlayerState implements State<Entity> {
 
         switch (this) {
             case IDLE:
-                if (movement.velocityX != 0 || movement.velocityY != 0) {
+                if (movement.deltaX != 0 || movement.deltaY != 0) {
                     state.machine.changeState(WALK);
                 }
                 return;
             case WALK:
-                if (movement.velocityX == 0 && movement.velocityY == 0) {
+                if (movement.deltaX == 0 && movement.deltaY == 0) {
                     state.machine.changeState(IDLE);
                 }
                 return;

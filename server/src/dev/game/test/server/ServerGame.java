@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Engine;
 import dev.game.test.api.IServerGame;
 import dev.game.test.core.Game;
 import dev.game.test.server.handler.ServerConnectionHandler;
-import dev.game.test.core.entity.systems.PlayerMovementControllerSystem;
 import dev.game.test.server.systems.ServerSystem;
 import lombok.Getter;
 

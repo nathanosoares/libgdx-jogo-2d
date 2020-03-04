@@ -6,6 +6,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.google.common.collect.Maps;
 import dev.game.test.api.IServerGame;
+import dev.game.test.api.net.IConnectionManager;
 import dev.game.test.api.net.handler.IServerConnectionHandler;
 import dev.game.test.api.net.packet.Packet;
 import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
@@ -47,8 +48,15 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
 
     @Override
     public void broadcastPacket(Packet packet) {
+        broadcastPacket(packet, null);
+    }
+
+    @Override
+    public void broadcastPacket(Packet packet, IConnectionManager exclude) {
         for (PlayerConnectionManager connectionManager : connections.values()) {
-            connectionManager.sendPacket(packet);
+            if (exclude != connectionManager) {
+                connectionManager.sendPacket(packet);
+            }
         }
     }
 

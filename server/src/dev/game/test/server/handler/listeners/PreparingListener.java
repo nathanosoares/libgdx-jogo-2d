@@ -71,6 +71,7 @@ public class PreparingListener extends AbstractPlayerPacketListener {
 
         this.manager.unregisterListener(PreparingListener.class);
         this.manager.registerListener(new KeybindListeners(game, manager));
+        this.manager.registerListener(new PlayerMovementListener(game, manager));
 
         this.game.getEngine().addEntity(this.manager.getPlayer());
 

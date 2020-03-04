@@ -6,7 +6,7 @@ import dev.game.test.server.handler.PlayerConnectionManager;
 
 public abstract class AbstractPlayerPacketListener extends AbstractPacketListener<IServerGame, PlayerConnectionManager> {
 
-    public AbstractPlayerPacketListener(IServerGame game, PlayerConnectionManager connectionManager) {
-        super(game, connectionManager);
+    public AbstractPlayerPacketListener(IServerGame game, PlayerConnectionManager manager) {
+        super(game, manager);
     }
 }

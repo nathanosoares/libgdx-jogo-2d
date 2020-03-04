@@ -47,10 +47,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
     @Override
     public void setVelocity(Vector2 vec) {
-        MovementComponent movementComponent = MovementComponent.MAPPER.get(this);
-
-        movementComponent.velocityX = vec.x;
-        movementComponent.velocityY = vec.y;
+        throw new RuntimeException("Invalid function");
     }
 
     @Override
