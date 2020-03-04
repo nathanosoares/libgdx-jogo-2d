@@ -11,6 +11,8 @@ import dev.game.test.client.entity.components.AnimateStateComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.entity.components.StateComponent;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
+
 public class AnimateStateSystem extends IteratingSystem {
 
     private final IClientGame game;
