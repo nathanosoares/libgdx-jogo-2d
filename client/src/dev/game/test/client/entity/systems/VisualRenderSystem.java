@@ -25,10 +25,7 @@ public class VisualRenderSystem extends EntitySystem {
 
     @Override
     public void addedToEngine(Engine engine) {
-        entities = engine.getEntitiesFor(Family.all(
-                PositionComponent.class,
-                VisualComponent.class
-        ).get());
+        entities = engine.getEntitiesFor(Family.all(PositionComponent.class, VisualComponent.class).get());
     }
 
     @Override

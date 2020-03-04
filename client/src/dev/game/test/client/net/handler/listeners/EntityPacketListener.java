@@ -36,8 +36,8 @@ public class EntityPacketListener extends AbstractServerPacketListener {
         if (entity != null) {
             MovementComponent movementComponent = MovementComponent.MAPPER.get((Entity) entity);
 
-            movementComponent.deltaX = packet.getVelocity().x;
-            movementComponent.deltaY = packet.getVelocity().y;
+            movementComponent.deltaX = packet.getDeltaX();
+            movementComponent.deltaY = packet.getDeltaY();
         }
     }
 

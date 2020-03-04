@@ -49,9 +49,9 @@ public class ClientGame extends Game implements IClientGame {
 
     @Override
     public void setupEngine(Engine engine) {
-        engine.addSystem(new ClientSystem(this));
 
         super.setupEngine(engine);
+        engine.addSystem(new ClientSystem(this));
     }
 
 }

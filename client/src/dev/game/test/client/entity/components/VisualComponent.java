@@ -14,4 +14,6 @@ public class VisualComponent implements Component {
     public static final ComponentMapper<VisualComponent> MAPPER = ComponentMapper.getFor(VisualComponent.class);
 
     public TextureRegion region;
+    public float time = 0.0f;
+    public boolean isLooping = true;
 }

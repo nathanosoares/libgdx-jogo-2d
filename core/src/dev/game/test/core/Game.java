@@ -46,7 +46,7 @@ public abstract class Game implements IGame {
     public void setupEngine(Engine engine) {
         Gdx.app.debug(this.getClass().getSimpleName(), "Setup Engine");
 
-        engine.addSystem(new MovementSystem(this));
         engine.addSystem(new PlayerStateSystem());
+        engine.addSystem(new MovementSystem(this));
     }
 }

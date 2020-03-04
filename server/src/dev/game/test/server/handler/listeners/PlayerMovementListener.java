@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.net.packet.client.PacketPlayerMovement;
 import dev.game.test.api.net.packet.server.PacketEntityMovement;
+import dev.game.test.api.net.packet.server.PacketEntityPosition;
 import dev.game.test.api.net.packet.server.PacketPlayerMovementResponse;
 import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.IdentifiableComponent;
@@ -26,6 +27,10 @@ public class PlayerMovementListener extends AbstractPlayerPacketListener {
             System.out.println(Math.abs(packet.getDeltaX()));
             System.out.println(Math.abs(packet.getDeltaY()));
 
+            this.manager.sendPacket(new PacketPlayerMovementResponse(
+                    packet.getSequenceNumber(), this.manager.getPlayer().getPosition()
+            ));
+
             return;
         }
 
@@ -37,10 +42,14 @@ public class PlayerMovementListener extends AbstractPlayerPacketListener {
         IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(this.manager.getPlayer());
 
         this.game.getConnectionHandler().broadcastPacket(new PacketEntityMovement(
-                identifiable.uuid, new Vector2(movementComponent.deltaX, movementComponent.deltaY)
+                identifiable.uuid, movementComponent.deltaX, movementComponent.deltaY
         ), this.manager);
 
         Vector2 toPosition = MovementSystem.processEntity((Game) this.game, this.manager.getPlayer());
+
+        this.game.getConnectionHandler().broadcastPacket(new PacketEntityPosition(
+                identifiable.uuid, toPosition, null
+        ), this.manager);
 
         this.manager.sendPacket(new PacketPlayerMovementResponse(
                 packet.getSequenceNumber(), toPosition

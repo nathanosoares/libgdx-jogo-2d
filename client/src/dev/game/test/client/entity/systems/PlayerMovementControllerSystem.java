@@ -15,7 +15,6 @@ public class PlayerMovementControllerSystem extends EntitySystem {
     private final IClientGame game;
 
     public PlayerMovementControllerSystem(IClientGame game) {
-
         this.game = game;
     }
 

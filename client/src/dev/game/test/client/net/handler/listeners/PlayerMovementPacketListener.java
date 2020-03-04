@@ -16,7 +16,6 @@ public class PlayerMovementPacketListener extends AbstractServerPacketListener {
     public void on(PacketPlayerMovementResponse packet) {
 
         if (packet.getSequenceNumber() == PlayerMovementControllerSystem.sequenceNumber - 1) {
-            System.out.println("PacketEntityMovementResponse");
             this.game.getClientManager().getPlayer().setPosition(packet.getPosition());
         }
 

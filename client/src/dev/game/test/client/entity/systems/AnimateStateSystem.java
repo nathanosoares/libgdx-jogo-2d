@@ -3,10 +3,10 @@ package dev.game.test.client.entity.systems;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.client.entity.components.AnimateStateComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.entity.components.StateComponent;
@@ -23,17 +23,18 @@ public class AnimateStateSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        AnimateStateComponent animateState = AnimateStateComponent.MAPPER.get(entity);
-        StateComponent state = StateComponent.MAPPER.get(entity);
+        AnimateStateComponent animateStateComponent = AnimateStateComponent.MAPPER.get(entity);
+        StateComponent stateComponent = StateComponent.MAPPER.get(entity);
 
-        Animation<TextureRegion> animation = animateState.animations.get(state.machine.getCurrentState());
+        State state = stateComponent.machine.getCurrentState();
+
+        Animation<TextureRegion> animation = animateStateComponent.animations.get(state);
 
         if (animation != null) {
             VisualComponent visual = VisualComponent.MAPPER.get(entity);
 
-            visual.region = animation.getKeyFrame(state.time, state.isLooping);
+            visual.region = animation.getKeyFrame(visual.time, visual.isLooping);
+            visual.time += deltaTime;
         }
-
-        state.time += deltaTime;
     }
 }

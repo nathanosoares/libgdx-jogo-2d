@@ -13,6 +13,6 @@ public class StateComponent<T extends State<Entity>> implements Component {
     public static final ComponentMapper<StateComponent> MAPPER = ComponentMapper.getFor(StateComponent.class);
 
     public final StateMachine<Entity, T> machine;
-    public float time = 0.0f;
-    public boolean isLooping = true;
+    public long changedAt = System.currentTimeMillis();
+
 }
