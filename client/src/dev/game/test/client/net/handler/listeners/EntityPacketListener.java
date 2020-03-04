@@ -6,10 +6,12 @@ import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.server.PacketEntityMovement;
 import dev.game.test.api.net.packet.server.PacketEntityPosition;
 import dev.game.test.api.net.packet.server.PacketEntitySpawn;
+import dev.game.test.api.net.packet.server.PacketEntityState;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.net.handler.ServerConnectionManager;
 import dev.game.test.core.entity.Player;
-import dev.game.test.core.entity.components.MovementComponent;
+import dev.game.test.core.entity.player.componenets.MovementComponent;
+import dev.game.test.core.entity.components.StateComponent;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.UUID;
@@ -21,7 +23,20 @@ public class EntityPacketListener extends AbstractServerPacketListener {
     }
 
     @Subscribe
+    public void on(PacketEntityState packet) {
+        System.out.println("PacketEntityState " + packet.getState() );
+        IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
+
+        if (entity != null && StateComponent.MAPPER.has((Entity) entity)) {
+            StateComponent stateComponent = StateComponent.MAPPER.get((Entity) entity);
+
+            stateComponent.machine.changeState(packet.getState());
+        }
+    }
+
+    @Subscribe
     public void on(PacketEntityPosition packet) {
+        System.out.println("PacketEntityPosition");
         IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
 
         if (entity != null) {

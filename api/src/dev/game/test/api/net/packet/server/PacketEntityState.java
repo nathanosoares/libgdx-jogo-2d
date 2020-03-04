@@ -1,6 +1,6 @@
 package dev.game.test.api.net.packet.server;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.ai.fsm.State;
 import dev.game.test.api.net.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketEntityPosition implements Packet {
+public class PacketEntityState implements Packet {
 
     @Getter
     @Setter
@@ -19,5 +19,5 @@ public class PacketEntityPosition implements Packet {
 
     @Getter
     @Setter
-    private Vector2 position;
+    private State state;
 }

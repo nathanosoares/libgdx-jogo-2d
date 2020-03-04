@@ -1,6 +1,5 @@
 package dev.game.test.server.handler;
 
-import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.net.packet.Packet;
@@ -33,10 +32,10 @@ public class PlayerConnectionManager extends AbstractConnectionManager {
 
     @Override
     public void queuePacket(Packet packet) {
-        Gdx.app.debug(
-                String.format("%s%s received packet\033[0m", "\033[1;33m", "Server"),
-                String.format("%s%s\033[0m", "\033[1;33m", packet.getClass().getSimpleName())
-        );
+//        Gdx.app.debug(
+//                String.format("%s%s received packet\033[0m", "\033[1;33m", "Server"),
+//                String.format("%s%s\033[0m", "\033[1;33m", packet.getClass().getSimpleName())
+//        );
 
         super.queuePacket(packet);
     }

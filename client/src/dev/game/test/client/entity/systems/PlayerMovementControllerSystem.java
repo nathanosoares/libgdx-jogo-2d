@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.net.packet.client.PacketPlayerMovement;
 import dev.game.test.core.entity.components.KeybindComponent;
-import dev.game.test.core.entity.components.MovementComponent;
+import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.keybind.Keybinds;
 
 public class PlayerMovementControllerSystem extends EntitySystem {

@@ -1,10 +1,10 @@
-package dev.game.test.core.entity.state;
+package dev.game.test.core.entity.player;
 
 
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 import dev.game.test.core.entity.Entity;
-import dev.game.test.core.entity.components.MovementComponent;
+import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.components.StateComponent;
 
 public enum PlayerState implements State<Entity> {
@@ -22,6 +22,9 @@ public enum PlayerState implements State<Entity> {
         StateComponent<PlayerState> state = StateComponent.MAPPER.get(entity);
         MovementComponent movement = MovementComponent.MAPPER.get(entity);
 
+        System.out.println(movement.deltaX );
+        System.out.println(movement.deltaY);
+        System.out.println("==");
         switch (this) {
             case IDLE:
                 if (movement.deltaX != 0 || movement.deltaY != 0) {

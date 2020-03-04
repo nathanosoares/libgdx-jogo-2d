@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
 import dev.game.test.core.entity.components.CollisiveComponent;
-import dev.game.test.core.entity.components.MovementComponent;
+import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 
 public class CollisiveDebugSystem extends EntitySystem {

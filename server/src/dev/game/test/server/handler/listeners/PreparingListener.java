@@ -12,6 +12,7 @@ import dev.game.test.api.net.packet.server.PacketSpawnPosition;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
+import dev.game.test.core.entity.player.componenets.ConnectionComponent;
 import dev.game.test.server.handler.PlayerConnectionManager;
 import dev.game.test.server.handler.ServerConnectionHandler;
 import dev.game.test.server.handler.WorldUtils;
@@ -51,6 +52,8 @@ public class PreparingListener extends AbstractPlayerPacketListener {
                 this.manager.getPlayerUUID(),
                 this.manager.getUsername()
         );
+
+        player.add(new ConnectionComponent(this.manager));
 
         // TODO mundar para config de default world
         IWorld world = this.game.getServerManager().getWorlds().get(0);

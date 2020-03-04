@@ -10,9 +10,8 @@ import dev.game.test.client.entity.components.FacingVisualFlipComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
-import dev.game.test.core.entity.state.PlayerState;
+import dev.game.test.core.entity.player.PlayerState;
 
-import java.util.Random;
 import java.util.UUID;
 
 public class GameUtils {

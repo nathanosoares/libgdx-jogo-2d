@@ -5,7 +5,6 @@ import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.components.EntityComponent;
 import dev.game.test.core.entity.components.IdentifiableComponent;
-import dev.game.test.core.entity.components.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 
 import java.util.UUID;

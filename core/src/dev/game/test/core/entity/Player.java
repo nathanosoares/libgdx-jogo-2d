@@ -5,7 +5,8 @@ import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.core.entity.components.*;
-import dev.game.test.core.entity.state.PlayerState;
+import dev.game.test.core.entity.player.componenets.MovementComponent;
+import dev.game.test.core.entity.player.PlayerState;
 
 import java.util.UUID;
 
@@ -24,10 +25,7 @@ public class Player extends Entity implements IPlayer {
         this.add(new CollisiveComponent(24f / 16f, 24f / 16f));
         this.add(new MovementComponent());
         this.add(new FacingComponent(EnumFacing.EAST));
-
-        DefaultStateMachine<Entity, PlayerState> defaultStateMachine = new DefaultStateMachine<>(this, PlayerState.WALK);
-
-        this.add(new StateComponent<>(defaultStateMachine));
+        this.add(new StateComponent<>(new DefaultStateMachine<>(this, PlayerState.IDLE)));
 
         this.add(new KeybindComponent());
     }

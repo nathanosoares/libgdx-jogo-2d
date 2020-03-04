@@ -11,6 +11,7 @@ import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.net.packet.handshake.PacketHandshake;
 import dev.game.test.api.net.packet.server.*;
 import dev.game.test.api.util.EnumFacing;
+import dev.game.test.core.entity.player.PlayerState;
 import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
 import dev.game.test.core.setup.Setup;
 import lombok.RequiredArgsConstructor;
@@ -50,10 +51,12 @@ public class PacketPayloadSetup implements Setup {
         registry.registerSerializer(1170, PacketEntitySpawn.class);
         registry.registerSerializer(1180, PacketPlayerMovement.class);
         registry.registerSerializer(1181, PacketPlayerMovementResponse.class);
+        registry.registerSerializer(1190, PacketEntityState.class);
 
         // Simple Objects
         registry.registerSerializer(2000, Vector2.class);
         registry.registerSerializer(2001, EnumFacing.class);
+        registry.registerSerializer(2002, PlayerState.class);
 
         // Complex Objects
         registry.registerSerializer(3000, UUID.class, kryo -> new Serializer<UUID>() {

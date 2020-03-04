@@ -1,4 +1,4 @@
-package dev.game.test.core.entity.systems;
+package dev.game.test.core.entity.player.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -10,10 +10,13 @@ import com.google.common.collect.Multimap;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.net.packet.server.PacketEntityPosition;
+import dev.game.test.api.net.packet.server.PacketPlayerMovementResponse;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.*;
+import dev.game.test.core.entity.player.componenets.ConnectionComponent;
+import dev.game.test.core.entity.player.componenets.MovementComponent;
 
 public class MovementSystem extends IteratingSystem {
 
@@ -36,31 +39,10 @@ public class MovementSystem extends IteratingSystem {
         PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
 
         Vector2 fromPosition = new Vector2(positionComponent.x, positionComponent.y);
-        Vector2 toPosition = processEntity(this.game, entity);
 
-        if (game instanceof IServerGame) {
-            if (fromPosition.x != toPosition.x || fromPosition.y != toPosition.y) {
-
-                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
-
-                EnumFacing facing = null;
-
-                if (FacingComponent.MAPPER.has(entity)) {
-                    facing = FacingComponent.MAPPER.get(entity).facing;
-                }
-
-                ((IServerGame) game).getConnectionHandler().broadcastPacket(new PacketEntityPosition(
-                        identifiable.uuid, new Vector2(toPosition.x, toPosition.y), facing
-                ));
-            }
-        }
-    }
-
-    public synchronized static Vector2 processEntity(Game game, Entity entity) {
         float speed = 4;
 
         MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
-        PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
 
         fromPosition.set(positionComponent.x, positionComponent.y);
         toPosition.set(fromPosition);
@@ -157,18 +139,43 @@ public class MovementSystem extends IteratingSystem {
 
         updateFacing(entity, movementComponent);
 
-        movementComponent.deltaX = 0;
-        movementComponent.deltaY = 0;
 
         positionComponent.x = toPosition.x;
         positionComponent.y = toPosition.y;
 
-        return new Vector2(positionComponent.x, positionComponent.y);
+        Vector2 toPosition = new Vector2(positionComponent.x, positionComponent.y);
+
+        if (game instanceof IServerGame) {
+
+            ConnectionComponent connectionComponent = ConnectionComponent.MAPPER.get(entity);
+
+            if (movementComponent.sequenceId != -1) {
+
+                if (connectionComponent != null) {
+                    connectionComponent.manager.sendPacket(new PacketPlayerMovementResponse(
+                            movementComponent.sequenceId, toPosition
+                    ));
+
+                    movementComponent.sequenceId = -1;
+                }
+            }
+
+            if (fromPosition.x != toPosition.x || fromPosition.y != toPosition.y) {
+                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
+
+                ((IServerGame) game).getConnectionHandler().broadcastPacket(new PacketEntityPosition(
+                        identifiable.uuid, new Vector2(toPosition.x, toPosition.y)
+                ), connectionComponent != null ? connectionComponent.manager : null);
+            }
+        }
+
+        movementComponent.deltaX = 0;
+        movementComponent.deltaY = 0;
     }
 
     private static IBlockState findBlock(IWorld world, boolean reverse, int startX, int endX, int startY, int endY) {
 
-        if (world == null || world.getLayers()[1] == null) {
+        if (true || world == null || world.getLayers()[1] == null) {
             return null;
         }
 
