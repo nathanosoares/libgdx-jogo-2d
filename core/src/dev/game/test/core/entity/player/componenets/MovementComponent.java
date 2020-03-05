@@ -8,6 +8,7 @@ public class MovementComponent implements Component {
     public static final ComponentMapper<MovementComponent> MAPPER = ComponentMapper.getFor(MovementComponent.class);
 
     public long sequenceId;
+    public long updatedAt;
     public float deltaX;
     public float deltaY;
 }

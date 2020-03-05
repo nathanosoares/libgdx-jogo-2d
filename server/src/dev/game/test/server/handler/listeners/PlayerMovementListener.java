@@ -30,15 +30,16 @@ public class PlayerMovementListener extends AbstractPlayerPacketListener {
         MovementComponent movementComponent = MovementComponent.MAPPER.get(this.manager.getPlayer());
 
         movementComponent.sequenceId = packet.getSequenceNumber();
-        float deltaX = movementComponent.deltaX = packet.getDeltaX();
-        float deltaY = movementComponent.deltaY = packet.getDeltaY();
+        movementComponent.updatedAt = System.currentTimeMillis();
+        movementComponent.deltaX += packet.getDeltaX();
+        movementComponent.deltaY += packet.getDeltaY();
 
 //        State state = PlayerStateSystem.processEntity((Game) this.game, this.manager.getPlayer());
 
         IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(this.manager.getPlayer());
 
 //        this.game.getConnectionHandler().broadcastPacket(new PacketEntityState(identifiable.uuid, state), this.manager);
-        this.game.getConnectionHandler().broadcastPacket(new PacketEntityMovement(identifiable.uuid, deltaX, deltaY), this.manager);
+        this.game.getConnectionHandler().broadcastPacket(new PacketEntityMovement(identifiable.uuid, packet.getDeltaX(), packet.getDeltaY()), this.manager);
 
 //        Vector2 toPosition = MovementSystem.processEntity((Game) this.game, this.manager.getPlayer());
 //

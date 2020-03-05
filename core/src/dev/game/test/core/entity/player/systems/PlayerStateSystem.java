@@ -11,6 +11,8 @@ import dev.game.test.api.net.packet.server.PacketEntityState;
 import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.StateComponent;
 
+import java.util.Objects;
+
 public class PlayerStateSystem extends IteratingSystem {
 
     private final Game game;
@@ -24,21 +26,16 @@ public class PlayerStateSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         if (this.game instanceof IClientGame) {
-//            if (!Objects.equals(entity, ((IClientGame) this.game).getClientManager().getPlayer())) {
-//                return;
-//            }
+            if (!Objects.equals(entity, ((IClientGame) this.game).getClientManager().getPlayer())) {
+                return;
+            }
         }
 
-
-        processEntity(this.game, entity);
-    }
-
-    public synchronized static State processEntity(Game game, Entity entity) {
         StateComponent stateComponent = StateComponent.MAPPER.get(entity);
 
-        stateComponent.machine.update();
-
         State old = stateComponent.machine.getCurrentState();
+
+        stateComponent.machine.update();
 
         if (old != stateComponent.machine.getCurrentState()) {
 
@@ -50,7 +47,5 @@ public class PlayerStateSystem extends IteratingSystem {
                 ));
             }
         }
-
-        return stateComponent.machine.getCurrentState();
     }
 }

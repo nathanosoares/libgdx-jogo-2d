@@ -3,9 +3,13 @@ package dev.game.test.core.entity.player;
 
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
+import dev.game.test.api.IServerGame;
+import dev.game.test.core.Game;
 import dev.game.test.core.entity.Entity;
-import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.components.StateComponent;
+import dev.game.test.core.entity.player.componenets.MovementComponent;
+
+import java.util.concurrent.TimeUnit;
 
 public enum PlayerState implements State<Entity> {
 
@@ -19,12 +23,10 @@ public enum PlayerState implements State<Entity> {
 
     @Override
     public void update(Entity entity) {
-        StateComponent<PlayerState> state = StateComponent.MAPPER.get(entity);
         MovementComponent movement = MovementComponent.MAPPER.get(entity);
 
-        System.out.println(movement.deltaX );
-        System.out.println(movement.deltaY);
-        System.out.println("==");
+        StateComponent<PlayerState> state = StateComponent.MAPPER.get(entity);
+
         switch (this) {
             case IDLE:
                 if (movement.deltaX != 0 || movement.deltaY != 0) {
@@ -32,6 +34,12 @@ public enum PlayerState implements State<Entity> {
                 }
                 return;
             case WALK:
+                if (Game.getInstance() instanceof IServerGame) {
+                    if (movement.updatedAt > System.currentTimeMillis() - 40) {
+                        return;
+                    }
+                }
+
                 if (movement.deltaX == 0 && movement.deltaY == 0) {
                     state.machine.changeState(IDLE);
                 }

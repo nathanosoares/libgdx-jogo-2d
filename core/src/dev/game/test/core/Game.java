@@ -17,6 +17,9 @@ import lombok.Getter;
 public abstract class Game implements IGame {
 
     @Getter
+    private static Game instance;
+
+    @Getter
     private final RegistryManager registryManager;
 
     @Getter
@@ -28,6 +31,7 @@ public abstract class Game implements IGame {
     //
 
     protected Game() {
+        instance = this;
         this.registryManager = new RegistryManager();
         this.eventManager = new EventManager();
         this.engine = new Engine();

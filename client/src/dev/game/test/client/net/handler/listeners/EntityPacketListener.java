@@ -24,7 +24,6 @@ public class EntityPacketListener extends AbstractServerPacketListener {
 
     @Subscribe
     public void on(PacketEntityState packet) {
-        System.out.println("PacketEntityState " + packet.getState() );
         IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
 
         if (entity != null && StateComponent.MAPPER.has((Entity) entity)) {
@@ -36,7 +35,6 @@ public class EntityPacketListener extends AbstractServerPacketListener {
 
     @Subscribe
     public void on(PacketEntityPosition packet) {
-        System.out.println("PacketEntityPosition");
         IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
 
         if (entity != null) {

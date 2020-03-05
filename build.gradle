@@ -24,6 +24,7 @@ allprojects {
         appName = "jogo-2d"
         gdxVersion = '1.9.10'
         gdxAiVersion = '1.8.2'
+        gdxBackendHeadlessVersion = '1.9.10'
         guavaVersion = '28.2-jre'
         kryonetVersion = '2.21'
         kryoVersion = '5.0.0-RC4'
@@ -48,12 +49,25 @@ project(":desktop") {
 
     dependencies {
         implementation project(":api")
-        implementation project(":core")
-        implementation project(":client")
+        compile project(":core")
+        compile project(":client")
 
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile("com.badlogicgames.gdx:gdx-tools:$gdxVersion") {
+            exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'
+        }
+    }
+
+
+    jar {
+        manifest {
+            attributes 'Main-Class': 'dev.game.test.desktop.DesktopLauncher'
+        }
+
+        from {
+            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        }
     }
 }
 
@@ -72,10 +86,20 @@ project(":server") {
 
     dependencies {
         implementation project(":api")
-        implementation project(":core")
+        compile project(":core")
 
-        api "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    }
+
+    jar {
+        manifest {
+            attributes 'Main-Class': 'dev.game.test.server.ServerLauncher'
+        }
+
+        from {
+            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        }
     }
 }
 
