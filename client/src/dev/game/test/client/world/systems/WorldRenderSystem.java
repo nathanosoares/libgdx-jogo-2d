@@ -4,23 +4,25 @@ import aurelienribon.tweenengine.Tween;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.IPlayer;
-import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.client.ClientApplication;
-import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.block.BlockState;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -40,6 +42,29 @@ public class WorldRenderSystem extends EntitySystem {
 
     private final Map<BlockState, AtomicReference<Float>> opacity = Maps.newHashMap();
 
+    TextureRegion portalFrame = new TextureRegion(new Texture(Gdx.files.internal("map/portal-frame.png")));
+    TextureRegion portalGround = new TextureRegion(new Texture(Gdx.files.internal("map/portal-ground.png")));
+
+    LinkedList<PortalFrame> portalFrames = Lists.newLinkedList();
+    float maxPortalFrames = 3;
+    float portalFrameX = 5;
+    float portalFrameY = 5;
+    float maxPortalFramesOffSet = 0.9f;
+
+    {
+        for (int i = 0; i < maxPortalFrames; i++) {
+            PortalFrame frame = new PortalFrame();
+            frame.y += i * maxPortalFramesOffSet / maxPortalFrames;
+            portalFrames.add(frame);
+        }
+    }
+
+    private class PortalFrame {
+        long portalTime = 0;
+        float time = 0;
+        float y = portalFrameY;
+    }
+
     @Override
     public void update(float deltaTime) {
 
@@ -53,6 +78,39 @@ public class WorldRenderSystem extends EntitySystem {
                 renderMapLayer(world, layerIndex);
             }
         }
+
+        batch.setColor(1.0f, 1.0f, 1.0f, 1);
+        batch.draw(portalGround, portalFrameX, portalFrameY, 1, 1);
+
+        while (portalFrames.size() < maxPortalFrames) {
+            PortalFrame frame = new PortalFrame();
+            frame.y += (portalFrames.size() + 1 - maxPortalFrames) * maxPortalFramesOffSet / maxPortalFrames;
+            portalFrames.add(frame);
+        }
+
+        Iterator<PortalFrame> iterator = portalFrames.iterator();
+
+        while (iterator.hasNext()) {
+            PortalFrame portalFrame = iterator.next();
+
+            portalFrame.portalTime += deltaTime;
+
+            portalFrame.time += deltaTime;
+            portalFrame.y += 1 * deltaTime;
+
+            if (portalFrame.y > portalFrameY + maxPortalFramesOffSet / 2) {
+                batch.setColor(1.0f, 1.0f, 1.0f, .1f + (portalFrameY + maxPortalFramesOffSet - portalFrame.y));
+            } else {
+                batch.setColor(1.0f, 1.0f, 1.0f, 1);
+            }
+
+            batch.draw(this.portalFrame, portalFrameX, portalFrame.y, 1, 1);
+
+            if (portalFrame.y > portalFrameY + maxPortalFramesOffSet) {
+                iterator.remove();
+            }
+        }
+
 
         this.batch.end();
     }
@@ -157,6 +215,7 @@ public class WorldRenderSystem extends EntitySystem {
                             batch.getColor().b,
                             alpha
                     );
+
 
                     batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);
                 }
