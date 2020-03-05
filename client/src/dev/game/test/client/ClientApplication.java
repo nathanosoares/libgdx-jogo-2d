@@ -3,6 +3,7 @@ package dev.game.test.client;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
+import com.google.common.primitives.Ints;
 import dev.game.test.client.setups.SetupBlocks;
 import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.GameApplication;
@@ -42,9 +43,18 @@ public class ClientApplication extends GameApplication<ClientGame> {
         this.tweenManager = new TweenManager();
 
         try {
-            getGame().getConnectionHandler().connect("127.0.0.1", 25565);
-        } catch (IOException e) {
+            String ip = System.getProperty("ip");
+            String rawPort = System.getProperty("port");
+
+            if (rawPort != null && Ints.tryParse(rawPort) != null) {
+                getGame().getConnectionHandler().connect(ip, Ints.tryParse(rawPort));
+                return;
+            }
+
+            throw new RuntimeException();
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
+            System.exit(1);
         }
 
     }

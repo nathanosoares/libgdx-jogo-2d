@@ -1,8 +1,10 @@
 package dev.game.test.client.net.handler;
 
+import com.badlogic.gdx.utils.Timer;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.Listener;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.net.handler.IClientConnectionHandler;
@@ -41,6 +43,13 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
                 super.connected(connection);
 
                 createHandler(connection);
+
+                Timer.instance().scheduleTask(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        client.updateReturnTripTime();
+                    }
+                }, 0, 3);
             }
 
             @Override
@@ -49,16 +58,24 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
             }
 
             @Override
-            public void received(Connection connection, Object o) {
-                super.received(connection, o);
+            public void received(Connection connection, Object object) {
+                super.received(connection, object);
 
-                if (o instanceof Packet) {
-                    ClientConnectionHandler.this.manager.queuePacket((Packet) o);
+                if (object instanceof Packet) {
+                    ClientConnectionHandler.this.manager.queuePacket((Packet) object);
+                }
+
+                if (object instanceof FrameworkMessage.Ping) {
+                    FrameworkMessage.Ping ping = (FrameworkMessage.Ping) object;
+
+                    if (ping.isReply) {
+                        System.out.println("Ping: " + connection.getReturnTripTime());
+                    }
                 }
             }
         });
 
-        client.connect(5000, hostname, port);
+        client.connect(20000, hostname, port);
     }
 
     public void createHandler(Connection connection) {

@@ -58,8 +58,7 @@ project(":desktop") {
             exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'
         }
     }
-
-
+    
     jar {
         manifest {
             attributes 'Main-Class': 'dev.game.test.desktop.DesktopLauncher'
