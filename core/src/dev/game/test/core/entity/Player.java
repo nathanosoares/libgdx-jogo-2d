@@ -4,6 +4,7 @@ import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.util.EnumFacing;
+import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.components.*;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.player.PlayerState;

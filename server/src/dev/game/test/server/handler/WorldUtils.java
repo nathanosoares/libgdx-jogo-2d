@@ -2,6 +2,7 @@ package dev.game.test.server.handler;
 
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.net.packet.Packet;
+import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.net.packet.server.PacketWorldLayerSnapshot;
 import dev.game.test.api.net.packet.server.PacketWorldSnapshot;
 import dev.game.test.api.net.packet.server.PacketWorldSnapshotFinish;
@@ -10,9 +11,9 @@ import dev.game.test.api.world.IWorldLayer;
 
 public class WorldUtils {
 
-    public static void sendWorld(PlayerConnectionManager connectionManager, IWorld world) {
+    public static void sendWorld(PlayerConnectionManager manager, IWorld world) {
         Packet worldSnapshot = new PacketWorldSnapshot(world.getName(), world.getLayers().length, (int) world.getBounds().getWidth(), (int) world.getBounds().getHeight());
-        connectionManager.sendPacket(worldSnapshot);
+        manager.sendPacket(worldSnapshot);
 
         for (int layerIndex = 0; layerIndex < world.getLayers().length; layerIndex++) {
 
@@ -33,15 +34,15 @@ public class WorldUtils {
                             blockState.getPosition(),
                             blockState.getConnectedData()
                     );
-                    
+
                     dataArray[x][y] = data;
                 }
             }
 
             PacketWorldLayerSnapshot worldLayerSnapshot = new PacketWorldLayerSnapshot(world.getName(), layerIndex, dataArray);
-            connectionManager.sendPacket(worldLayerSnapshot);
+            manager.sendPacket(worldLayerSnapshot);
         }
 
-        connectionManager.sendPacket(new PacketWorldSnapshotFinish(world.getName()));
+        manager.sendPacket(new PacketWorldSnapshotFinish(world.getName()));
     }
 }

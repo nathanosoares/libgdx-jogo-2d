@@ -19,6 +19,7 @@ import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.net.packet.client.PacketKeybindActivate;
 import dev.game.test.api.net.packet.client.PacketKeybindDeactivate;
 import dev.game.test.api.world.IWorld;
+import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.systems.AnimateStateSystem;
 import dev.game.test.client.entity.systems.CollisiveDebugSystem;
 import dev.game.test.client.entity.systems.PlayerMovementControllerSystem;
@@ -90,6 +91,8 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        GameUtils.clearScreen(0, 0, 0, 0);
+
         IWorld currentWorld = this.game.getClientManager().getCurrentWorld();
         IPlayer currentPlayer = this.game.getClientManager().getPlayer();
 

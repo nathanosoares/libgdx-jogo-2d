@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import dev.game.test.api.server.IServerManager;
 import dev.game.test.api.world.IWorld;
+import dev.game.test.core.block.Blocks;
 import dev.game.test.core.world.World;
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +22,7 @@ public class ServerManager implements IServerManager {
         {
             World world = new World("world", ServerConstants.MAP_SIZE, ServerConstants.MAP_SIZE);
 
-            world.fillLayers(); // TODO temp
+            world.fillLayers(Blocks.GRASS, Blocks.DIRT); // TODO temp
 
             addWorld(world);
         }
@@ -29,7 +30,7 @@ public class ServerManager implements IServerManager {
         {
             World world = new World("test", ServerConstants.MAP_SIZE, ServerConstants.MAP_SIZE);
 
-            world.fillLayers(); // TODO temp
+            world.fillLayers(Blocks.DIRT, Blocks.GRASS); // TODO temp
 
             addWorld(world);
         }

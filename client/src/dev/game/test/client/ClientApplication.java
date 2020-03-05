@@ -70,16 +70,15 @@ public class ClientApplication extends GameApplication<ClientGame> {
 
     @Override
     public void render() {
-        GameUtils.clearScreen(0, 0, 0, 0);
+        if (getGame().getScreenManager().getCurrentScreen() != null) {
+            getGame().getScreenManager().getCurrentScreen().render(Gdx.graphics.getDeltaTime());
+        }
+
         super.render();
 
         this.tweenManager.update(Gdx.graphics.getDeltaTime());
 
         this.fpsLogger.log();
-
-        if (getGame().getScreenManager().getCurrentScreen() != null) {
-            getGame().getScreenManager().getCurrentScreen().render(Gdx.graphics.getDeltaTime());
-        }
     }
 
     @Override
@@ -104,6 +103,8 @@ public class ClientApplication extends GameApplication<ClientGame> {
     public void dispose() {
         super.dispose();
 
-        getGame().getScreenManager().getCurrentScreen().dispose();
+        if (getGame().getScreenManager().getCurrentScreen() != null) {
+            getGame().getScreenManager().getCurrentScreen().dispose();
+        }
     }
 }

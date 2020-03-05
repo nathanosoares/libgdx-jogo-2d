@@ -4,6 +4,9 @@ import dev.game.test.api.IServerGame;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.net.packet.client.PacketKeybindActivate;
 import dev.game.test.api.net.packet.client.PacketKeybindDeactivate;
+import dev.game.test.api.net.packet.handshake.PacketConnectionState;
+import dev.game.test.api.world.IWorld;
+import dev.game.test.core.keybind.Keybinds;
 import dev.game.test.core.registry.impl.KeybindsRegistry;
 import dev.game.test.server.handler.PlayerConnectionManager;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,6 +24,21 @@ public class KeybindListeners extends AbstractPlayerPacketListener {
 
         if (keybind == null) {
             return;
+        }
+
+        if (keybind == Keybinds.CHANGE_WORLD && !this.manager.getPlayer().hasActiveKeybind(keybind)) {
+            IWorld world = this.manager.getPlayer().getWorld();
+
+            if (world.getName().equalsIgnoreCase("world")) {
+                world = this.game.getServerManager().getWorld("test");
+            } else {
+                world = this.game.getServerManager().getWorld("world");
+            }
+
+            this.manager.getPlayer().setPosition(world, this.manager.getPlayer().getPosition());
+
+            this.manager.registerListener(new WorldListener(this.game, this.manager));
+            this.manager.setState(PacketConnectionState.State.PREPARING_WORLD);
         }
 
         this.manager.getPlayer().addActiveKeybind(keybind);

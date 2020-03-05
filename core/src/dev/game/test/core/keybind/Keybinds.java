@@ -13,4 +13,6 @@ public class Keybinds {
 
     public static Keybind MOVE_RIGHT = new KeybindAdapter("move_right", "Move right", "desc", Input.Keys.D);
 
+    public static Keybind CHANGE_WORLD = new KeybindAdapter("change_world", "Change World", "desc", Input.Keys.T);
+
 }

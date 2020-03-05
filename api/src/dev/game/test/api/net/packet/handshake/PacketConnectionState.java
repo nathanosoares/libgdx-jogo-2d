@@ -19,8 +19,9 @@ public class PacketConnectionState implements Packet {
 
         DISCONNECTED(-1),
         HANDSHAKE(0),
-        PREPARING(1),
-        INGAME(2);
+        PREPARING_INFO(1),
+        PREPARING_WORLD(2),
+        INGAME(3);
 
         @Getter
         private int id;

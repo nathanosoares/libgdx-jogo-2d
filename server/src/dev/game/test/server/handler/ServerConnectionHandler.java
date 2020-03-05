@@ -1,14 +1,19 @@
 package dev.game.test.server.handler;
 
+import com.badlogic.ashley.core.Entity;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.google.common.collect.Maps;
 import dev.game.test.api.IServerGame;
+import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.net.IConnectionManager;
 import dev.game.test.api.net.handler.IServerConnectionHandler;
 import dev.game.test.api.net.packet.Packet;
+import dev.game.test.api.world.IWorld;
+import dev.game.test.core.entity.Player;
+import dev.game.test.core.entity.player.componenets.ConnectionComponent;
 import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
 import dev.game.test.server.handler.listeners.HandshakeListener;
 import lombok.Getter;
@@ -46,9 +51,27 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
         }
     }
 
+
+    @Override
+    public void broadcastPacket(Packet packet, IWorld world) {
+        broadcastPacket(packet, world, null);
+    }
+
+
+    @Override
+    public void broadcastPacket(Packet packet, IWorld world, IConnectionManager exclude) {
+        for (IPlayer player : world.getPlayers()) {
+            ConnectionComponent connectionComponent = ConnectionComponent.MAPPER.get((Entity) player);
+
+            if (connectionComponent.manager != exclude) {
+                connectionComponent.manager.sendPacket(packet);
+            }
+        }
+    }
+
     @Override
     public void broadcastPacket(Packet packet) {
-        broadcastPacket(packet, null);
+        broadcastPacket(packet, (IConnectionManager) null);
     }
 
     @Override
@@ -86,8 +109,13 @@ public class ServerConnectionHandler implements IServerConnectionHandler {
             if (manager != null) {
 
                 if (manager.getPlayer() != null) {
+                    Player player = manager.getPlayer();
 
-                    ServerConnectionHandler.this.game.getEngine().removeEntity(manager.getPlayer());
+                    if (player.getWorld() != null) {
+                        player.getWorld().destroyEntity(player);
+                    }
+
+                    ServerConnectionHandler.this.game.getEngine().removeEntity(player);
                 }
             }
         }

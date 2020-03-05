@@ -17,8 +17,6 @@ public interface IWorld {
 
     Rectangle getBounds();
 
-    //
-
     Collection<IEntity> getEntities();
 
     Collection<IPlayer> getPlayers();

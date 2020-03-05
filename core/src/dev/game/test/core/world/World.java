@@ -7,6 +7,7 @@ import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
+import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.block.Blocks;
 import lombok.Getter;
@@ -44,7 +45,7 @@ public class World implements IWorld {
         }
     }
 
-    public void fillLayers() {
+    public void fillLayers(Block primary, Block secondary) {
         this.layers = new WorldLayer[2];
 
         WorldLayer ground = new WorldLayer(this);
@@ -53,22 +54,22 @@ public class World implements IWorld {
             for (int y = 0; y < getBounds().getHeight(); y++) {
 
                 ground.setBlockState(new BlockState(
-                        Blocks.GRASS, this, ground, new Vector2(x, y)
+                        primary, this, ground, new Vector2(x, y)
                 ));
 
             }
         }
 
         for (int x = 4; x < 9; x++) {
-            ground.getBlockState(x, 5).setBlock(Blocks.DIRT);
-            ground.getBlockState(x, 6).setBlock(Blocks.DIRT);
+            ground.getBlockState(x, 5).setBlock(secondary);
+            ground.getBlockState(x, 6).setBlock(secondary);
 
             if (x == 4 || x == 9) {
                 continue;
             }
 
-            ground.getBlockState(x, 4).setBlock(Blocks.DIRT);
-            ground.getBlockState(x, 7).setBlock(Blocks.DIRT);
+            ground.getBlockState(x, 4).setBlock(secondary);
+            ground.getBlockState(x, 7).setBlock(secondary);
         }
 
         for (int x = 9; x < 12; x++) {
@@ -127,10 +128,13 @@ public class World implements IWorld {
         return entities.get(id);
     }
 
-    //
-
     @Override
     public void spawnEntity(IEntity entity, float x, float y) {
+
+        if (entity.getWorld() != null) {
+            entity.getWorld().destroyEntity(entity);
+        }
+
         entity.onSpawn(this);
 
         this.entities.put(entity.getId(), entity);
@@ -138,6 +142,8 @@ public class World implements IWorld {
         if (entity instanceof IPlayer) {
             players.put(entity.getId(), (IPlayer) entity);
         }
+
+        entity.setPosition(new Vector2(x, y));
     }
 
     @Override
@@ -147,7 +153,7 @@ public class World implements IWorld {
         this.entities.remove(entity.getId());
 
         if (entity instanceof IPlayer) {
-            players.remove((IPlayer) entity);
+            players.remove(entity.getId());
         }
     }
 }

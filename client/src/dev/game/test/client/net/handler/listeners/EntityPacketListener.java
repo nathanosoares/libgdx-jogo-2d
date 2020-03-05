@@ -3,15 +3,12 @@ package dev.game.test.client.net.handler.listeners;
 import com.badlogic.ashley.core.Entity;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.IEntity;
-import dev.game.test.api.net.packet.server.PacketEntityMovement;
-import dev.game.test.api.net.packet.server.PacketEntityPosition;
-import dev.game.test.api.net.packet.server.PacketEntitySpawn;
-import dev.game.test.api.net.packet.server.PacketEntityState;
+import dev.game.test.api.net.packet.server.*;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.net.handler.ServerConnectionManager;
 import dev.game.test.core.entity.Player;
-import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.components.StateComponent;
+import dev.game.test.core.entity.player.componenets.MovementComponent;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.UUID;
@@ -55,6 +52,19 @@ public class EntityPacketListener extends AbstractServerPacketListener {
     }
 
     @Subscribe
+    public void on(PacketEntityDestroy packet) {
+        if (packet.getEntityId().equals(this.game.getClientManager().getPlayer().getId())) {
+            return;
+        }
+
+        IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
+
+        if (entity != null) {
+            this.game.getClientManager().removeEntity(entity);
+        }
+    }
+
+    @Subscribe
     public void on(PacketEntitySpawn packet) {
         if (packet.getEntityId().equals(this.game.getClientManager().getPlayer().getId())) {
             return;
@@ -63,16 +73,13 @@ public class EntityPacketListener extends AbstractServerPacketListener {
         IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
 
         if (entity != null) {
-            this.game.getEngine().removeEntity((Entity) entity);
             this.game.getClientManager().removeEntity(entity);
         }
 
         Player player = GameUtils.buildClientPlayer(packet.getEntityId(), UUID.randomUUID().toString());
 
-        player.setPosition(packet.getPosition());
-        player.setWorld(this.game.getClientManager().getPlayer().getWorld());
+        player.setPosition(this.game.getClientManager().getPlayer().getWorld(), packet.getPosition());
 
-        this.game.getEngine().addEntity(player);
         this.game.getClientManager().addEntity(player);
     }
 }

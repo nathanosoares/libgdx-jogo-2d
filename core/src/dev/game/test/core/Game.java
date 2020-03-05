@@ -26,12 +26,11 @@ public abstract class Game implements IGame {
     private final EventManager eventManager;
 
     @Getter
-    private final Engine engine;
-
-    //
+    protected final Engine engine;
 
     protected Game() {
         instance = this;
+
         this.registryManager = new RegistryManager();
         this.eventManager = new EventManager();
         this.engine = new Engine();

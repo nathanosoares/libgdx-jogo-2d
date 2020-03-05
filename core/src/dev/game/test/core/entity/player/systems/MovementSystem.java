@@ -9,12 +9,16 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.block.IBlockState;
+import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.server.PacketEntityPosition;
 import dev.game.test.api.net.packet.server.PacketPlayerMovementResponse;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
-import dev.game.test.core.entity.components.*;
+import dev.game.test.core.entity.components.CollisiveComponent;
+import dev.game.test.core.entity.components.FacingComponent;
+import dev.game.test.core.entity.components.IdentifiableComponent;
+import dev.game.test.core.entity.components.PositionComponent;
 import dev.game.test.core.entity.player.componenets.ConnectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 
@@ -22,9 +26,8 @@ public class MovementSystem extends IteratingSystem {
 
     private final Game game;
 
-    private static final Vector2 fromPosition = new Vector2();
-    private static final Vector2 toPosition = new Vector2();
-    private static final Vector2 velocity = new Vector2();
+    private final Vector2 toPosition = new Vector2();
+    private final Vector2 velocity = new Vector2();
 
     public MovementSystem(Game game) {
         super(Family.all(PositionComponent.class, MovementComponent.class).get());
@@ -136,25 +139,19 @@ public class MovementSystem extends IteratingSystem {
 
         // TODO adicionar evento
 
-
         updateFacing(entity, movementComponent);
 
-
-        positionComponent.x = toPosition.x;
-        positionComponent.y = toPosition.y;
-
-        Vector2 toPosition = new Vector2(positionComponent.x, positionComponent.y);
+        ((IEntity) entity).setPosition(toPosition);
 
         if (game instanceof IServerGame) {
-
             ConnectionComponent connectionComponent = ConnectionComponent.MAPPER.get(entity);
 
             if (movementComponent.sequenceId != -1) {
 
                 if (connectionComponent != null) {
-                    connectionComponent.manager.sendPacket(new PacketPlayerMovementResponse(
-                            movementComponent.sequenceId, toPosition
-                    ));
+                    connectionComponent.manager.sendPacket(
+                            new PacketPlayerMovementResponse(movementComponent.sequenceId, toPosition)
+                    );
 
                     movementComponent.sequenceId = -1;
                 }
@@ -163,9 +160,11 @@ public class MovementSystem extends IteratingSystem {
             if (fromPosition.x != toPosition.x || fromPosition.y != toPosition.y) {
                 IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
 
-                ((IServerGame) game).getConnectionHandler().broadcastPacket(new PacketEntityPosition(
-                        identifiable.uuid, new Vector2(toPosition.x, toPosition.y)
-                ), connectionComponent != null ? connectionComponent.manager : null);
+                ((IServerGame) game).getConnectionHandler().broadcastPacket(
+                        new PacketEntityPosition(identifiable.uuid, toPosition),
+                        ((IEntity) entity).getWorld(),
+                        connectionComponent != null ? connectionComponent.manager : null
+                );
             }
         }
 

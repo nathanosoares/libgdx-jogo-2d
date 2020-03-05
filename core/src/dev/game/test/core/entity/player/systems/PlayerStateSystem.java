@@ -42,9 +42,10 @@ public class PlayerStateSystem extends IteratingSystem {
             stateComponent.changedAt = System.currentTimeMillis();
 
             if (game instanceof IServerGame) {
-                ((IServerGame) game).getConnectionHandler().broadcastPacket(new PacketEntityState(
-                        ((IEntity) entity).getId(), stateComponent.machine.getCurrentState()
-                ));
+                ((IServerGame) game).getConnectionHandler().broadcastPacket(
+                        new PacketEntityState(((IEntity) entity).getId(), stateComponent.machine.getCurrentState()),
+                        ((IEntity) entity).getWorld()
+                );
             }
         }
     }

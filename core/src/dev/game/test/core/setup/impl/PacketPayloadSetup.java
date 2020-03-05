@@ -42,13 +42,15 @@ public class PacketPayloadSetup implements Setup {
         registry.registerSerializer(1091, PacketWorldLayerSnapshot.LayerData.class);
         registry.registerSerializer(1092, PacketWorldLayerSnapshot.LayerData[].class);
         registry.registerSerializer(1093, PacketWorldLayerSnapshot.LayerData[][].class);
-        registry.registerSerializer(1100, PacketWorldReady.class);
+        registry.registerSerializer(1100, PacketWorldRequest.class);
+        registry.registerSerializer(1101, PacketWorldReady.class);
         registry.registerSerializer(1110, PacketSpawnPosition.class);
         registry.registerSerializer(1120, PacketKeybindActivate.class);
         registry.registerSerializer(1140, PacketKeybindDeactivate.class);
         registry.registerSerializer(1150, PacketEntityPosition.class);
         registry.registerSerializer(1160, PacketEntityMovement.class);
         registry.registerSerializer(1170, PacketEntitySpawn.class);
+        registry.registerSerializer(1171, PacketEntityDestroy.class);
         registry.registerSerializer(1180, PacketPlayerMovement.class);
         registry.registerSerializer(1181, PacketPlayerMovementResponse.class);
         registry.registerSerializer(1190, PacketEntityState.class);

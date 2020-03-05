@@ -33,7 +33,7 @@ public class LoginListener extends AbstractPlayerPacketListener {
             this.manager.unregisterListener(LoginListener.class);
             this.manager.registerListener(new PreparingListener(this.game, this.manager));
 
-            this.manager.setState(PacketConnectionState.State.PREPARING);
+            this.manager.setState(PacketConnectionState.State.PREPARING_INFO);
         }).start();
     }
 }

@@ -20,5 +20,6 @@ public class SetupKeybinds implements Setup {
         keybindsRegistry.registerKeybind(Keybinds.MOVE_LEFT);
         keybindsRegistry.registerKeybind(Keybinds.MOVE_DOWN);
         keybindsRegistry.registerKeybind(Keybinds.MOVE_RIGHT);
+        keybindsRegistry.registerKeybind(Keybinds.CHANGE_WORLD);
     }
 }

@@ -37,7 +37,7 @@ public class ClientGame extends Game implements IClientGame {
         }
 
         this.screenManager = new ScreenManager(this);
-        this.clientManager = new ClientManager(this);
+        this.clientManager = new ClientManager(this, this.engine);
         this.connectionHandler = new ClientConnectionHandler(this);
     }
 
