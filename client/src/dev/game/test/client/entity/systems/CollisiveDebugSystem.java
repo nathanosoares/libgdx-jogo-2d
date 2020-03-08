@@ -2,11 +2,13 @@ package dev.game.test.client.entity.systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
+import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
@@ -57,9 +59,39 @@ public class CollisiveDebugSystem extends EntitySystem {
                 this.shapeRenderer.line(
                         position.x + size.x / 2,
                         position.y + size.y / 2,
-                        position.x + movement.deltaX + size.x / 2,
-                        position.y + movement.deltaY + size.y / 2
+                        position.x + Math.signum(movement.deltaX) + size.x / 2,
+                        position.y + Math.signum(movement.deltaY) + size.y / 2
                 );
+
+
+                this.shapeRenderer.setColor(Color.BROWN);
+
+                Vector2 mouseWorldPosition = this.game.getEngine().getSystem(WorldRenderSystem.class)
+                        .getMouseWorldPosition(new Vector2());
+
+
+                double theta = Math.toDegrees(Math.atan2(
+                        mouseWorldPosition.x - (position.x + size.x / 2),
+                        mouseWorldPosition.y - (position.y + size.y / 2)
+                ));
+
+                double x = 3 * Math.sin(Math.toRadians(theta)) + (position.x + size.x / 2);
+                double y = 3 * Math.cos(Math.toRadians(theta)) + (position.y + size.y / 2);
+
+                this.shapeRenderer.line(
+                        position.x + size.x / 2,
+                        position.y + size.y / 2,
+                        (float) x,
+                        (float) y
+                );
+
+                this.shapeRenderer.circle(
+                        position.x + size.x / 2,
+                        position.y + size.y / 2,
+                        3,
+                        100
+                );
+
 //
 //                if (transformComponent.originCenter) {
 //                    this.shapeRenderer.line(
@@ -84,7 +116,6 @@ public class CollisiveDebugSystem extends EntitySystem {
 
 //            }
         }
-
         this.shapeRenderer.end();
     }
 }

@@ -19,6 +19,7 @@ import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.client.ClientApplication;
 import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.block.BlockState;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Iterator;
@@ -39,6 +40,10 @@ public class WorldRenderSystem extends EntitySystem {
 
     private final Rectangle blockArea = new Rectangle();
     private final Rectangle viewBounds = new Rectangle();
+
+    private final Vector2 mouseScreenPosition = new Vector2();
+
+    private final Vector2 mouseWorldPosition = new Vector2();
 
     private final Map<BlockState, AtomicReference<Float>> opacity = Maps.newHashMap();
 
@@ -65,11 +70,19 @@ public class WorldRenderSystem extends EntitySystem {
         float y = portalFrameY;
     }
 
+    public Vector2 getMouseWorldPosition(Vector2 vector2) {
+        return vector2.set(mouseWorldPosition);
+    }
+
+
     @Override
     public void update(float deltaTime) {
 
         this.batch.begin();
         this.setView(this.camera);
+
+        mouseScreenPosition.set(Gdx.input.getX(), Gdx.input.getY());
+        mouseWorldPosition.set(viewport.unproject(mouseScreenPosition.cpy()));
 
         if (game.getClientManager().getCurrentWorld() != null) {
             IWorld world = game.getClientManager().getCurrentWorld();
@@ -128,9 +141,6 @@ public class WorldRenderSystem extends EntitySystem {
 
         IWorldLayer layer = world.getLayers()[layerIndex];
 
-        Vector2 mouseScreenPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-        Vector2 mouseWorldPosition = viewport.unproject(mouseScreenPosition);
-
         float layerTileWidth = TILE_WIDTH * UNIT_PER_PIXEL;
         float layerTileHeight = TILE_WIDTH * UNIT_PER_PIXEL;
 
@@ -157,7 +167,7 @@ public class WorldRenderSystem extends EntitySystem {
 
                 batch.setColor(1.0f, 1.0f, 1.0f, 1);
 
-                if (x == (int) mouseWorldPosition.x && y == (int) mouseScreenPosition.y) {
+                if (x == (int) mouseWorldPosition.x && y == (int) mouseWorldPosition.y) {
                     float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
                     batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
                 }
