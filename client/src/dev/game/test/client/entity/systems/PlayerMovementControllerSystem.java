@@ -2,9 +2,15 @@ package dev.game.test.client.entity.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.net.packet.client.PacketPlayerMovement;
+import dev.game.test.api.util.EnumDirection;
+import dev.game.test.client.world.systems.WorldRenderSystem;
+import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.KeybindComponent;
+import dev.game.test.core.entity.components.PositionComponent;
+import dev.game.test.core.entity.player.componenets.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.keybind.Keybinds;
 
@@ -22,7 +28,8 @@ public class PlayerMovementControllerSystem extends EntitySystem {
     public void update(float deltaTime) {
         Entity entity = (Entity) this.game.getClientManager().getPlayer();
 
-        MovementComponent movement = MovementComponent.MAPPER.get(entity);
+        PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
+        MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
         KeybindComponent activatedKeybinds = KeybindComponent.MAPPER.get(entity);
 
         boolean moveLeft = false;
@@ -37,11 +44,11 @@ public class PlayerMovementControllerSystem extends EntitySystem {
         }
 
         if (moveLeft == moveRight) {
-            movement.deltaX = 0;
+            movementComponent.deltaX = 0;
         } else if (moveLeft) {
-            movement.deltaX = -deltaTime;
+            movementComponent.deltaX = -deltaTime;
         } else {
-            movement.deltaX = deltaTime;
+            movementComponent.deltaX = deltaTime;
         }
 
         boolean moveTop = false;
@@ -56,18 +63,35 @@ public class PlayerMovementControllerSystem extends EntitySystem {
         }
 
         if (moveTop == moveDown) {
-            movement.deltaY = 0;
+            movementComponent.deltaY = 0;
         } else if (moveTop) {
-            movement.deltaY = deltaTime;
+            movementComponent.deltaY = deltaTime;
         } else {
-            movement.deltaY = -deltaTime;
+            movementComponent.deltaY = -deltaTime;
         }
 
-        if (movement.deltaX != 0 || movement.deltaY != 0) {
+        Vector2 mouseWorldPosition = this.game.getEngine().getSystem(WorldRenderSystem.class)
+                .getMouseWorldPosition(new Vector2());
+
+        DirectionComponent directionComponent = DirectionComponent.MAPPER.get(entity);
+        CollisiveComponent collisiveComponent = CollisiveComponent.MAPPER.get(entity);
+
+        double oldDegrees = directionComponent.degrees;
+
+        Vector2 boxSize = collisiveComponent.box.getSize(new Vector2());
+
+        directionComponent.degrees = Math.toDegrees(Math.atan2(
+                mouseWorldPosition.x - (positionComponent.x + boxSize.x / 2),
+                mouseWorldPosition.y - (positionComponent.y + boxSize.y / 2)
+        ));
+
+        if (movementComponent.deltaX != 0 || movementComponent.deltaY != 0 || oldDegrees != directionComponent.degrees) {
+
             this.game.getConnectionHandler().getManager().sendPacket(new PacketPlayerMovement(
                     sequenceNumber++,
-                    movement.deltaX,
-                    movement.deltaY
+                    movementComponent.deltaX,
+                    movementComponent.deltaY,
+                    directionComponent.degrees
             ));
         }
     }

@@ -8,6 +8,7 @@ import dev.game.test.client.GameUtils;
 import dev.game.test.client.net.handler.ServerConnectionManager;
 import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.StateComponent;
+import dev.game.test.core.entity.player.componenets.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -45,9 +46,11 @@ public class EntityPacketListener extends AbstractServerPacketListener {
 
         if (entity != null) {
             MovementComponent movementComponent = MovementComponent.MAPPER.get((Entity) entity);
+            DirectionComponent directionComponent = DirectionComponent.MAPPER.get((Entity) entity);
 
             movementComponent.deltaX = packet.getDeltaX();
             movementComponent.deltaY = packet.getDeltaY();
+            directionComponent.degrees = packet.getDegrees();
         }
     }
 

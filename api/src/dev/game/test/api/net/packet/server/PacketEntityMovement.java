@@ -16,5 +16,6 @@ public class PacketEntityMovement implements Packet {
 
     public float deltaX;
     public float deltaY;
+    public double degrees;
 
 }

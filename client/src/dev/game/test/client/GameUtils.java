@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import dev.game.test.client.entity.components.AnimateStateComponent;
-import dev.game.test.client.entity.components.FacingVisualFlipComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
@@ -30,7 +29,6 @@ public class GameUtils {
         Player player = PlayerUtils.buildLocalPlayer(uuid, username);
 
         player.add(new VisualComponent());
-        player.add(new FacingVisualFlipComponent());
 
         // Animate
         {

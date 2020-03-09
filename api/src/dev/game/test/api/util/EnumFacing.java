@@ -18,15 +18,12 @@ public enum EnumFacing {
     @Getter
     private EnumFacing opposite;
 
-    /*
-
-     */
-
     static {
         NORTH.opposite = SOUTH;
         SOUTH.opposite = NORTH;
         EAST.opposite = WEST;
         WEST.opposite = EAST;
     }
+
 
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
 import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.components.CollisiveComponent;
+import dev.game.test.core.entity.player.componenets.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 
@@ -63,20 +64,12 @@ public class CollisiveDebugSystem extends EntitySystem {
                         position.y + Math.signum(movement.deltaY) + size.y / 2
                 );
 
-
                 this.shapeRenderer.setColor(Color.BROWN);
 
-                Vector2 mouseWorldPosition = this.game.getEngine().getSystem(WorldRenderSystem.class)
-                        .getMouseWorldPosition(new Vector2());
+                DirectionComponent directionComponent = DirectionComponent.MAPPER.get(entity);
 
-
-                double theta = Math.toDegrees(Math.atan2(
-                        mouseWorldPosition.x - (position.x + size.x / 2),
-                        mouseWorldPosition.y - (position.y + size.y / 2)
-                ));
-
-                double x = 3 * Math.sin(Math.toRadians(theta)) + (position.x + size.x / 2);
-                double y = 3 * Math.cos(Math.toRadians(theta)) + (position.y + size.y / 2);
+                double x = 3 * Math.sin(Math.toRadians(directionComponent.degrees)) + (position.x + size.x / 2);
+                double y = 3 * Math.cos(Math.toRadians(directionComponent.degrees)) + (position.y + size.y / 2);
 
                 this.shapeRenderer.line(
                         position.x + size.x / 2,
@@ -89,7 +82,7 @@ public class CollisiveDebugSystem extends EntitySystem {
                         position.x + size.x / 2,
                         position.y + size.y / 2,
                         3,
-                        100
+                        16
                 );
 
 //

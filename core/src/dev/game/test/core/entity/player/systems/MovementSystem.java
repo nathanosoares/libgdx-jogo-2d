@@ -16,7 +16,6 @@ import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.CollisiveComponent;
-import dev.game.test.core.entity.components.FacingComponent;
 import dev.game.test.core.entity.components.IdentifiableComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 import dev.game.test.core.entity.player.componenets.ConnectionComponent;
@@ -46,6 +45,25 @@ public class MovementSystem extends IteratingSystem {
         float speed = 4;
 
         MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
+
+        if (this.game instanceof IServerGame) {
+//            float olddeltaX = movementComponent.deltaX;
+//            float olddeltaY = movementComponent.deltaY;
+//
+//            movementComponent.deltaX = Math.min(Math.abs(movementComponent.deltaX) * 1.01f, deltaTime) * Math.signum(movementComponent.deltaX);
+//            movementComponent.deltaY = Math.min(Math.abs(movementComponent.deltaY) * 1.01f, deltaTime) * Math.signum(movementComponent.deltaY);
+//
+//            if (olddeltaX != movementComponent.deltaX || olddeltaY != movementComponent.deltaY) {
+//                System.out.println(movementComponent.deltaX);
+//                System.out.println(movementComponent.deltaY);
+//                System.out.println("~~~~");
+//                System.out.println(olddeltaX);
+//                System.out.println(olddeltaY);
+//                System.out.println("=====");
+//                System.out.println("=====");
+//                System.out.println("=====");
+//            }
+        }
 
         fromPosition.set(positionComponent.x, positionComponent.y);
         toPosition.set(fromPosition);
@@ -139,8 +157,6 @@ public class MovementSystem extends IteratingSystem {
 
         // TODO adicionar evento
 
-        updateFacing(entity, movementComponent);
-
         ((IEntity) entity).setPosition(toPosition);
 
         if (game instanceof IServerGame) {
@@ -213,17 +229,5 @@ public class MovementSystem extends IteratingSystem {
         }
 
         return null;
-    }
-
-    private static void updateFacing(Entity entity, MovementComponent movement) {
-        if (FacingComponent.MAPPER.has(entity)) {
-            FacingComponent facing = FacingComponent.MAPPER.get(entity);
-
-            if (movement.deltaX > 0) {
-                facing.facing = EnumFacing.EAST;
-            } else if (movement.deltaX < 0) {
-                facing.facing = EnumFacing.WEST;
-            }
-        }
     }
 }
