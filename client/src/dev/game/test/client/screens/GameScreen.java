@@ -73,8 +73,8 @@ public class GameScreen extends ScreenAdapter {
         this.registerSystem(new PlayerMovementControllerSystem(this.game));
         this.registerSystem(new AnimateStateSystem(this.game));
         this.registerSystem(new WorldRenderSystem(this.game, this.camera, this.spriteBatch, this.viewport));
-        this.registerSystem(new CollisiveDebugSystem(this.game, this.spriteBatch));
         this.registerSystem(new VisualRenderSystem(this.game, this.spriteBatch));
+        this.registerSystem(new CollisiveDebugSystem(this.game, this.spriteBatch));
 
         Gdx.input.setInputProcessor(new PlayerControllerInputAdapter());
     }

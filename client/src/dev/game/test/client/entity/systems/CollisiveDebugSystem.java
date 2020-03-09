@@ -81,7 +81,7 @@ public class CollisiveDebugSystem extends EntitySystem {
                 this.shapeRenderer.circle(
                         position.x + size.x / 2,
                         position.y + size.y / 2,
-                        3,
+                        1,
                         16
                 );
 
