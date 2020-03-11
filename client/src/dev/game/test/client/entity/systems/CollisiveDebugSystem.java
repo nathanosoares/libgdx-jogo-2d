@@ -2,15 +2,13 @@ package dev.game.test.client.entity.systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
-import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.components.CollisiveComponent;
-import dev.game.test.core.entity.player.componenets.DirectionComponent;
+import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 

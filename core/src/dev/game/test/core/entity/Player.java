@@ -3,10 +3,9 @@ package dev.game.test.core.entity;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.keybind.Keybind;
-import dev.game.test.api.util.EnumFacing;
 import dev.game.test.core.entity.components.*;
 import dev.game.test.core.entity.player.PlayerState;
-import dev.game.test.core.entity.player.componenets.DirectionComponent;
+import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 
 import java.util.UUID;

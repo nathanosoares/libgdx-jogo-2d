@@ -1,6 +1,5 @@
 package dev.game.test.client.entity.systems;
 
-import aurelienribon.tweenengine.Tween;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
@@ -8,24 +7,18 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import dev.game.test.api.IClientGame;
-import dev.game.test.client.ClientApplication;
 import dev.game.test.client.entity.components.VisualComponent;
-import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.PositionComponent;
-import dev.game.test.core.entity.player.componenets.DirectionComponent;
+import dev.game.test.core.entity.components.DirectionComponent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

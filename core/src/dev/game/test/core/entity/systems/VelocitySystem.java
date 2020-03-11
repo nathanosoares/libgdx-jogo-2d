@@ -1,4 +1,4 @@
-package dev.game.test.core.entity.player.systems;
+package dev.game.test.core.entity.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -17,18 +17,19 @@ import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.IdentifiableComponent;
 import dev.game.test.core.entity.components.PositionComponent;
+import dev.game.test.core.entity.components.VelocityComponent;
 import dev.game.test.core.entity.player.componenets.ConnectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 
-public class MovementSystem extends IteratingSystem {
+public class VelocitySystem extends IteratingSystem {
 
     private final Game game;
 
     private final Vector2 toPosition = new Vector2();
     private final Vector2 velocity = new Vector2();
 
-    public MovementSystem(Game game) {
-        super(Family.all(PositionComponent.class, MovementComponent.class).get());
+    public VelocitySystem(Game game) {
+        super(Family.all(PositionComponent.class, VelocityComponent.class).get());
 
         this.game = game;
     }
@@ -40,41 +41,23 @@ public class MovementSystem extends IteratingSystem {
         PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
 
         Vector2 fromPosition = new Vector2(positionComponent.x, positionComponent.y);
-
-        float speed = 4;
-
-        MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
+        VelocityComponent velocityComponent = VelocityComponent.MAPPER.get(entity);
 
         if (this.game instanceof IServerGame) {
-//            float olddeltaX = movementComponent.deltaX;
-//            float olddeltaY = movementComponent.deltaY;
-//
-//            movementComponent.deltaX = Math.min(Math.abs(movementComponent.deltaX) * 1.01f, deltaTime) * Math.signum(movementComponent.deltaX);
-//            movementComponent.deltaY = Math.min(Math.abs(movementComponent.deltaY) * 1.01f, deltaTime) * Math.signum(movementComponent.deltaY);
-//
-//            if (olddeltaX != movementComponent.deltaX || olddeltaY != movementComponent.deltaY) {
-//                System.out.println(movementComponent.deltaX);
-//                System.out.println(movementComponent.deltaY);
-//                System.out.println("~~~~");
-//                System.out.println(olddeltaX);
-//                System.out.println(olddeltaY);
-//                System.out.println("=====");
-//                System.out.println("=====");
-//                System.out.println("=====");
-//            }
         }
 
         fromPosition.set(positionComponent.x, positionComponent.y);
         toPosition.set(fromPosition);
 
+        velocity.set(velocityComponent.x * 0.2f, velocityComponent.y * 0.2f);
+
+
         if (!CollisiveComponent.MAPPER.has(entity)) {
 
-            toPosition.x += movementComponent.deltaX * speed;
-            toPosition.y += movementComponent.deltaY * speed;
+            toPosition.x += velocityComponent.x;
+            toPosition.y += velocityComponent.y;
 
         } else {
-
-            velocity.set(movementComponent.deltaX * speed, movementComponent.deltaY * speed);
 
             Rectangle box = CollisiveComponent.MAPPER.get(entity).box;
 
@@ -102,19 +85,19 @@ public class MovementSystem extends IteratingSystem {
                 IBlockState found = findBlock(positionComponent.world, velocity.x < 0, startX, endX, startY, endY);
 
                 if (found != null) {
-                    if (movementComponent.deltaX > 0) {
+                    if (velocity.x > 0) {
                         toPosition.x = Math.min(
                                 found.getPosition().x - box.width - 0.01f,
-                                fromPosition.x + movementComponent.deltaX * speed
+                                fromPosition.x + velocity.x
                         );
-                    } else if (movementComponent.deltaX < 0) {
+                    } else if (velocity.x < 0) {
                         toPosition.x = Math.max(
                                 found.getPosition().x + found.getBlock().getWidth(),
-                                fromPosition.x + movementComponent.deltaX * speed
+                                fromPosition.x + velocity.x
                         );
                     }
                 } else {
-                    toPosition.x += movementComponent.deltaX * speed;
+                    toPosition.x += velocity.x;
                 }
             }
 
@@ -137,55 +120,54 @@ public class MovementSystem extends IteratingSystem {
                 IBlockState found = findBlock(positionComponent.world, velocity.y < 0, startX, endX, startY, endY);
 
                 if (found != null) {
-                    if (movementComponent.deltaY > 0) {
+                    if (velocity.y > 0) {
                         toPosition.y = Math.min(
                                 found.getPosition().y - box.height - 0.01f,
-                                fromPosition.y + movementComponent.deltaY * speed
+                                fromPosition.y + velocity.y
                         );
-                    } else if (movementComponent.deltaY < 0) {
+                    } else if (velocity.y < 0) {
                         toPosition.y = Math.max(
                                 found.getPosition().y + found.getBlock().getHeight(),
-                                fromPosition.y + movementComponent.deltaY * speed
+                                fromPosition.y + velocity.y
                         );
                     }
                 } else {
-                    toPosition.y += movementComponent.deltaY * speed;
+                    toPosition.y += velocity.y;
                 }
             }
         }
 
         // TODO adicionar evento
 
-
         ((IEntity) entity).setPosition(toPosition);
 
         if (game instanceof IServerGame) {
-            ConnectionComponent connectionComponent = ConnectionComponent.MAPPER.get(entity);
+//            ConnectionComponent connectionComponent = ConnectionComponent.MAPPER.get(entity);
+//
+//            if (velocityComponent.sequenceId != -1) {
+//
+//                if (connectionComponent != null) {
+//                    connectionComponent.manager.sendPacket(
+//                            new PacketPlayerMovementResponse(velocityComponent.sequenceId, toPosition)
+//                    );
+//
+//                    velocityComponent.sequenceId = -1;
+//                }
+//            }
 
-            if (movementComponent.sequenceId != -1) {
-
-                if (connectionComponent != null) {
-                    connectionComponent.manager.sendPacket(
-                            new PacketPlayerMovementResponse(movementComponent.sequenceId, toPosition)
-                    );
-
-                    movementComponent.sequenceId = -1;
-                }
-            }
-
-            if (fromPosition.x != toPosition.x || fromPosition.y != toPosition.y) {
-                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
-
-                ((IServerGame) game).getConnectionHandler().broadcastPacket(
-                        new PacketEntityPosition(identifiable.uuid, toPosition),
-                        ((IEntity) entity).getWorld(),
-                        connectionComponent != null ? connectionComponent.manager : null
-                );
-            }
+//            if (fromPosition.x != toPosition.x || fromPosition.y != toPosition.y) {
+//                IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
+//
+//                ((IServerGame) game).getConnectionHandler().broadcastPacket(
+//                        new PacketEntityPosition(identifiable.uuid, toPosition),
+//                        ((IEntity) entity).getWorld(),
+//                        connectionComponent != null ? connectionComponent.manager : null
+//                );
+//            }
         }
 
-        movementComponent.deltaX = 0;
-        movementComponent.deltaY = 0;
+        velocityComponent.x -= velocity.x;
+        velocityComponent.y -= velocity.y;
     }
 
     private static IBlockState findBlock(IWorld world, boolean reverse, int startX, int endX, int startY, int endY) {
@@ -231,4 +213,3 @@ public class MovementSystem extends IteratingSystem {
         return null;
     }
 }
-

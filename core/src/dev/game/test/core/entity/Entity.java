@@ -11,6 +11,7 @@ import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.EntityComponent;
 import dev.game.test.core.entity.components.IdentifiableComponent;
 import dev.game.test.core.entity.components.PositionComponent;
+import dev.game.test.core.entity.components.VelocityComponent;
 
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
         this.add(new IdentifiableComponent(id));
         this.add(new PositionComponent(0, 0, null));
         this.add(new EntityComponent(false));
+        this.add(new VelocityComponent());
 
         this.setupDefaultComponents();
     }

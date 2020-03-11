@@ -1,4 +1,4 @@
-package dev.game.test.core.entity.player.componenets;
+package dev.game.test.core.entity.components;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;

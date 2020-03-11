@@ -8,6 +8,7 @@ import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.registry.IRegistryManager;
 import dev.game.test.core.entity.player.systems.MovementSystem;
 import dev.game.test.core.entity.player.systems.PlayerStateSystem;
+import dev.game.test.core.entity.systems.VelocitySystem;
 import dev.game.test.core.event.EventManager;
 import dev.game.test.core.registry.RegistryManager;
 import dev.game.test.core.registry.impl.KeybindsRegistry;

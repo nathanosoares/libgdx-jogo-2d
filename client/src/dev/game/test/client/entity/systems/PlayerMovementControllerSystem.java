@@ -5,12 +5,11 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.net.packet.client.PacketPlayerMovement;
-import dev.game.test.api.util.EnumDirection;
 import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.KeybindComponent;
 import dev.game.test.core.entity.components.PositionComponent;
-import dev.game.test.core.entity.player.componenets.DirectionComponent;
+import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.keybind.Keybinds;
 

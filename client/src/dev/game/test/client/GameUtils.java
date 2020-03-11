@@ -13,7 +13,7 @@ import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.StateComponent;
 import dev.game.test.core.entity.player.PlayerState;
-import dev.game.test.core.entity.player.componenets.DirectionComponent;
+import dev.game.test.core.entity.components.DirectionComponent;
 
 import java.util.Map;
 import java.util.UUID;
