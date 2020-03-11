@@ -23,7 +23,7 @@ public class Player extends Entity implements IPlayer {
     protected void setupDefaultComponents() {
         super.setupDefaultComponents();
 
-        this.add(new CollisiveComponent(24f / 16f, 24f / 16f));
+        this.add(new CollisiveComponent(16f / 16f, 16f / 16f));
         this.add(new DirectionComponent());
         this.add(new MovementComponent());
         this.add(new StateComponent<>(new DefaultStateMachine<>(this, PlayerState.IDLE)));

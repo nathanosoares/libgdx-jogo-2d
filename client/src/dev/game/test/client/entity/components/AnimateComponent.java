@@ -9,10 +9,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
-public class AnimateStateComponent implements Component {
+public class AnimateComponent implements Component {
 
-    public static final ComponentMapper<AnimateStateComponent> MAPPER = ComponentMapper.getFor(AnimateStateComponent.class);
+    public static final ComponentMapper<AnimateComponent> MAPPER = ComponentMapper.getFor(AnimateComponent.class);
 
-    public final Map<State<? extends Entity>, Animation<TextureRegion>> animations = Maps.newHashMap();
+    public final Map<Predicate<Entity>, Animation<TextureRegion>> animations = Maps.newHashMap();
 }

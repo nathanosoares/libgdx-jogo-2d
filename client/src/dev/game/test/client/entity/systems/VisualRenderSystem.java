@@ -1,18 +1,28 @@
 package dev.game.test.client.entity.systems;
 
+import aurelienribon.tweenengine.Tween;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import dev.game.test.api.IClientGame;
+import dev.game.test.client.ClientApplication;
 import dev.game.test.client.entity.components.VisualComponent;
+import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 import dev.game.test.core.entity.player.componenets.DirectionComponent;
@@ -29,9 +39,11 @@ public class VisualRenderSystem extends EntitySystem {
     private final Batch batch;
 
     private final Sprite spriteSword = new Sprite(new Texture(Gdx.files.internal("sword.png")));
+    private float attackTime = Float.MAX_VALUE;
+    private boolean attacked = false;
 
     {
-        spriteSword.setScale(1 / 16f);
+        spriteSword.setScale(1f / 16f);
     }
 
     @Override
@@ -58,7 +70,7 @@ public class VisualRenderSystem extends EntitySystem {
                 if (DirectionComponent.MAPPER.has(entity)) {
                     double degrees = DirectionComponent.MAPPER.get(entity).degrees;
 
-                    if (visual.region.isFlipX()) {
+                    if (!visual.region.isFlipX()) {
                         if (degrees >= 0) {
                             visual.region.flip(true, visual.region.isFlipY());
                         }
@@ -68,7 +80,6 @@ public class VisualRenderSystem extends EntitySystem {
                 }
 
                 batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-
 
                 Vector2 size = CollisiveComponent.MAPPER.get(entity).box.getSize(new Vector2());
 
@@ -85,40 +96,72 @@ public class VisualRenderSystem extends EntitySystem {
                         0
                 );
 
+                long time = 150;
+
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && attackTime >= time) {
+                    attackTime = 0;
+                    attacked = !attacked;
+                }
+
+                float attackOffset = 0;
+
                 DirectionComponent directionComponent = DirectionComponent.MAPPER.get(entity);
+                double degrees = directionComponent.degrees + 90;
+                float rotation = 20;
+
+                if (attackTime >= 0 && attackTime < time) {
+                    attackOffset = 180f * (100f / time * attackTime / 100f);
+
+                    if (!attacked) {
+                        attackOffset -= 180f;
+                    }
+
+                    rotation += (360f * (100f / time * attackTime / 100f)) * (attacked ? 1 : -1);
+
+                    attackTime += deltaTime * 1000;
+                } else if (attacked) {
+                    attackOffset = 180;
+                }
+
+                degrees += attackOffset * (attacked ? -1 : 1);
 
                 float originX = spriteSword.getWidth() / 2f;
-                float originZ = spriteSword.getHeight() / 2f;
+                float originY = spriteSword.getHeight() / 2f;
 
-                double y = 0.8 * Math.cos(Math.toRadians(directionComponent.degrees))
-                        + position.y
-                        + (size.y / 2)
-                        - originX;
+                float radius = 0.5f;
 
-                double x = 0.8 * Math.sin(Math.toRadians(directionComponent.degrees))
+                double x = radius * Math.sin(Math.toRadians(degrees))
                         + position.x
                         + (size.x / 2)
-                        - originZ;
+                        - originX;
 
-                spriteSword.setOrigin(1 / 16f, 1/ 16f);
+                double y = radius * Math.cos(Math.toRadians(degrees))
+                        + position.y
+                        + (size.y / 2)
+                        - originY;
+
+
+                spriteSword.setFlip(
+                        Math.toRadians(degrees) < Math.toRadians(directionComponent.degrees),
+                        true
+                );
                 spriteSword.setOriginCenter();
-                spriteSword.setFlip(false, Math.signum(directionComponent.degrees) < 0);
-                spriteSword.setRotation((float) (-directionComponent.degrees + 90));
-                spriteSword.setPosition((float) x, (float) y);
+                spriteSword.setOrigin(4, 15f);
+                spriteSword.setRotation((float) -directionComponent.degrees + rotation);
 
-                spriteSword.draw(this.batch);
+                Group group = new Group();
 
-                nameOffsetY = visual.region.getRegionHeight() / 16f;
+                group.addActor(new Actor() {
+                    @Override
+                    public void draw(Batch batch, float parentAlpha) {
+                        spriteSword.draw(batch);
+                    }
+                });
+
+                group.setOrigin(originX, originY);
+                group.setPosition((float) x, (float) y - (spriteSword.getHeight() - 8f) / 2);
+                group.draw(this.batch, 1f);
             }
-
-//            if (NamedComponent.MAPPER.has(entity)) {
-//                this.font.getData().setScale(1f / 32f);
-//                this.font.draw(
-//                        this.batch,
-//                        namedMapper.get(entity).name,
-//                        position.x, position.y + nameOffsetY + 1
-//                );
-//            }
         }
 
         this.batch.end();

@@ -1,17 +1,23 @@
 package dev.game.test.client;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import dev.game.test.client.entity.components.AnimateStateComponent;
+import com.google.common.collect.Maps;
+import dev.game.test.client.entity.components.AnimateComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
+import dev.game.test.core.entity.components.StateComponent;
 import dev.game.test.core.entity.player.PlayerState;
+import dev.game.test.core.entity.player.componenets.DirectionComponent;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class GameUtils {
 
@@ -24,40 +30,61 @@ public class GameUtils {
 
     public static Player buildClientPlayer(UUID uuid, String username) {
 
-        Texture texture = new Texture("rpg-pack/chars/gabe/gabe-idle-run.png");
-
         Player player = PlayerUtils.buildLocalPlayer(uuid, username);
 
         player.add(new VisualComponent());
 
         // Animate
         {
-            TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth() / 7, texture.getHeight());
+            AnimateComponent animateComponent = new AnimateComponent();
 
-            TextureRegion[] idleFrames = new TextureRegion[1];
-            TextureRegion[] walkFrames = new TextureRegion[6];
 
-            int index = 0;
-            for (int i = 0; i < 7; i++) {
-                if (i == 0) {
-                    idleFrames[0] = tmp[0][i];
-                    continue;
+            Map<String, Predicate<Entity>> textures = Maps.newHashMap();
+
+            textures.put("char_front_idle.png", entity -> {
+                if (StateComponent.MAPPER.get(entity).machine.getCurrentState() != PlayerState.IDLE) {
+                    return false;
                 }
-                walkFrames[index++] = tmp[0][i];
+
+                return Math.abs(DirectionComponent.MAPPER.get(entity).degrees) >= 90;
+            });
+
+            textures.put("char_front_walk.png", entity -> {
+                if (StateComponent.MAPPER.get(entity).machine.getCurrentState() != PlayerState.WALK) {
+                    return false;
+                }
+
+                return Math.abs(DirectionComponent.MAPPER.get(entity).degrees) >= 90;
+            });
+
+            textures.put("char_back_idle.png", entity -> {
+                if (StateComponent.MAPPER.get(entity).machine.getCurrentState() != PlayerState.IDLE) {
+                    return false;
+                }
+
+                return Math.abs(DirectionComponent.MAPPER.get(entity).degrees) < 90;
+            });
+
+            textures.put("char_back_walk.png", entity -> {
+                if (StateComponent.MAPPER.get(entity).machine.getCurrentState() != PlayerState.WALK) {
+                    return false;
+                }
+
+                return Math.abs(DirectionComponent.MAPPER.get(entity).degrees) < 90;
+            });
+
+            for (Map.Entry<String, Predicate<Entity>> entry : textures.entrySet()) {
+                Texture texture = new Texture(entry.getKey());
+
+                TextureRegion[] frames = TextureRegion.split(texture, texture.getWidth() / 2, texture.getHeight())[0];
+
+                Animation<TextureRegion> animation = new Animation<>(0.135f, frames);
+
+                animateComponent.animations.put(entry.getValue(), animation);
             }
 
-            Animation<TextureRegion> idleAnimation = new Animation<>(0.135f, idleFrames);
-            Animation<TextureRegion> walkAnimation = new Animation<>(0.135f, walkFrames);
-            Animation<TextureRegion> runningAnimation = new Animation<>(0.105f, walkFrames);
 
-
-            AnimateStateComponent animateStateComponent = new AnimateStateComponent();
-
-            animateStateComponent.animations.put(PlayerState.IDLE, idleAnimation);
-            animateStateComponent.animations.put(PlayerState.WALK, walkAnimation);
-            animateStateComponent.animations.put(PlayerState.RUNNING, runningAnimation);
-
-            player.add(animateStateComponent);
+            player.add(animateComponent);
         }
 
         return player;
