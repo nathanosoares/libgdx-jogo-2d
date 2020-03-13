@@ -12,7 +12,7 @@ import dev.game.test.api.net.packet.server.PacketSpawnPosition;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.player.componenets.ConnectionComponent;
 import dev.game.test.server.handler.PlayerConnectionManager;
-import dev.game.test.server.handler.WorldUtils;
+import dev.game.test.server.handler.ServerWorldUtils;
 import org.greenrobot.eventbus.Subscribe;
 
 public class WorldListener extends AbstractPlayerPacketListener {
@@ -36,7 +36,7 @@ public class WorldListener extends AbstractPlayerPacketListener {
     public void on(PacketWorldRequest packet) {
         this.lock();
 
-        WorldUtils.sendWorld(this.manager, this.manager.getPlayer().getWorld());
+        ServerWorldUtils.sendWorld(this.manager, this.manager.getPlayer().getWorld());
     }
 
     @Subscribe
@@ -61,8 +61,7 @@ public class WorldListener extends AbstractPlayerPacketListener {
 
             if (connectionComponent.manager != this.manager) {
                 if (connectionComponent.manager.getState() == PacketConnectionState.State.INGAME) {
-                    System.out.println(target.getPosition());
-                    this.sendPacket(new PacketEntitySpawn(target.getId(), target.getPosition()));
+                    this.sendPacket(new PacketEntitySpawn(target.getId(), target.getType(), target.getPosition(), target.getDirection()));
                 }
             }
         }

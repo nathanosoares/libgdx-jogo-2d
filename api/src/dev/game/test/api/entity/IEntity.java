@@ -10,11 +10,21 @@ public interface IEntity extends Identifiable {
 
     IWorld getWorld();
 
-    Vector2 getPosition();
-
     void setPosition(Vector2 vec);
 
     void setPosition(IWorld world, Vector2 vec);
+
+    Vector2 getPosition();
+
+    void setVelocity(Vector2 vec);
+
+    double getDirection();
+
+    void setDirection(double degrees);
+
+    Vector2 getVelocity();
+
+    EnumEntityType getType();
 
     default void onSpawn(IWorld world) {
     }

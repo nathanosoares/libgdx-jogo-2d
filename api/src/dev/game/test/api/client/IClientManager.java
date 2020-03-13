@@ -19,9 +19,4 @@ public interface IClientManager extends IGameManager {
 
     void setPlayer(IPlayer player);
 
-    IEntity getEntity(UUID uuid);
-
-    void addEntity(IEntity entity);
-
-    void removeEntity(IEntity entity);
 }

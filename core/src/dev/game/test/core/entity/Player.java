@@ -1,12 +1,14 @@
 package dev.game.test.core.entity;
 
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
+import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.core.entity.components.*;
 import dev.game.test.core.entity.player.PlayerState;
 import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
+import dev.game.test.core.entity.player.componenets.WalkSpeedComponent;
 
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ public class Player extends Entity implements IPlayer {
         super(uuid);
 
         this.add(new NamedComponent(name));
+        this.add(new MovementComponent());
     }
 
     @Override
@@ -23,8 +26,7 @@ public class Player extends Entity implements IPlayer {
         super.setupDefaultComponents();
 
         this.add(new CollisiveComponent(16f / 16f, 16f / 16f));
-        this.add(new DirectionComponent());
-        this.add(new MovementComponent());
+        this.add(new WalkSpeedComponent(4));
         this.add(new StateComponent<>(new DefaultStateMachine<>(this, PlayerState.IDLE)));
 
         this.add(new KeybindComponent());
@@ -54,5 +56,10 @@ public class Player extends Entity implements IPlayer {
     @Override
     public boolean hasActiveKeybind(Keybind keybind) {
         return KeybindComponent.MAPPER.get(this).activeKeybinds.contains(keybind);
+    }
+
+    @Override
+    public EnumEntityType getType() {
+        return EnumEntityType.PLAYER;
     }
 }

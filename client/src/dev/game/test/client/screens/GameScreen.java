@@ -21,8 +21,7 @@ import dev.game.test.api.net.packet.client.PacketKeybindDeactivate;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.systems.AnimateStateSystem;
-import dev.game.test.client.entity.systems.CollisiveDebugSystem;
-import dev.game.test.client.entity.systems.PlayerMovementControllerSystem;
+import dev.game.test.client.entity.systems.PlayerControllerSystem;
 import dev.game.test.client.entity.systems.VisualRenderSystem;
 import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.components.KeybindComponent;
@@ -70,7 +69,7 @@ public class GameScreen extends ScreenAdapter {
 
         this.spriteBatch = new SpriteBatch();
 
-        this.registerSystem(new PlayerMovementControllerSystem(this.game));
+        this.registerSystem(new PlayerControllerSystem(this.game));
         this.registerSystem(new AnimateStateSystem(this.game));
         this.registerSystem(new WorldRenderSystem(this.game, this.camera, this.spriteBatch, this.viewport));
         this.registerSystem(new VisualRenderSystem(this.game, this.spriteBatch));

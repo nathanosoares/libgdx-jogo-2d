@@ -13,13 +13,13 @@ import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.keybind.Keybinds;
 
-public class PlayerMovementControllerSystem extends EntitySystem {
+public class PlayerControllerSystem extends EntitySystem {
 
     public static int sequenceNumber = 0;
 
     private final IClientGame game;
 
-    public PlayerMovementControllerSystem(IClientGame game) {
+    public PlayerControllerSystem(IClientGame game) {
         this.game = game;
     }
 

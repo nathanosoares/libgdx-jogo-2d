@@ -2,11 +2,11 @@ package dev.game.test.api.world;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.entity.IPlayer;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 public interface IWorld {
@@ -32,4 +32,8 @@ public interface IWorld {
     }
 
     void destroyEntity(IEntity entity);
+
+    IEntity createEntity(EnumEntityType type);
+
+    IEntity createEntity(UUID uuid, EnumEntityType type);
 }

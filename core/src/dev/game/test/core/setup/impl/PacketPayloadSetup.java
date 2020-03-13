@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import dev.game.test.api.IGame;
+import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.net.packet.client.*;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.net.packet.handshake.PacketHandshake;
@@ -54,11 +55,14 @@ public class PacketPayloadSetup implements Setup {
         registry.registerSerializer(1180, PacketPlayerMovement.class);
         registry.registerSerializer(1181, PacketPlayerMovementResponse.class);
         registry.registerSerializer(1190, PacketEntityState.class);
+        registry.registerSerializer(1200, PacketHit.class);
+        registry.registerSerializer(1210, PacketEntityDirection.class);
 
         // Simple Objects
         registry.registerSerializer(2000, Vector2.class);
         registry.registerSerializer(2001, EnumFacing.class);
         registry.registerSerializer(2002, PlayerState.class);
+        registry.registerSerializer(2003, EnumEntityType.class);
 
         // Complex Objects
         registry.registerSerializer(3000, UUID.class, kryo -> new Serializer<UUID>() {

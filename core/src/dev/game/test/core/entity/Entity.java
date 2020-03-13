@@ -5,13 +5,9 @@ import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.server.PacketEntityDestroy;
 import dev.game.test.api.net.packet.server.PacketEntitySpawn;
-import dev.game.test.api.util.Identifiable;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
-import dev.game.test.core.entity.components.EntityComponent;
-import dev.game.test.core.entity.components.IdentifiableComponent;
-import dev.game.test.core.entity.components.PositionComponent;
-import dev.game.test.core.entity.components.VelocityComponent;
+import dev.game.test.core.entity.components.*;
 
 import java.util.UUID;
 
@@ -22,12 +18,23 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
         this.add(new PositionComponent(0, 0, null));
         this.add(new EntityComponent(false));
         this.add(new VelocityComponent());
+        this.add(new DirectionComponent());
 
         this.setupDefaultComponents();
     }
 
     protected void setupDefaultComponents() {
 
+    }
+
+    @Override
+    public double getDirection() {
+        return DirectionComponent.MAPPER.get(this).degrees;
+    }
+
+    @Override
+    public void setDirection(double degrees) {
+        DirectionComponent.MAPPER.get(this).degrees = degrees;
     }
 
     @Override
@@ -55,6 +62,21 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
     }
 
     @Override
+    public void setVelocity(Vector2 vec) {
+        VelocityComponent velocityComponent = VelocityComponent.MAPPER.get(this);
+
+        velocityComponent.x = vec.x;
+        velocityComponent.y = vec.y;
+    }
+
+    @Override
+    public Vector2 getVelocity() {
+        VelocityComponent velocityComponent = VelocityComponent.MAPPER.get(this);
+
+        return new Vector2(velocityComponent.x, velocityComponent.y);
+    }
+
+    @Override
     public boolean isSpawned() {
         return EntityComponent.MAPPER.get(this).spawned;
     }
@@ -66,7 +88,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
         if (Game.getInstance() instanceof IServerGame) {
             ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
-                    new PacketEntitySpawn(this.getId(), getPosition()), world
+                    new PacketEntitySpawn(this.getId(), this.getType(), getPosition(), getDirection()), world
             );
         }
     }

@@ -1,12 +1,12 @@
 package dev.game.test.client.net.handler.listeners;
 
-import com.badlogic.ashley.core.Entity;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.entity.IEntity;
+import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.net.packet.client.PacketGameInfoRequest;
 import dev.game.test.api.net.packet.client.PacketLogin;
 import dev.game.test.api.net.packet.client.PacketWorldRequest;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
+import dev.game.test.api.world.IWorld;
 import dev.game.test.client.net.handler.ServerConnectionManager;
 import dev.game.test.client.screens.GameScreen;
 import dev.game.test.client.screens.PreparingWorldScreen;
@@ -38,9 +38,13 @@ public class ConnectionStatePacketListener extends AbstractServerPacketListener 
                 this.manager.sendPacket(new PacketWorldRequest());
                 break;
             case INGAME:
-                this.game.getClientManager().addEntity(this.game.getClientManager().getPlayer());
+                IPlayer player = this.game.getClientManager().getPlayer();
+                IWorld world = player.getWorld();
 
-                this.game.getClientManager().setCurrentWorld(this.game.getClientManager().getPlayer().getWorld());
+                this.game.getClientManager().setCurrentWorld(world);
+
+                world.spawnEntity(player, player.getPosition());
+
 
                 GameScreen screenGame = new GameScreen(this.game);
 

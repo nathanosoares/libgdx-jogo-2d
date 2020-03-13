@@ -2,13 +2,13 @@ package dev.game.test.client.net.handler.listeners;
 
 import com.badlogic.ashley.core.Entity;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.server.*;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.net.handler.ServerConnectionManager;
-import dev.game.test.core.entity.Player;
-import dev.game.test.core.entity.components.StateComponent;
 import dev.game.test.core.entity.components.DirectionComponent;
+import dev.game.test.core.entity.components.StateComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -79,10 +79,24 @@ public class EntityPacketListener extends AbstractServerPacketListener {
             this.game.getClientManager().removeEntity(entity);
         }
 
-        Player player = GameUtils.buildClientPlayer(packet.getEntityId(), UUID.randomUUID().toString());
+        if (packet.getEntityType() == EnumEntityType.PLAYER) {
+            entity = GameUtils.buildClientPlayer(packet.getEntityId(), UUID.randomUUID().toString());
+            entity.setPosition(this.game.getClientManager().getPlayer().getWorld(), packet.getPosition());
+        } else {
+            entity = this.game.getClientManager().getPlayer().getWorld().createEntity(packet.getEntityId(), packet.getEntityType());
+        }
 
-        player.setPosition(this.game.getClientManager().getPlayer().getWorld(), packet.getPosition());
+        entity.setDirection(packet.getDirection());
 
-        this.game.getClientManager().addEntity(player);
+        this.game.getClientManager().getPlayer().getWorld().spawnEntity(entity, packet.getPosition());
+    }
+
+    @Subscribe
+    public void on(PacketEntityDirection packet) {
+        IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
+
+        if (entity != null) {
+            DirectionComponent.MAPPER.get((Entity) entity).degrees = packet.getDegrees();
+        }
     }
 }

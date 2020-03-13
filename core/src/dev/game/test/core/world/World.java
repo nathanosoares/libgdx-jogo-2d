@@ -1,15 +1,19 @@
 package dev.game.test.core.world;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.Maps;
 import dev.game.test.api.block.IBlockState;
+import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
+import dev.game.test.core.Game;
 import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.block.Blocks;
+import dev.game.test.core.entity.HitProjectile;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -135,6 +139,7 @@ public class World implements IWorld {
             entity.getWorld().destroyEntity(entity);
         }
 
+        entity.setPosition(new Vector2(x, y));
         entity.onSpawn(this);
 
         this.entities.put(entity.getId(), entity);
@@ -143,7 +148,7 @@ public class World implements IWorld {
             players.put(entity.getId(), (IPlayer) entity);
         }
 
-        entity.setPosition(new Vector2(x, y));
+        Game.getInstance().getGameManager().addEntity(entity);
     }
 
     @Override
@@ -155,5 +160,30 @@ public class World implements IWorld {
         if (entity instanceof IPlayer) {
             players.remove(entity.getId());
         }
+
+        Game.getInstance().getGameManager().removeEntity(entity);
+    }
+
+    @Override
+    public IEntity createEntity(EnumEntityType type) {
+        UUID uuid = UUID.randomUUID();
+
+        return createEntity(uuid, type);
+    }
+
+
+    @Override
+    public IEntity createEntity(UUID uuid, EnumEntityType type) {
+
+        IEntity entity = null;
+        if (type == EnumEntityType.HIT_PROJECTILE) {
+            entity = new HitProjectile(uuid);
+        }
+
+        if (entity != null) {
+            type.onPostCreate(entity);
+        }
+
+        return entity;
     }
 }

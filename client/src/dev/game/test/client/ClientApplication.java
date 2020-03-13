@@ -5,6 +5,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.google.common.primitives.Ints;
 import dev.game.test.client.setups.SetupBlocks;
+import dev.game.test.client.setups.SetupEntities;
 import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.GameApplication;
 import dev.game.test.core.setup.SetupPipeline;
@@ -33,6 +34,7 @@ public class ClientApplication extends GameApplication<ClientGame> {
         super.setupPipeline(pipeline);
 
         pipeline.registerSetup(new SetupBlocks(this.getGame()));
+        pipeline.registerSetup(new SetupEntities());
     }
 
     @Override

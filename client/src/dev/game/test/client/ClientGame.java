@@ -2,10 +2,12 @@ package dev.game.test.client;
 
 import com.badlogic.ashley.core.Engine;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.IGameManager;
 import dev.game.test.api.registry.IRegistryManager;
 import dev.game.test.client.net.handler.ClientConnectionHandler;
 import dev.game.test.client.registry.RegistryBlocks;
 import dev.game.test.client.screens.ScreenManager;
+import dev.game.test.client.setups.SetupEntities;
 import dev.game.test.client.systems.ClientSystem;
 import dev.game.test.core.Game;
 import dev.game.test.core.block.Block;
@@ -42,6 +44,11 @@ public class ClientGame extends Game implements IClientGame {
     }
 
     @Override
+    public IGameManager getGameManager() {
+        return this.getClientManager();
+    }
+
+    @Override
     public void setupRegistries(IRegistryManager registryManager) {
         super.setupRegistries(registryManager);
         registryManager.addRegistry(Block.class, new RegistryBlocks());
@@ -52,6 +59,7 @@ public class ClientGame extends Game implements IClientGame {
 
         super.setupEngine(engine);
         engine.addSystem(new ClientSystem(this));
+
     }
 
 }

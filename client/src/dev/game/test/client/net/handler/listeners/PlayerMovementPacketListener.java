@@ -2,7 +2,7 @@ package dev.game.test.client.net.handler.listeners;
 
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.net.packet.server.PacketPlayerMovementResponse;
-import dev.game.test.client.entity.systems.PlayerMovementControllerSystem;
+import dev.game.test.client.entity.systems.PlayerControllerSystem;
 import dev.game.test.client.net.handler.ServerConnectionManager;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -15,7 +15,7 @@ public class PlayerMovementPacketListener extends AbstractServerPacketListener {
     @Subscribe
     public void on(PacketPlayerMovementResponse packet) {
 
-        if (packet.getSequenceNumber() == PlayerMovementControllerSystem.sequenceNumber - 1) {
+        if (packet.getSequenceNumber() == PlayerControllerSystem.sequenceNumber - 1) {
             this.game.getClientManager().getPlayer().setPosition(packet.getPosition());
         }
 

@@ -1,7 +1,10 @@
 package dev.game.test.server;
 
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.server.IServerManager;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.block.Blocks;
@@ -10,11 +13,15 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class ServerManager implements IServerManager {
 
+    private Map<UUID, IEntity> entities = Maps.newHashMap();
+
     private final ServerGame game;
+    private final Engine engine;
 
     private Map<String, IWorld> worlds = Maps.newLinkedHashMap();
 
@@ -53,6 +60,23 @@ public class ServerManager implements IServerManager {
     @Override
     public IWorld getWorld(String worldName) {
         return worlds.get(worldName);
+    }
+
+    @Override
+    public IEntity getEntity(UUID uuid) {
+        return entities.get(uuid);
+    }
+
+    @Override
+    public void addEntity(IEntity entity) {
+        entities.put(entity.getId(), entity);
+        engine.addEntity((Entity) entity);
+    }
+
+    @Override
+    public void removeEntity(IEntity entity) {
+        entities.remove(entity.getId());
+        engine.removeEntity((Entity) entity);
     }
 
 }

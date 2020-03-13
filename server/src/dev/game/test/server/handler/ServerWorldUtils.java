@@ -9,7 +9,7 @@ import dev.game.test.api.net.packet.server.PacketWorldSnapshotFinish;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 
-public class WorldUtils {
+public class ServerWorldUtils {
 
     public static void sendWorld(PlayerConnectionManager manager, IWorld world) {
         Packet worldSnapshot = new PacketWorldSnapshot(world.getName(), world.getLayers().length, (int) world.getBounds().getWidth(), (int) world.getBounds().getHeight());
@@ -45,4 +45,6 @@ public class WorldUtils {
 
         manager.sendPacket(new PacketWorldSnapshotFinish(world.getName()));
     }
+
+
 }

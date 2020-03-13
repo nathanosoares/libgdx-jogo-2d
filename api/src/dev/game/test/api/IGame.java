@@ -12,6 +12,7 @@ public interface IGame {
 
     Engine getEngine();
 
+    IGameManager getGameManager();
 
     default void setupRegistries(IRegistryManager registryManager) {
     }

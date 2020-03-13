@@ -40,16 +40,14 @@ public class PreparingListener extends AbstractPlayerPacketListener {
                 this.manager.getUsername()
         );
 
+        this.manager.setPlayer(player);
+
         player.add(new ConnectionComponent(this.manager));
 
         // TODO mundar para config de default world
         IWorld world = this.game.getServerManager().getWorlds().get(0);
 
-        player.setPosition(world, world.getBounds().getCenter(new Vector2()));
-
-        this.manager.setPlayer(player);
-
-        this.game.getEngine().addEntity(player);
+        world.spawnEntity(player, world.getBounds().getCenter(new Vector2()));
 
         this.manager.unregisterListener(PreparingListener.class);
 

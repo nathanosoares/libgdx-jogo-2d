@@ -1,9 +1,15 @@
 package dev.game.test.server.handler.listeners;
 
+import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IServerGame;
+import dev.game.test.api.entity.EnumEntityType;
+import dev.game.test.api.net.packet.client.PacketHit;
 import dev.game.test.api.net.packet.client.PacketPlayerMovement;
 import dev.game.test.api.net.packet.server.PacketEntityMovement;
 import dev.game.test.api.net.packet.server.PacketPlayerMovementResponse;
+import dev.game.test.api.world.IWorld;
+import dev.game.test.core.entity.HitProjectile;
+import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.components.IdentifiableComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
@@ -45,5 +51,27 @@ public class PlayerMovementListener extends AbstractPlayerPacketListener {
                 this.manager.getPlayer().getWorld(),
                 this.manager
         );
+    }
+
+    @Subscribe
+    public void on(PacketHit packet) {
+        Player player = this.manager.getPlayer();
+
+        IWorld world = player.getWorld();
+
+        HitProjectile projectile = (HitProjectile) world.createEntity(EnumEntityType.HIT_PROJECTILE);
+        projectile.setSource(player);
+        projectile.setDirection(player.getDirection());
+
+        world.spawnEntity(projectile, player.getPosition());
+
+        double x = Math.sin(Math.toRadians(player.getDirection()));
+        double y = Math.cos(Math.toRadians(player.getDirection()));
+
+        Vector2 velocity = new Vector2((float) x, (float) y);
+        velocity.scl(0.1f);
+
+        projectile.setVelocity(velocity);
+
     }
 }
