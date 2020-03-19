@@ -8,50 +8,36 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import dev.game.test.api.IClientGame;
-import dev.game.test.client.RenderInfo;
-import dev.game.test.client.entity.components.ModifyVisualComponent;
+import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.entity.components.VisualComponent;
-import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.CollisiveComponent;
-import dev.game.test.core.entity.components.PositionComponent;
 import dev.game.test.core.entity.components.DirectionComponent;
+import dev.game.test.core.entity.components.PositionComponent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class VisualRenderSystem extends EntitySystem {
-
-    private final BitmapFont font = new BitmapFont();
 
     private ImmutableArray<Entity> entities;
 
     private final IClientGame game;
     private final Batch batch;
 
-    private final RenderInfo renderInfo = new RenderInfo();
+    private final Sprite spriteSword;
 
-    private final Sprite spriteSword = new Sprite(new Texture(Gdx.files.internal("sword.png")));
+    public VisualRenderSystem(IClientGame game, Batch batch) {
+        this.game = game;
+        this.batch = batch;
 
-    Animation<TextureRegion> animation;
-    TextureRegion[] frames;
-    private float attackTime = Float.MAX_VALUE;
-    private boolean attacked = false;
-    private boolean hitting = false;
-    private float hittingDegrees = 0;
-    private float animationTime = 0;
-
-    {
-        spriteSword.setScale(1f / 16f);
-
-        Texture texture = new Texture(Gdx.files.internal("hit.png"));
-
-        frames = TextureRegion.split(texture, texture.getWidth() / 5, texture.getHeight())[0];
-
-        animation = new Animation<>(150f / 1000f / 5f, frames);
+        spriteSword = new Sprite(new Texture(Gdx.files.internal("sword.png")));
+        spriteSword.setScale(1 / 16f);
     }
 
     @Override
@@ -61,7 +47,6 @@ public class VisualRenderSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        animationTime += deltaTime;
 
         PositionComponent position;
         VisualComponent visual;
@@ -92,97 +77,57 @@ public class VisualRenderSystem extends EntitySystem {
 
                 Vector2 size = CollisiveComponent.MAPPER.get(entity).box.getSize(new Vector2());
 
-                renderInfo.region = visual.region;
-                renderInfo.x = position.x;
-                renderInfo.y = position.y;
-                renderInfo.originX = 0;
-                renderInfo.originY = 0;
-                renderInfo.width = visual.region.getRegionWidth();
-                renderInfo.height = visual.region.getRegionHeight();
-                renderInfo.scaleX = 1 / 16f;
-                renderInfo.scaleY = 1 / 16f;
-                renderInfo.rotation = 0;
-
-                if (ModifyVisualComponent.MAPPER.has(entity)) {
-                    ModifyVisualComponent modifyVisualComponent = ModifyVisualComponent.MAPPER.get(entity);
-
-                    if (modifyVisualComponent.consumer != null) {
-                        modifyVisualComponent.consumer.accept(renderInfo);
-                    }
-                }
-
                 this.batch.draw(
-                        renderInfo.region,
-                        renderInfo.x,
-                        renderInfo.y,
-                        renderInfo.originX,
-                        renderInfo.originY,
-                        renderInfo.width,
-                        renderInfo.height,
-                        renderInfo.scaleX,
-                        renderInfo.scaleY,
-                        renderInfo.rotation
+                        visual.region,
+                        position.x,
+                        position.y,
+                        0,
+                        0,
+                        visual.region.getRegionWidth(),
+                        visual.region.getRegionHeight(),
+                        1 / 16f,
+                        1 / 16f,
+                        0
                 );
 
-                if (entity instanceof Player) {
-                    long maxHitTime = 150;
+                if (HitVisualComponent.MAPPER.has(entity)) {
 
-                    if (attackTime >= maxHitTime) {
-                        hitting = false;
-                    }
+                    HitVisualComponent hitVisualComponent = HitVisualComponent.MAPPER.get(entity);
 
                     DirectionComponent directionComponent = DirectionComponent.MAPPER.get(entity);
-
-                    if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && attackTime >= maxHitTime) {
-                        attackTime = 0;
-                        attacked = !attacked;
-                        hitting = true;
-                        hittingDegrees = (float) directionComponent.degrees;
-                        animationTime = 0;
-                    }
 
                     float attackOffset = 0;
 
                     double degrees = directionComponent.degrees + 90;
                     float rotation = 20;
 
-                    if (attackTime >= 0 && attackTime < maxHitTime) {
-                        attackOffset = 180f * (100f / maxHitTime * attackTime / 100f);
+                    if (hitVisualComponent.handler.hitting) {
+                        float hitProgress = hitVisualComponent.handler.time / hitVisualComponent.handler.delay * 100f / 100f;
 
-                        if (!attacked) {
+                        attackOffset = 180f * hitProgress;
+
+                        if (hitVisualComponent.handler.onRight) {
                             attackOffset -= 180f;
                         }
 
-                        rotation += (360f * (100f / maxHitTime * attackTime / 100f)) * (attacked ? 1 : -1);
+                        rotation += 360f * hitProgress * (hitVisualComponent.handler.onRight ? -1 : 1);
 
-                        attackTime += deltaTime * 1000;
-                    } else if (attacked) {
+                    } else if (!hitVisualComponent.handler.onRight) {
                         attackOffset = 180;
                     }
 
-                    degrees += attackOffset * (attacked ? -1 : 1);
+                    degrees += attackOffset * (hitVisualComponent.handler.onRight ? 1 : -1);
 
                     float originX = spriteSword.getWidth() / 2f;
                     float originY = spriteSword.getHeight() / 2f;
 
                     float radius = 0.5f;
+                    double radians = Math.toRadians(degrees);
 
-                    double x = radius * Math.sin(Math.toRadians(degrees))
-                            + position.x
-                            + (size.x / 2)
-                            - originX;
+                    double x = radius * Math.sin(radians) + position.x + (size.x / 2) - originX;
+                    double y = radius * Math.cos(radians) + position.y + (size.y / 2) - originY;
 
-                    double y = radius * Math.cos(Math.toRadians(degrees))
-                            + position.y
-                            + (size.y / 2)
-                            - originY;
-
-                    spriteSword.setFlip(
-                            Math.toRadians(degrees) < Math.toRadians(directionComponent.degrees),
-                            true
-                    );
-
-                    spriteSword.setOriginCenter();
+                    spriteSword.setFlip(radians < Math.toRadians(directionComponent.degrees), true);
                     spriteSword.setOrigin(4, 15f);
                     spriteSword.setRotation((float) -directionComponent.degrees + rotation);
 
@@ -194,26 +139,21 @@ public class VisualRenderSystem extends EntitySystem {
                             spriteSword.draw(batch);
                         }
                     });
-
                     group.setOrigin(originX, originY);
                     group.setPosition((float) x, (float) y - (spriteSword.getHeight() - 8f) / 2);
                     group.draw(this.batch, 1f);
 
-                    if (hitting) {
-                        TextureRegion region = animation.getKeyFrame(animationTime);
+                    if (hitVisualComponent.handler.hitting) {
+                        TextureRegion region = hitVisualComponent.animation.getKeyFrame(hitVisualComponent.handler.time);
 
                         originX = region.getRegionWidth() / 2f;
                         originY = region.getRegionHeight() / 2f;
 
-                        x = 1.5 * Math.sin(Math.toRadians(hittingDegrees))
-                                + position.x
-                                + (size.x / 2)
-                                - originX;
+                        radius = 1.5f;
+                        radians = Math.toRadians(hitVisualComponent.handler.degrees);
 
-                        y = 1.5 * Math.cos(Math.toRadians(hittingDegrees))
-                                + position.y
-                                + (size.y / 2)
-                                - originY;
+                        x = radius * Math.sin(radians) + position.x + (size.x / 2) - originX;
+                        y = radius * Math.cos(radians) + position.y + (size.y / 2) - originY;
 
                         this.batch.draw(
                                 region,
@@ -225,7 +165,7 @@ public class VisualRenderSystem extends EntitySystem {
                                 region.getRegionHeight(),
                                 1f / 16f,
                                 1f / 16f,
-                                -hittingDegrees
+                                (float) -hitVisualComponent.handler.degrees
                         );
                     }
                 }

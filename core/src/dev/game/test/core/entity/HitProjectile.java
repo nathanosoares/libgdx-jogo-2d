@@ -1,6 +1,5 @@
 package dev.game.test.core.entity;
 
-import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IHitProjectile;
 

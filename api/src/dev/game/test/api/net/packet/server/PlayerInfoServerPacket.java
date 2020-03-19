@@ -5,20 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketWorldSnapshot implements Packet {
+public class PlayerInfoServerPacket implements Packet {
 
     @Getter
-    private String worldName;
+    private UUID id;
 
     @Getter
-    private int layersSize;
-
-    @Getter
-    private int width;
-
-    @Getter
-    private int height;
+    private String name;
 
 }

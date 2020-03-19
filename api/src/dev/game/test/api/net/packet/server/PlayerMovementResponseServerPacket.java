@@ -5,19 +5,13 @@ import dev.game.test.api.net.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.UUID;
-
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
-public class PacketEntityPosition implements Packet {
+@AllArgsConstructor
+public class PlayerMovementResponseServerPacket implements Packet {
 
-    @Getter
-    @Setter
-    private UUID entityId;
-
-    @Getter
-    @Setter
+    private long sequenceNumber;
     private Vector2 position;
+
 }

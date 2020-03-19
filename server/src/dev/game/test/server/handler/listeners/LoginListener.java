@@ -1,9 +1,9 @@
 package dev.game.test.server.handler.listeners;
 
 import dev.game.test.api.IServerGame;
-import dev.game.test.api.net.packet.client.PacketLogin;
+import dev.game.test.api.net.packet.client.LoginClientPacket;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
-import dev.game.test.api.net.packet.server.PacketLoginResponse;
+import dev.game.test.api.net.packet.server.LoginResponseServerPacket;
 import dev.game.test.server.handler.PlayerConnectionManager;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -16,7 +16,7 @@ public class LoginListener extends AbstractPlayerPacketListener {
     }
 
     @Subscribe
-    public void on(PacketLogin packet) {
+    public void on(LoginClientPacket packet) {
         if (this.manager.getState() != PacketConnectionState.State.HANDSHAKE) {
             return;
         }
@@ -28,7 +28,7 @@ public class LoginListener extends AbstractPlayerPacketListener {
 
             // TODO fazer as coisas async
 
-            this.manager.sendPacket(new PacketLoginResponse(this.manager.getPlayerUUID()));
+            this.manager.sendPacket(new LoginResponseServerPacket(this.manager.getPlayerUUID()));
 
             this.manager.unregisterListener(LoginListener.class);
             this.manager.registerListener(new PreparingListener(this.game, this.manager));

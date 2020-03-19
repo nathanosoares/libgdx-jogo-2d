@@ -2,9 +2,9 @@ package dev.game.test.client.net.handler.listeners;
 
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.IPlayer;
-import dev.game.test.api.net.packet.client.PacketGameInfoRequest;
-import dev.game.test.api.net.packet.client.PacketLogin;
-import dev.game.test.api.net.packet.client.PacketWorldRequest;
+import dev.game.test.api.net.packet.client.GameInfoRequestClientPacket;
+import dev.game.test.api.net.packet.client.LoginClientPacket;
+import dev.game.test.api.net.packet.client.WorldRequestClientPacket;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.net.handler.ServerConnectionManager;
@@ -25,17 +25,17 @@ public class ConnectionStatePacketListener extends AbstractServerPacketListener 
 
         switch (this.manager.getState()) {
             case HANDSHAKE:
-                this.manager.sendPacket(new PacketLogin(this.game.getUsername()));
+                this.manager.sendPacket(new LoginClientPacket(this.game.getUsername()));
                 break;
             case PREPARING_INFO:
-                this.manager.sendPacket(new PacketGameInfoRequest());
+                this.manager.sendPacket(new GameInfoRequestClientPacket());
                 break;
             case PREPARING_WORLD:
                 this.game.getEngine().removeAllEntities();
 
                 this.game.getScreenManager().setCurrentScreen(new PreparingWorldScreen());
 
-                this.manager.sendPacket(new PacketWorldRequest());
+                this.manager.sendPacket(new WorldRequestClientPacket());
                 break;
             case INGAME:
                 IPlayer player = this.game.getClientManager().getPlayer();

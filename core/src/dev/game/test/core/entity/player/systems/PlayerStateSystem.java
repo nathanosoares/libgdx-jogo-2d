@@ -7,7 +7,7 @@ import com.badlogic.gdx.ai.fsm.State;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IEntity;
-import dev.game.test.api.net.packet.server.PacketEntityState;
+import dev.game.test.api.net.packet.server.EntityStateServerPacket;
 import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.StateComponent;
 
@@ -43,7 +43,7 @@ public class PlayerStateSystem extends IteratingSystem {
 
             if (game instanceof IServerGame) {
                 ((IServerGame) game).getConnectionHandler().broadcastPacket(
-                        new PacketEntityState(((IEntity) entity).getId(), stateComponent.machine.getCurrentState()),
+                        new EntityStateServerPacket(((IEntity) entity).getId(), stateComponent.machine.getCurrentState()),
                         ((IEntity) entity).getWorld()
                 );
             }

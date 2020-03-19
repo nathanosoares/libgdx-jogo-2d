@@ -2,8 +2,8 @@ package dev.game.test.server.handler.listeners;
 
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.keybind.Keybind;
-import dev.game.test.api.net.packet.client.PacketKeybindActivate;
-import dev.game.test.api.net.packet.client.PacketKeybindDeactivate;
+import dev.game.test.api.net.packet.client.KeybindActivateClientPacket;
+import dev.game.test.api.net.packet.client.KeybindDeactivateClientPacket;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.keybind.Keybinds;
@@ -18,7 +18,7 @@ public class KeybindListeners extends AbstractPlayerPacketListener {
     }
 
     @Subscribe
-    public void onKeybindActivate(PacketKeybindActivate keybindActivate) {
+    public void onKeybindActivate(KeybindActivateClientPacket keybindActivate) {
         KeybindsRegistry keybindRegistry = game.getRegistryManager().getRegistry(Keybind.class);
         Keybind keybind = keybindRegistry.getKeybind(keybindActivate.getKeybindId());
 
@@ -45,7 +45,7 @@ public class KeybindListeners extends AbstractPlayerPacketListener {
     }
 
     @Subscribe
-    public void onKeybindDeactivate(PacketKeybindDeactivate keybindDeactivate) {
+    public void onKeybindDeactivate(KeybindDeactivateClientPacket keybindDeactivate) {
         KeybindsRegistry keybindRegistry = game.getRegistryManager().getRegistry(Keybind.class);
         Keybind keybind = keybindRegistry.getKeybind(keybindDeactivate.getKeybindId());
 

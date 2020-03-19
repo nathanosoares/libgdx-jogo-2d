@@ -1,6 +1,5 @@
-package dev.game.test.api.net.packet.server;
+package dev.game.test.api.net.packet.client;
 
-import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.net.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PacketPlayerMovementResponse implements Packet {
+public class MovementClientPacket implements Packet {
 
     private long sequenceNumber;
-    private Vector2 position;
+    private float deltaX;
+    private float deltaY;
 
 }

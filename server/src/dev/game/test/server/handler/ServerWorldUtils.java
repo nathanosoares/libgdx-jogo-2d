@@ -2,24 +2,23 @@ package dev.game.test.server.handler;
 
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.net.packet.Packet;
-import dev.game.test.api.net.packet.handshake.PacketConnectionState;
-import dev.game.test.api.net.packet.server.PacketWorldLayerSnapshot;
-import dev.game.test.api.net.packet.server.PacketWorldSnapshot;
-import dev.game.test.api.net.packet.server.PacketWorldSnapshotFinish;
+import dev.game.test.api.net.packet.server.WorldLayerSnapshotServerPacket;
+import dev.game.test.api.net.packet.server.WorldSnapshotServerPacket;
+import dev.game.test.api.net.packet.server.WorldSnapshotFinishServerPacket;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 
 public class ServerWorldUtils {
 
     public static void sendWorld(PlayerConnectionManager manager, IWorld world) {
-        Packet worldSnapshot = new PacketWorldSnapshot(world.getName(), world.getLayers().length, (int) world.getBounds().getWidth(), (int) world.getBounds().getHeight());
+        Packet worldSnapshot = new WorldSnapshotServerPacket(world.getName(), world.getLayers().length, (int) world.getBounds().getWidth(), (int) world.getBounds().getHeight());
         manager.sendPacket(worldSnapshot);
 
         for (int layerIndex = 0; layerIndex < world.getLayers().length; layerIndex++) {
 
             IWorldLayer worldLayer = world.getLayers()[layerIndex];
 
-            PacketWorldLayerSnapshot.LayerData[][] dataArray = new PacketWorldLayerSnapshot.LayerData[(int) world.getBounds().getWidth()][(int) world.getBounds().getHeight()];
+            WorldLayerSnapshotServerPacket.LayerData[][] dataArray = new WorldLayerSnapshotServerPacket.LayerData[(int) world.getBounds().getWidth()][(int) world.getBounds().getHeight()];
 
             for (int x = 0; x < dataArray.length; x++) {
                 for (int y = 0; y < dataArray[x].length; y++) {
@@ -29,7 +28,7 @@ public class ServerWorldUtils {
                         continue;
                     }
 
-                    PacketWorldLayerSnapshot.LayerData data = new PacketWorldLayerSnapshot.LayerData(
+                    WorldLayerSnapshotServerPacket.LayerData data = new WorldLayerSnapshotServerPacket.LayerData(
                             blockState.getBlock().getId(),
                             blockState.getPosition(),
                             blockState.getConnectedData()
@@ -39,11 +38,11 @@ public class ServerWorldUtils {
                 }
             }
 
-            PacketWorldLayerSnapshot worldLayerSnapshot = new PacketWorldLayerSnapshot(world.getName(), layerIndex, dataArray);
+            WorldLayerSnapshotServerPacket worldLayerSnapshot = new WorldLayerSnapshotServerPacket(world.getName(), layerIndex, dataArray);
             manager.sendPacket(worldLayerSnapshot);
         }
 
-        manager.sendPacket(new PacketWorldSnapshotFinish(world.getName()));
+        manager.sendPacket(new WorldSnapshotFinishServerPacket(world.getName()));
     }
 
 

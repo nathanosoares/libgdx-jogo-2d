@@ -1,15 +1,17 @@
-package dev.game.test.api.net.packet.client;
+package dev.game.test.api.net.packet.server;
 
 import dev.game.test.api.net.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketLogin implements Packet {
+public class LoginResponseServerPacket implements Packet {
 
     @Getter
-    private String username;
+    private UUID uuid;
 
 }

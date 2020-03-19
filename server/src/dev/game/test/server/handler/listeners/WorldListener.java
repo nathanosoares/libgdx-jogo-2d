@@ -4,11 +4,11 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IPlayer;
-import dev.game.test.api.net.packet.client.PacketWorldReady;
-import dev.game.test.api.net.packet.client.PacketWorldRequest;
+import dev.game.test.api.net.packet.client.WorldReadyClientPacket;
+import dev.game.test.api.net.packet.client.WorldRequestClientPacket;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
-import dev.game.test.api.net.packet.server.PacketEntitySpawn;
-import dev.game.test.api.net.packet.server.PacketSpawnPosition;
+import dev.game.test.api.net.packet.server.EntitySpawnServerPacket;
+import dev.game.test.api.net.packet.server.SpawnPositionServerPacket;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.entity.player.componenets.ConnectionComponent;
 import dev.game.test.server.handler.PlayerConnectionManager;
@@ -33,14 +33,14 @@ public class WorldListener extends AbstractPlayerPacketListener {
     }
 
     @Subscribe
-    public void on(PacketWorldRequest packet) {
+    public void on(WorldRequestClientPacket packet) {
         this.lock();
 
         ServerWorldUtils.sendWorld(this.manager, this.manager.getPlayer().getWorld());
     }
 
     @Subscribe
-    public void on(PacketWorldReady packet) {
+    public void on(WorldReadyClientPacket packet) {
         IPlayer player = this.manager.getPlayer();
         IWorld world = player.getWorld();
         Vector2 position = player.getPosition();
@@ -49,7 +49,7 @@ public class WorldListener extends AbstractPlayerPacketListener {
 
         this.unlock();
 
-        this.sendPacket(new PacketSpawnPosition(world.getName(), position));
+        this.sendPacket(new SpawnPositionServerPacket(world.getName(), position));
         this.manager.setState(PacketConnectionState.State.INGAME);
 
         // Enviando posição do jogador atual para todos
@@ -61,7 +61,7 @@ public class WorldListener extends AbstractPlayerPacketListener {
 
             if (connectionComponent.manager != this.manager) {
                 if (connectionComponent.manager.getState() == PacketConnectionState.State.INGAME) {
-                    this.sendPacket(new PacketEntitySpawn(target.getId(), target.getType(), target.getPosition(), target.getDirection()));
+                    this.sendPacket(new EntitySpawnServerPacket(target.getId(), target.getType(), target.getPosition(), target.getDirection()));
                 }
             }
         }

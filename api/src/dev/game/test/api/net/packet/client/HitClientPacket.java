@@ -4,5 +4,5 @@ import dev.game.test.api.net.packet.Packet;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class PacketWorldRequest implements Packet {
+public class HitClientPacket implements Packet {
 }

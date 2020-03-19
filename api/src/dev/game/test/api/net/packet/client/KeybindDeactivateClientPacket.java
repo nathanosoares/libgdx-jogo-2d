@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketKeybindActivate implements Packet {
+public class KeybindDeactivateClientPacket implements Packet {
 
     @Getter
     private String keybindId;

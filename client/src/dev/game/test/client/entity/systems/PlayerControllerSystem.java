@@ -2,14 +2,19 @@ package dev.game.test.client.entity.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.net.packet.client.PacketPlayerMovement;
+import dev.game.test.api.net.packet.client.DirectionClientPacket;
+import dev.game.test.api.net.packet.client.HitClientPacket;
+import dev.game.test.api.net.packet.client.MovementClientPacket;
+import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.components.CollisiveComponent;
+import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.components.KeybindComponent;
 import dev.game.test.core.entity.components.PositionComponent;
-import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.keybind.Keybinds;
 
@@ -30,6 +35,7 @@ public class PlayerControllerSystem extends EntitySystem {
         PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
         MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
         KeybindComponent activatedKeybinds = KeybindComponent.MAPPER.get(entity);
+        HitVisualComponent hitVisualComponent = HitVisualComponent.MAPPER.get(entity);
 
         boolean moveLeft = false;
         boolean moveRight = false;
@@ -84,13 +90,22 @@ public class PlayerControllerSystem extends EntitySystem {
                 mouseWorldPosition.y - (positionComponent.y + boxSize.y / 2)
         ));
 
-        if (movementComponent.deltaX != 0 || movementComponent.deltaY != 0 || oldDegrees != directionComponent.degrees) {
+        if (oldDegrees != directionComponent.degrees) {
+            this.game.getConnectionHandler().getManager().sendPacket(new DirectionClientPacket(directionComponent.degrees));
+        }
 
-            this.game.getConnectionHandler().getManager().sendPacket(new PacketPlayerMovement(
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            hitVisualComponent.handler.pending = true;
+
+            this.game.getConnectionHandler().getManager().sendPacket(new HitClientPacket());
+        }
+
+        if (movementComponent.deltaX != 0 || movementComponent.deltaY != 0) {
+
+            this.game.getConnectionHandler().getManager().sendPacket(new MovementClientPacket(
                     sequenceNumber++,
                     movementComponent.deltaX,
-                    movementComponent.deltaY,
-                    directionComponent.degrees
+                    movementComponent.deltaY
             ));
         }
     }

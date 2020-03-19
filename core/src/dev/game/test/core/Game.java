@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.Serializer;
 import dev.game.test.api.IGame;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.registry.IRegistryManager;
+import dev.game.test.core.entity.player.systems.HitSystem;
 import dev.game.test.core.entity.player.systems.MovementSystem;
 import dev.game.test.core.entity.systems.VelocitySystem;
 import dev.game.test.core.entity.player.systems.PlayerStateSystem;
@@ -53,5 +54,6 @@ public abstract class Game implements IGame {
         engine.addSystem(new PlayerStateSystem(this));
         engine.addSystem(new MovementSystem(this));
         engine.addSystem(new VelocitySystem(this));
+        engine.addSystem(new HitSystem(this));
     }
 }

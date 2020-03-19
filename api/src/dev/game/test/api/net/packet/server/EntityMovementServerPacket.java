@@ -1,20 +1,23 @@
 package dev.game.test.api.net.packet.server;
 
-import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.net.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import java.util.UUID;
+
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketSpawnPosition implements Packet {
+public class EntityMovementServerPacket implements Packet {
 
-    @Getter
-    private String worldName;
+    private UUID entityId;
 
-    @Getter
-    @Setter
-    private Vector2 position;
+    public float deltaX;
+    public float deltaY;
+
+    public float fromX;
+    public float fromY;
+
 }

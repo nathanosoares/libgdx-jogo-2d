@@ -2,10 +2,10 @@ package dev.game.test.server.handler.listeners;
 
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IServerGame;
-import dev.game.test.api.net.packet.client.PacketGameInfoReady;
-import dev.game.test.api.net.packet.client.PacketGameInfoRequest;
+import dev.game.test.api.net.packet.client.GameInfoReadyClientPacket;
+import dev.game.test.api.net.packet.client.GameInfoRequestClientPacket;
 import dev.game.test.api.net.packet.handshake.PacketConnectionState;
-import dev.game.test.api.net.packet.server.PacketGameInfoResponse;
+import dev.game.test.api.net.packet.server.GameInfoResponseServerPacket;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
@@ -20,14 +20,14 @@ public class PreparingListener extends AbstractPlayerPacketListener {
     }
 
     @Subscribe
-    public void on(PacketGameInfoRequest packet) {
+    public void on(GameInfoRequestClientPacket packet) {
         // TODO enviar keybinds, texturas, etc..
         // Async?
-        this.manager.sendPacket(new PacketGameInfoResponse());
+        this.manager.sendPacket(new GameInfoResponseServerPacket());
     }
 
     @Subscribe
-    public void on(PacketGameInfoReady packet) {
+    public void on(GameInfoReadyClientPacket packet) {
 
         if (this.game.getServerManager().getWorlds().size() < 1) {
             this.manager.getConnection().close();

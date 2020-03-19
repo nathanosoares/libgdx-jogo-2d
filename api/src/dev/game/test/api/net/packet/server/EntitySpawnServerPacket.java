@@ -1,5 +1,7 @@
 package dev.game.test.api.net.packet.server;
 
+import com.badlogic.gdx.math.Vector2;
+import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.net.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,9 +12,14 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketEntityDirection implements Packet {
+public class EntitySpawnServerPacket implements Packet {
 
     private UUID entityId;
-    private double degrees;
+
+    private EnumEntityType entityType;
+
+    private Vector2 position;
+
+    private double direction;
 
 }

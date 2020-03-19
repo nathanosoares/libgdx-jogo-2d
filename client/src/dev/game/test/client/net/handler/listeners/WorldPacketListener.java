@@ -2,10 +2,10 @@ package dev.game.test.client.net.handler.listeners;
 
 import com.badlogic.gdx.Gdx;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.net.packet.client.PacketWorldReady;
-import dev.game.test.api.net.packet.server.PacketWorldLayerSnapshot;
-import dev.game.test.api.net.packet.server.PacketWorldSnapshot;
-import dev.game.test.api.net.packet.server.PacketWorldSnapshotFinish;
+import dev.game.test.api.net.packet.client.WorldReadyClientPacket;
+import dev.game.test.api.net.packet.server.WorldLayerSnapshotServerPacket;
+import dev.game.test.api.net.packet.server.WorldSnapshotServerPacket;
+import dev.game.test.api.net.packet.server.WorldSnapshotFinishServerPacket;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.client.net.handler.ServerConnectionManager;
@@ -22,14 +22,14 @@ public class WorldPacketListener extends AbstractServerPacketListener {
     }
 
     @Subscribe
-    public void on(PacketWorldSnapshot packet) {
+    public void on(WorldSnapshotServerPacket packet) {
         World world = new World(packet.getWorldName(), packet.getLayersSize(), packet.getWidth(), packet.getHeight());
 
         game.getClientManager().addWorld(world);
     }
 
     @Subscribe
-    public void on(PacketWorldLayerSnapshot packet) {
+    public void on(WorldLayerSnapshotServerPacket packet) {
         RegistryBlocks blockRegistry = game.getRegistryManager().getRegistry(Block.class);
 
         IWorld world = game.getClientManager().getWorld(packet.getWorldName());
@@ -41,10 +41,10 @@ public class WorldPacketListener extends AbstractServerPacketListener {
 
         IWorldLayer worldLayer = world.getLayers()[packet.getLayerId()];
 
-        PacketWorldLayerSnapshot.LayerData[][] dataArray = packet.getData();
+        WorldLayerSnapshotServerPacket.LayerData[][] dataArray = packet.getData();
 
-        for (PacketWorldLayerSnapshot.LayerData[] layerData : dataArray) {
-            for (PacketWorldLayerSnapshot.LayerData data : layerData) {
+        for (WorldLayerSnapshotServerPacket.LayerData[] layerData : dataArray) {
+            for (WorldLayerSnapshotServerPacket.LayerData data : layerData) {
                 if (data == null) {
                     continue;
                 }
@@ -65,7 +65,7 @@ public class WorldPacketListener extends AbstractServerPacketListener {
     }
 
     @Subscribe
-    public void on(PacketWorldSnapshotFinish packet) {
-        this.manager.sendPacket(new PacketWorldReady());
+    public void on(WorldSnapshotFinishServerPacket packet) {
+        this.manager.sendPacket(new WorldReadyClientPacket());
     }
 }

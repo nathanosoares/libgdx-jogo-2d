@@ -8,12 +8,14 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.common.collect.Maps;
 import dev.game.test.client.entity.components.AnimateComponent;
+import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.PlayerUtils;
 import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.StateComponent;
 import dev.game.test.core.entity.player.PlayerState;
 import dev.game.test.core.entity.components.DirectionComponent;
+import dev.game.test.core.entity.player.componenets.HitComponent;
 
 import java.util.Map;
 import java.util.UUID;
@@ -33,6 +35,19 @@ public class GameUtils {
         Player player = PlayerUtils.buildLocalPlayer(uuid, username);
 
         player.add(new VisualComponent());
+
+        // Hit Visual
+        {
+            HitComponent hitComponent = player.getComponent(HitComponent.class);
+
+            Texture texture = new Texture(Gdx.files.internal("hit.png"));
+
+            TextureRegion[] frames = TextureRegion.split(texture, texture.getWidth() / 5, texture.getHeight())[0];
+
+            player.add(new HitVisualComponent(hitComponent, new Animation<>(
+                    hitComponent.delay / 5f, frames
+            )));
+        }
 
         // Animate
         {

@@ -2,9 +2,8 @@ package dev.game.test.client.net.handler.listeners;
 
 import com.badlogic.gdx.Gdx;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.entity.IPlayer;
-import dev.game.test.api.net.packet.client.PacketGameInfoReady;
+import dev.game.test.api.net.packet.client.GameInfoReadyClientPacket;
 import dev.game.test.api.net.packet.server.*;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.client.GameUtils;
@@ -18,21 +17,21 @@ public class GenericPacketListener extends AbstractServerPacketListener {
     }
 
     @Subscribe
-    public void on(PacketLoginResponse packet) {
+    public void on(LoginResponseServerPacket packet) {
 
         System.out.println(packet.getUuid());
         this.game.getClientManager().setPlayer(GameUtils.buildClientPlayer(packet.getUuid(), this.game.getUsername()));
     }
 
     @Subscribe
-    public void on(PacketGameInfoResponse packet) {
+    public void on(GameInfoResponseServerPacket packet) {
         // TODO Load all game info. Download textures, register keybinds, etc...
 
-        this.manager.sendPacket(new PacketGameInfoReady());
+        this.manager.sendPacket(new GameInfoReadyClientPacket());
     }
 
     @Subscribe
-    public void on(PacketSpawnPosition packet) {
+    public void on(SpawnPositionServerPacket packet) {
         IWorld world = game.getClientManager().getWorld(packet.getWorldName());
 
         if (world == null) {

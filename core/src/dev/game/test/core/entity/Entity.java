@@ -3,8 +3,8 @@ package dev.game.test.core.entity;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IEntity;
-import dev.game.test.api.net.packet.server.PacketEntityDestroy;
-import dev.game.test.api.net.packet.server.PacketEntitySpawn;
+import dev.game.test.api.net.packet.server.EntityDestroyServerPacket;
+import dev.game.test.api.net.packet.server.EntitySpawnServerPacket;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.*;
@@ -88,7 +88,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
         if (Game.getInstance() instanceof IServerGame) {
             ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
-                    new PacketEntitySpawn(this.getId(), this.getType(), getPosition(), getDirection()), world
+                    new EntitySpawnServerPacket(this.getId(), this.getType(), getPosition(), getDirection()), world
             );
         }
     }
@@ -100,7 +100,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
         if (Game.getInstance() instanceof IServerGame) {
             ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
-                    new PacketEntityDestroy(this.getId()), world
+                    new EntityDestroyServerPacket(this.getId()), world
             );
         }
     }

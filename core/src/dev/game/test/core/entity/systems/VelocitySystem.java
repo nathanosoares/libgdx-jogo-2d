@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IEntity;
-import dev.game.test.api.net.packet.server.PacketEntityPosition;
+import dev.game.test.api.net.packet.server.EntityPositionServerPacket;
 import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.IdentifiableComponent;
@@ -69,7 +69,7 @@ public class VelocitySystem extends IteratingSystem {
                 IdentifiableComponent identifiable = IdentifiableComponent.MAPPER.get(entity);
 
                 ((IServerGame) game).getConnectionHandler().broadcastPacket(
-                        new PacketEntityPosition(identifiable.uuid, toPosition),
+                        new EntityPositionServerPacket(identifiable.uuid, toPosition),
                         ((IEntity) entity).getWorld(),
                         connectionComponent != null ? connectionComponent.manager : null
                 );

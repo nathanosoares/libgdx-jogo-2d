@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketWorldLayerSnapshot implements Packet {
+public class WorldLayerSnapshotServerPacket implements Packet {
 
     @Getter
     private String worldName;

@@ -7,6 +7,7 @@ import dev.game.test.api.keybind.Keybind;
 import dev.game.test.core.entity.components.*;
 import dev.game.test.core.entity.player.PlayerState;
 import dev.game.test.core.entity.components.DirectionComponent;
+import dev.game.test.core.entity.player.componenets.HitComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.entity.player.componenets.WalkSpeedComponent;
 
@@ -19,6 +20,7 @@ public class Player extends Entity implements IPlayer {
 
         this.add(new NamedComponent(name));
         this.add(new MovementComponent());
+        this.add(new HitComponent());
     }
 
     @Override

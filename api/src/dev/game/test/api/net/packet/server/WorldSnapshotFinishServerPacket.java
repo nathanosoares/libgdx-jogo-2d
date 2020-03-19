@@ -5,17 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PacketEntityMovement implements Packet {
+public class WorldSnapshotFinishServerPacket implements Packet {
 
-    private UUID entityId;
-
-    public float deltaX;
-    public float deltaY;
-    public double degrees;
+    @Getter
+    private String worldName;
 
 }

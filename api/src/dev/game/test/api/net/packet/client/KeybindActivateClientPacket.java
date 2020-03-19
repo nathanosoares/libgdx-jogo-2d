@@ -5,14 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class PacketPlayerMovement implements Packet {
+@NoArgsConstructor
+public class KeybindActivateClientPacket implements Packet {
 
-    private long sequenceNumber;
-    private float deltaX;
-    private float deltaY;
-    private double degrees;
+    @Getter
+    private String keybindId;
 
 }
