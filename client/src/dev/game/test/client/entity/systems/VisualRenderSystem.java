@@ -8,21 +8,14 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.entity.EnumEntityType;
-import dev.game.test.api.net.packet.client.PacketHit;
-import dev.game.test.api.net.packet.client.PacketPlayerMovement;
-import dev.game.test.api.world.IWorld;
 import dev.game.test.client.RenderInfo;
 import dev.game.test.client.entity.components.ModifyVisualComponent;
 import dev.game.test.client.entity.components.VisualComponent;
-import dev.game.test.core.entity.HitProjectile;
 import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.PositionComponent;
@@ -42,11 +35,23 @@ public class VisualRenderSystem extends EntitySystem {
     private final RenderInfo renderInfo = new RenderInfo();
 
     private final Sprite spriteSword = new Sprite(new Texture(Gdx.files.internal("sword.png")));
+
+    Animation<TextureRegion> animation;
+    TextureRegion[] frames;
     private float attackTime = Float.MAX_VALUE;
     private boolean attacked = false;
+    private boolean hitting = false;
+    private float hittingDegrees = 0;
+    private float animationTime = 0;
 
     {
         spriteSword.setScale(1f / 16f);
+
+        Texture texture = new Texture(Gdx.files.internal("hit.png"));
+
+        frames = TextureRegion.split(texture, texture.getWidth() / 5, texture.getHeight())[0];
+
+        animation = new Animation<>(150f / 1000f / 5f, frames);
     }
 
     @Override
@@ -56,6 +61,8 @@ public class VisualRenderSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
+        animationTime += deltaTime;
+
         PositionComponent position;
         VisualComponent visual;
 
@@ -67,7 +74,6 @@ public class VisualRenderSystem extends EntitySystem {
             position = PositionComponent.MAPPER.get(entity);
             visual = VisualComponent.MAPPER.get(entity);
 
-            float nameOffsetY = 0;
             if (visual.region != null) {
 
                 if (DirectionComponent.MAPPER.has(entity)) {
@@ -119,29 +125,35 @@ public class VisualRenderSystem extends EntitySystem {
                 );
 
                 if (entity instanceof Player) {
-                    long time = 150;
+                    long maxHitTime = 150;
 
-                    if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && attackTime >= time) {
+                    if (attackTime >= maxHitTime) {
+                        hitting = false;
+                    }
+
+                    DirectionComponent directionComponent = DirectionComponent.MAPPER.get(entity);
+
+                    if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && attackTime >= maxHitTime) {
                         attackTime = 0;
                         attacked = !attacked;
-
-                        this.game.getConnectionHandler().getManager().sendPacket(new PacketHit());
+                        hitting = true;
+                        hittingDegrees = (float) directionComponent.degrees;
+                        animationTime = 0;
                     }
 
                     float attackOffset = 0;
 
-                    DirectionComponent directionComponent = DirectionComponent.MAPPER.get(entity);
                     double degrees = directionComponent.degrees + 90;
                     float rotation = 20;
 
-                    if (attackTime >= 0 && attackTime < time) {
-                        attackOffset = 180f * (100f / time * attackTime / 100f);
+                    if (attackTime >= 0 && attackTime < maxHitTime) {
+                        attackOffset = 180f * (100f / maxHitTime * attackTime / 100f);
 
                         if (!attacked) {
                             attackOffset -= 180f;
                         }
 
-                        rotation += (360f * (100f / time * attackTime / 100f)) * (attacked ? 1 : -1);
+                        rotation += (360f * (100f / maxHitTime * attackTime / 100f)) * (attacked ? 1 : -1);
 
                         attackTime += deltaTime * 1000;
                     } else if (attacked) {
@@ -165,11 +177,11 @@ public class VisualRenderSystem extends EntitySystem {
                             + (size.y / 2)
                             - originY;
 
-
                     spriteSword.setFlip(
                             Math.toRadians(degrees) < Math.toRadians(directionComponent.degrees),
                             true
                     );
+
                     spriteSword.setOriginCenter();
                     spriteSword.setOrigin(4, 15f);
                     spriteSword.setRotation((float) -directionComponent.degrees + rotation);
@@ -186,6 +198,36 @@ public class VisualRenderSystem extends EntitySystem {
                     group.setOrigin(originX, originY);
                     group.setPosition((float) x, (float) y - (spriteSword.getHeight() - 8f) / 2);
                     group.draw(this.batch, 1f);
+
+                    if (hitting) {
+                        TextureRegion region = animation.getKeyFrame(animationTime);
+
+                        originX = region.getRegionWidth() / 2f;
+                        originY = region.getRegionHeight() / 2f;
+
+                        x = 1.5 * Math.sin(Math.toRadians(hittingDegrees))
+                                + position.x
+                                + (size.x / 2)
+                                - originX;
+
+                        y = 1.5 * Math.cos(Math.toRadians(hittingDegrees))
+                                + position.y
+                                + (size.y / 2)
+                                - originY;
+
+                        this.batch.draw(
+                                region,
+                                (float) x,
+                                (float) y,
+                                originX,
+                                originY,
+                                region.getRegionWidth(),
+                                region.getRegionHeight(),
+                                1f / 16f,
+                                1f / 16f,
+                                -hittingDegrees
+                        );
+                    }
                 }
             }
         }
