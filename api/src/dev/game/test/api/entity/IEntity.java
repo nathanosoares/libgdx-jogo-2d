@@ -1,6 +1,7 @@
 package dev.game.test.api.entity;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Shape;
 import dev.game.test.api.util.Identifiable;
 import dev.game.test.api.world.IWorld;
 
@@ -25,6 +26,12 @@ public interface IEntity extends Identifiable {
     Vector2 getVelocity();
 
     EnumEntityType getType();
+
+    Shape createShape();
+
+    float getWidth();
+
+    float getHeight();
 
     default void onSpawn(IWorld world) {
     }

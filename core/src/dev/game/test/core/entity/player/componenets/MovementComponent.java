@@ -9,6 +9,7 @@ public class MovementComponent implements Component {
 
     public long sequenceId;
     public long updatedAt;
+    public float speed = 4;
     public float deltaX;
     public float deltaY;
 }

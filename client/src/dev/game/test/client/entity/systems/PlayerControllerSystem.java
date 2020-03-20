@@ -6,12 +6,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.client.DirectionClientPacket;
 import dev.game.test.api.net.packet.client.HitClientPacket;
 import dev.game.test.api.net.packet.client.MovementClientPacket;
 import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.world.systems.WorldRenderSystem;
-import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.components.KeybindComponent;
 import dev.game.test.core.entity.components.PositionComponent;
@@ -31,6 +31,7 @@ public class PlayerControllerSystem extends EntitySystem {
     @Override
     public void update(float deltaTime) {
         Entity entity = (Entity) this.game.getClientManager().getPlayer();
+        IEntity iEntity = (IEntity) entity;
 
         PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
         MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
@@ -79,15 +80,12 @@ public class PlayerControllerSystem extends EntitySystem {
                 .getMouseWorldPosition(new Vector2());
 
         DirectionComponent directionComponent = DirectionComponent.MAPPER.get(entity);
-        CollisiveComponent collisiveComponent = CollisiveComponent.MAPPER.get(entity);
 
         double oldDegrees = directionComponent.degrees;
 
-        Vector2 boxSize = collisiveComponent.box.getSize(new Vector2());
-
         directionComponent.degrees = Math.toDegrees(Math.atan2(
-                mouseWorldPosition.x - (positionComponent.x + boxSize.x / 2),
-                mouseWorldPosition.y - (positionComponent.y + boxSize.y / 2)
+                mouseWorldPosition.x - (positionComponent.x + iEntity.getWidth() / 2),
+                mouseWorldPosition.y - (positionComponent.y + iEntity.getHeight() / 2)
         ));
 
         if (oldDegrees != directionComponent.degrees) {

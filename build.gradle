@@ -54,6 +54,7 @@ project(":desktop") {
 
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         compile("com.badlogicgames.gdx:gdx-tools:$gdxVersion") {
             exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'
         }
@@ -89,6 +90,7 @@ project(":server") {
 
         compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
     }
 
     jar {
@@ -110,7 +112,7 @@ project(":core") {
 
         api "kryonet:kryonet:$kryonetVersion"
         api "com.esotericsoftware:kryo:$kryoVersion"
-
+        compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }
 }
 
@@ -124,6 +126,7 @@ project(":api") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "org.mini2Dx:universal-tween-engine:6.3.3"
         api 'org.greenrobot:eventbus:3.2.0'
+        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }
 }
 

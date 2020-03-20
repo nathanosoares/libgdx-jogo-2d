@@ -1,6 +1,7 @@
 package dev.game.test.client.net.handler.listeners;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.net.packet.client.WorldReadyClientPacket;
 import dev.game.test.api.net.packet.server.WorldLayerSnapshotServerPacket;
@@ -11,7 +12,10 @@ import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.client.net.handler.ServerConnectionManager;
 import dev.game.test.client.registry.RegistryBlocks;
 import dev.game.test.core.block.Block;
+import dev.game.test.core.block.BlockSolidState;
 import dev.game.test.core.block.BlockState;
+import dev.game.test.core.block.Blocks;
+import dev.game.test.core.block.impl.BlockStone;
 import dev.game.test.core.world.World;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -56,7 +60,13 @@ public class WorldPacketListener extends AbstractServerPacketListener {
                     continue;
                 }
 
-                BlockState state = new BlockState(block, world, worldLayer, data.getPosition());
+                BlockState state;
+                if (block instanceof BlockStone) {
+                    state = new BlockSolidState(block, world, worldLayer, new Vector2(2, 4));
+                } else {
+                    state = new BlockState(block, world, worldLayer, data.getPosition());
+                }
+
                 state.setConnectedData(data.getConnectedData());
 
                 worldLayer.setBlockState(state);

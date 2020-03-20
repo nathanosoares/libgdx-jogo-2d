@@ -53,8 +53,8 @@ public class EntityPacketListener extends AbstractServerPacketListener {
             movementComponent.deltaX = packet.getDeltaX();
             movementComponent.deltaY = packet.getDeltaY();
 
-            positionComponent.x = packet.getFromX();
-            positionComponent.y = packet.getFromY();
+//            positionComponent.x = packet.getFromX();
+//            positionComponent.y = packet.getFromY();
 
         }
     }

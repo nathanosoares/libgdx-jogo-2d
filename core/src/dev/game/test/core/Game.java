@@ -7,13 +7,12 @@ import dev.game.test.api.IGame;
 import dev.game.test.api.keybind.Keybind;
 import dev.game.test.api.registry.IRegistryManager;
 import dev.game.test.core.entity.player.systems.HitSystem;
-import dev.game.test.core.entity.player.systems.MovementSystem;
-import dev.game.test.core.entity.systems.VelocitySystem;
 import dev.game.test.core.entity.player.systems.PlayerStateSystem;
 import dev.game.test.core.event.EventManager;
 import dev.game.test.core.registry.RegistryManager;
 import dev.game.test.core.registry.impl.KeybindsRegistry;
 import dev.game.test.core.registry.impl.PacketPayloadSerializerRegistry;
+import dev.game.test.core.systems.PhysicsSystem;
 import lombok.Getter;
 
 public abstract class Game implements IGame {
@@ -52,8 +51,7 @@ public abstract class Game implements IGame {
         Gdx.app.debug(this.getClass().getSimpleName(), "Setup Engine");
 
         engine.addSystem(new PlayerStateSystem(this));
-        engine.addSystem(new MovementSystem(this));
-        engine.addSystem(new VelocitySystem(this));
         engine.addSystem(new HitSystem(this));
+        engine.addSystem(new PhysicsSystem(this));
     }
 }

@@ -6,18 +6,16 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.entity.IEntity;
 import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.entity.components.VisualComponent;
-import dev.game.test.core.entity.components.CollisiveComponent;
 import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +53,7 @@ public class VisualRenderSystem extends EntitySystem {
 
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
+            IEntity iEntity = (IEntity) entity;
 
             position = PositionComponent.MAPPER.get(entity);
             visual = VisualComponent.MAPPER.get(entity);
@@ -74,8 +73,6 @@ public class VisualRenderSystem extends EntitySystem {
                 }
 
                 batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-                Vector2 size = CollisiveComponent.MAPPER.get(entity).box.getSize(new Vector2());
 
                 this.batch.draw(
                         visual.region,
@@ -124,8 +121,8 @@ public class VisualRenderSystem extends EntitySystem {
                     float radius = 0.5f;
                     double radians = Math.toRadians(degrees);
 
-                    double x = radius * Math.sin(radians) + position.x + (size.x / 2) - originX;
-                    double y = radius * Math.cos(radians) + position.y + (size.y / 2) - originY;
+                    double x = radius * Math.sin(radians) + position.x + (iEntity.getWidth() / 2) - originX;
+                    double y = radius * Math.cos(radians) + position.y + (iEntity.getHeight() / 2) - originY;
 
                     spriteSword.setFlip(radians < Math.toRadians(directionComponent.degrees), true);
                     spriteSword.setOrigin(4, 15f);
@@ -152,8 +149,8 @@ public class VisualRenderSystem extends EntitySystem {
                         radius = 1.5f;
                         radians = Math.toRadians(hitVisualComponent.handler.degrees);
 
-                        x = radius * Math.sin(radians) + position.x + (size.x / 2) - originX;
-                        y = radius * Math.cos(radians) + position.y + (size.y / 2) - originY;
+                        x = radius * Math.sin(radians) + position.x + (iEntity.getWidth() / 2) - originX;
+                        y = radius * Math.cos(radians) + position.y + (iEntity.getHeight() / 2) - originY;
 
                         this.batch.draw(
                                 region,

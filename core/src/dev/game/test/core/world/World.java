@@ -1,6 +1,5 @@
 package dev.game.test.core.world;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.Maps;
@@ -11,6 +10,7 @@ import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
 import dev.game.test.core.block.Block;
+import dev.game.test.core.block.BlockSolidState;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.block.Blocks;
 import dev.game.test.core.entity.HitProjectile;
@@ -29,7 +29,7 @@ public class World implements IWorld {
 
     protected WorldLayer[] layers;
 
-    //
+    private final com.badlogic.gdx.physics.box2d.World box2dWorld;
 
     private final Map<UUID, IEntity> entities = Maps.newHashMap();
 
@@ -47,6 +47,8 @@ public class World implements IWorld {
         for (int i = 0; i < layersSize; i++) {
             this.layers[i] = new WorldLayer(this);
         }
+
+        this.box2dWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
     }
 
     public void fillLayers(Block primary, Block secondary) {
@@ -68,7 +70,7 @@ public class World implements IWorld {
             ground.getBlockState(x, 5).setBlock(secondary);
             ground.getBlockState(x, 6).setBlock(secondary);
 
-            if (x == 4 || x == 9) {
+            if (x == 4) {
                 continue;
             }
 
@@ -80,7 +82,7 @@ public class World implements IWorld {
             ground.getBlockState(x, 11).setBlock(Blocks.WATER);
             ground.getBlockState(x, 12).setBlock(Blocks.WATER);
 
-            if (x == 9 || x == 12) {
+            if (x == 9) {
                 continue;
             }
 
@@ -103,7 +105,7 @@ public class World implements IWorld {
 
         WorldLayer decoration = new WorldLayer(this);
 
-        decoration.setBlockState(new BlockState(Blocks.STONE, this, decoration, new Vector2(2, 4)));
+        decoration.setBlockState(new BlockSolidState(Blocks.STONE, this, decoration, new Vector2(2, 4)));
 
         this.layers[1] = decoration;
     }

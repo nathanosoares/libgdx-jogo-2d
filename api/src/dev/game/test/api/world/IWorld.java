@@ -2,6 +2,7 @@ package dev.game.test.api.world;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.entity.IPlayer;
@@ -36,4 +37,6 @@ public interface IWorld {
     IEntity createEntity(EnumEntityType type);
 
     IEntity createEntity(UUID uuid, EnumEntityType type);
+
+    World getBox2dWorld();
 }

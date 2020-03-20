@@ -23,6 +23,7 @@ import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.systems.AnimateStateSystem;
 import dev.game.test.client.entity.systems.PlayerControllerSystem;
 import dev.game.test.client.entity.systems.VisualRenderSystem;
+import dev.game.test.client.systems.PhysicsDebugSystem;
 import dev.game.test.client.world.systems.WorldRenderSystem;
 import dev.game.test.core.entity.components.KeybindComponent;
 import dev.game.test.core.registry.impl.KeybindsRegistry;
@@ -73,7 +74,7 @@ public class GameScreen extends ScreenAdapter {
         this.registerSystem(new AnimateStateSystem(this.game));
         this.registerSystem(new WorldRenderSystem(this.game, this.camera, this.spriteBatch, this.viewport));
         this.registerSystem(new VisualRenderSystem(this.game, this.spriteBatch));
-//        this.registerSystem(new CollisiveDebugSystem(this.game, this.spriteBatch));
+        this.registerSystem(new PhysicsDebugSystem(this.game, this.camera));
 
         Gdx.input.setInputProcessor(new PlayerControllerInputAdapter());
     }

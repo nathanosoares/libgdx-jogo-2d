@@ -43,8 +43,6 @@ public class ConnectionStatePacketListener extends AbstractServerPacketListener 
 
                 this.game.getClientManager().setCurrentWorld(world);
 
-                world.spawnEntity(player, player.getPosition());
-
 
                 GameScreen screenGame = new GameScreen(this.game);
 
