@@ -5,6 +5,10 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.client.DirectionClientPacket;
@@ -12,6 +16,7 @@ import dev.game.test.api.net.packet.client.HitClientPacket;
 import dev.game.test.api.net.packet.client.MovementClientPacket;
 import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.world.systems.WorldRenderSystem;
+import dev.game.test.core.Box2dUtils;
 import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.components.KeybindComponent;
 import dev.game.test.core.entity.components.PositionComponent;
@@ -96,6 +101,30 @@ public class PlayerControllerSystem extends EntitySystem {
             hitVisualComponent.handler.pending = true;
 
             this.game.getConnectionHandler().getManager().sendPacket(new HitClientPacket());
+
+            BodyDef bodyDef1 = new BodyDef();
+            bodyDef1.type = BodyDef.BodyType.KinematicBody;
+            FixtureDef fixtureDef1 = new FixtureDef();
+
+            float width = 1f;
+            float height = 1.5f;
+
+            ChainShape shape1 = Box2dUtils.createEllipse(width, height, 30);
+
+            fixtureDef1.shape = shape1;
+            fixtureDef1.isSensor = true;
+
+            Body body1 = iEntity.getWorld().getBox2dWorld().createBody(bodyDef1);
+            body1.createFixture(fixtureDef1);
+
+            double radians = Math.toRadians(directionComponent.degrees);
+
+            double x = 1 * Math.sin(radians) + iEntity.getPosition().x + iEntity.getWidth() / 2;
+            double y = 1 * Math.cos(radians) + iEntity.getPosition().y + iEntity.getHeight() / 2;
+
+            body1.setTransform((float) x, (float) y, (float) -radians);
+
+            shape1.dispose();
         }
 
         if (movementComponent.deltaX != 0 || movementComponent.deltaY != 0) {

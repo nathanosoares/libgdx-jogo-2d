@@ -1,6 +1,7 @@
 package dev.game.test.core;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Serializer;
 import dev.game.test.api.IGame;
@@ -34,7 +35,7 @@ public abstract class Game implements IGame {
 
         this.registryManager = new RegistryManager();
         this.eventManager = new EventManager();
-        this.engine = new Engine();
+        this.engine = new PooledEngine();
     }
 
     @Override

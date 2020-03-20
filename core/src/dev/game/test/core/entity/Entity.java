@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
-import com.google.common.base.Throwables;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.server.EntityDestroyServerPacket;
@@ -88,7 +87,6 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
     @Override
     public void onSpawn(IWorld world) {
-        System.out.println(Throwables.getStackTraceAsString(new Throwable()));
 
         EntityComponent.MAPPER.get(this).spawned = true;
         PositionComponent.MAPPER.get(this).world = world;
