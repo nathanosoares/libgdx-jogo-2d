@@ -30,7 +30,6 @@ public class Player extends LivingEntity implements IPlayer {
     protected void setupDefaultComponents() {
         super.setupDefaultComponents();
 
-        this.add(new BodyComponent());
         this.add(new StateComponent<>(new DefaultStateMachine<>(this, PlayerState.IDLE)));
         this.add(new KeybindComponent());
     }

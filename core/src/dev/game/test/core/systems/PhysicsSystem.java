@@ -6,7 +6,6 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import dev.game.test.api.IGame;
-import dev.game.test.api.IGameManager;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.server.EntityMovementServerPacket;
@@ -47,10 +46,6 @@ public class PhysicsSystem extends IteratingSystem {
         for (Entity entity : bodiesQueue) {
             BodyComponent bodyComponent = BodyComponent.MAPPER.get(entity);
 
-            if (PositionComponent.MAPPER.has(entity)) {
-                fixPosition(entity, bodyComponent);
-            }
-
             if (MovementComponent.MAPPER.has(entity)) {
                 processMovement(entity, bodyComponent);
             }
@@ -84,18 +79,6 @@ public class PhysicsSystem extends IteratingSystem {
 
     private final Vector2 movement = new Vector2();
 
-    private void fixPosition(Entity entity, BodyComponent bodyComponent) {
-        PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
-
-        IEntity iEntity = (IEntity) entity;
-        bodyComponent.body.setTransform(
-                new Vector2(
-                        positionComponent.x + iEntity.getWidth() / 2,
-                        positionComponent.y + iEntity.getWidth() / 2
-                ),
-                bodyComponent.body.getAngle()
-        );
-    }
 
     private void processMovement(Entity entity, BodyComponent bodyComponent) {
         MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);

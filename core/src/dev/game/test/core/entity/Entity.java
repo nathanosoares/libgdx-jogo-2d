@@ -24,6 +24,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
         this.add(new EntityComponent(false));
         this.add(new VelocityComponent());
         this.add(new DirectionComponent());
+        this.add(new BodyComponent());
 
         this.setupDefaultComponents();
     }
@@ -44,17 +45,26 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
     @Override
     public Vector2 getPosition() {
-        PositionComponent position = PositionComponent.MAPPER.get(this);
+        PositionComponent positionComponent = PositionComponent.MAPPER.get(this);
 
-        return new Vector2(position.x, position.y);
+        return new Vector2(positionComponent.x, positionComponent.y);
     }
 
     @Override
     public void setPosition(Vector2 vec) {
-        PositionComponent position = PositionComponent.MAPPER.get(this);
+        PositionComponent positionComponent = PositionComponent.MAPPER.get(this);
 
-        position.x = vec.x;
-        position.y = vec.y;
+        positionComponent.x = vec.x;
+        positionComponent.y = vec.y;
+
+        BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
+
+        if (bodyComponent.body != null) {
+            bodyComponent.body.setTransform(
+                    new Vector2(positionComponent.x + this.getWidth() / 2, positionComponent.y + this.getWidth() / 2),
+                    bodyComponent.body.getAngle()
+            );
+        }
     }
 
     @Override
@@ -93,35 +103,33 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
         EntityComponent.MAPPER.get(this).spawned = true;
         PositionComponent.MAPPER.get(this).world = world;
 
-        if (BodyComponent.MAPPER.has(this)) {
-            BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
-            BodyDef bodyDef = new BodyDef();
-            // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
-            bodyDef.type = BodyDef.BodyType.DynamicBody;
-            bodyDef.allowSleep = false;
+        BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
+        BodyDef bodyDef = new BodyDef();
+        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.allowSleep = false;
 
-            // Set our body's starting position in the world
-            Vector2 position = getPosition();
-            bodyDef.position.set(position.x + this.getWidth() / 2, position.y + this.getHeight() / 2);
+        // Set our body's starting position in the world
+        Vector2 position = getPosition();
+        bodyDef.position.set(position.x + this.getWidth() / 2, position.y + this.getHeight() / 2);
 
-            // Create our body in the world using our body definition
-            bodyComponent.body = world.getBox2dWorld().createBody(bodyDef);
+        // Create our body in the world using our body definition
+        bodyComponent.body = world.getBox2dWorld().createBody(bodyDef);
 
-            // Create Shape
-            Shape shape = this.createShape();
+        // Create Shape
+        Shape shape = this.createShape();
 
-            // Create our fixture and attach it to the body
-            FixtureDef fixtureDef = new FixtureDef();
-            fixtureDef.shape = shape;
-            fixtureDef.filter.groupIndex = -1;
+        // Create our fixture and attach it to the body
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.filter.groupIndex = -1;
 
-            Fixture fixture = bodyComponent.body.createFixture(fixtureDef);
-            fixture.setUserData(this);
+        Fixture fixture = bodyComponent.body.createFixture(fixtureDef);
+        fixture.setUserData(this);
 
-            // Remember to dispose of any shapes after you're done with them!
-            // BodyDef and FixtureDef don't need disposing, but shapes do.
-            shape.dispose();
-        }
+        // Remember to dispose of any shapes after you're done with them!
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+        shape.dispose();
 
         if (!(this instanceof IServerEntity) && Game.getInstance() instanceof IServerGame) {
             ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(

@@ -1,10 +1,10 @@
 package dev.game.test.client.net.handler.listeners;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.math.MathUtils;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IEntity;
+import dev.game.test.api.entity.ILivingEntity;
 import dev.game.test.api.net.packet.server.*;
 import dev.game.test.client.GameUtils;
 import dev.game.test.client.net.handler.ServerConnectionManager;
@@ -78,7 +78,12 @@ public class EntityPacketListener extends AbstractServerPacketListener {
 
         IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
 
+
         if (entity != null) {
+            if (entity.getWorld() != null) {
+                entity.getWorld().destroyEntity(entity);
+            }
+
             this.game.getClientManager().removeEntity(entity);
         }
     }
@@ -105,5 +110,19 @@ public class EntityPacketListener extends AbstractServerPacketListener {
         entity.setDirection(packet.getDirection());
 
         this.game.getClientManager().getPlayer().getWorld().spawnEntity(entity, packet.getPosition());
+    }
+
+    @Subscribe
+    public void on(EntityHeathServerPacket packet) {
+        IEntity entity = this.game.getClientManager().getEntity(packet.getEntityId());
+
+        if (!(entity instanceof ILivingEntity)) {
+            return;
+        }
+
+        ILivingEntity livingEntity = (ILivingEntity) entity;
+
+        livingEntity.setHealth(packet.getHealth());
+        livingEntity.setMaxHealth(packet.getMaxHealth());
     }
 }

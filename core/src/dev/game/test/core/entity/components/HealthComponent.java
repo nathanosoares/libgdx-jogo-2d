@@ -7,6 +7,6 @@ public class HealthComponent implements Component {
 
     public static final ComponentMapper<HealthComponent> MAPPER = ComponentMapper.getFor(HealthComponent.class);
 
-    public float health;
-    public float maxHealth;
+    public float health = 20;
+    public float maxHealth = 20;
 }

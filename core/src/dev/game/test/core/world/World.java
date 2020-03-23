@@ -78,14 +78,18 @@ public class World implements IWorld {
                 }
 
                 if (hitFixture != null) {
-                    hit.getDamaged().add(livingEntity.getId());
 
                     if (!hit.getDamaged().contains(livingEntity.getId()) && hit.getSource() != livingEntity) {
 
                         // TODO event
 
+                        System.out.println("damage");
+
                         livingEntity.damage(hit.getSource(), hit.getDamage());
                     }
+
+
+                    hit.getDamaged().add(livingEntity.getId());
                 }
             }
 

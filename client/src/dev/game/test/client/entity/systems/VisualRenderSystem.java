@@ -6,15 +6,17 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.IEntity;
+import dev.game.test.api.entity.ILivingEntity;
 import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.entity.components.DirectionComponent;
@@ -169,8 +171,22 @@ public class VisualRenderSystem extends EntitySystem {
                     }
                 }
 
-                if (HealthComponent.MAPPER.has(entity)) {
+                if (entity instanceof ILivingEntity) {
+                    ILivingEntity livingEntity = (ILivingEntity) entity;
 
+                    BitmapFont font = new BitmapFont();
+                    font.getData().setScale(1 / 32f);
+                    font.setUseIntegerPositions(false);
+
+                    final GlyphLayout layout = new GlyphLayout(font, String.format(
+                            "%s/%s",
+                            livingEntity.getHealth(), livingEntity.getMaxHealth()
+                    ));
+
+                    final float fontX = position.x + (iEntity.getWidth() - layout.width) / 2;
+                    final float fontY = position.y + (iEntity.getHeight() + layout.height) / 2 + 1;
+
+                    font.draw(this.batch, layout, fontX, fontY);
 
                 }
             }
