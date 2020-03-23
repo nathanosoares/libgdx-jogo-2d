@@ -2,10 +2,12 @@ package dev.game.test.core.world;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
 import com.google.common.collect.Maps;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IEntity;
+import dev.game.test.api.entity.ILivingEntity;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
@@ -13,7 +15,7 @@ import dev.game.test.core.block.Block;
 import dev.game.test.core.block.BlockSolidState;
 import dev.game.test.core.block.BlockState;
 import dev.game.test.core.block.Blocks;
-import dev.game.test.core.entity.HitProjectile;
+import dev.game.test.core.entity.Hit;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -49,6 +51,59 @@ public class World implements IWorld {
         }
 
         this.box2dWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+
+        this.box2dWorld.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+
+                Fixture fixtureA = contact.getFixtureA();
+                Fixture fixtureB = contact.getFixtureB();
+
+                Hit hit = null;
+                Fixture hitFixture = null;
+                ILivingEntity livingEntity = null;
+
+                if (fixtureA.getUserData() instanceof Hit && fixtureB.getUserData() instanceof ILivingEntity) {
+
+                    hitFixture = fixtureA;
+                    hit = (Hit) fixtureA.getUserData();
+                    livingEntity = (ILivingEntity) fixtureB.getUserData();
+
+                } else if (fixtureB.getUserData() instanceof Hit && fixtureA.getUserData() instanceof ILivingEntity) {
+
+                    hitFixture = fixtureB;
+                    hit = (Hit) fixtureB.getUserData();
+                    livingEntity = (ILivingEntity) fixtureA.getUserData();
+
+                }
+
+                if (hitFixture != null) {
+                    hit.getDamaged().add(livingEntity.getId());
+
+                    if (!hit.getDamaged().contains(livingEntity.getId()) && hit.getSource() != livingEntity) {
+
+                        // TODO event
+
+                        livingEntity.damage(hit.getSource(), hit.getDamage());
+                    }
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+
+            }
+        });
     }
 
     public void fillLayers(Block primary, Block secondary) {
@@ -178,10 +233,6 @@ public class World implements IWorld {
     public IEntity createEntity(UUID uuid, EnumEntityType type) {
 
         IEntity entity = null;
-        if (type == EnumEntityType.HIT_PROJECTILE) {
-            entity = new HitProjectile(uuid);
-        }
-
         if (entity != null) {
             type.onPostCreate(entity);
         }

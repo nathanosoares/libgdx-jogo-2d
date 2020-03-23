@@ -2,10 +2,12 @@ package dev.game.test.core.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IEntity;
+import dev.game.test.api.entity.IServerEntity;
 import dev.game.test.api.net.packet.server.EntityDestroyServerPacket;
 import dev.game.test.api.net.packet.server.EntitySpawnServerPacket;
 import dev.game.test.api.world.IWorld;
@@ -91,35 +93,37 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
         EntityComponent.MAPPER.get(this).spawned = true;
         PositionComponent.MAPPER.get(this).world = world;
 
-        BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
-        BodyDef bodyDef = new BodyDef();
-        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.allowSleep = false;
+        if (BodyComponent.MAPPER.has(this)) {
+            BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
+            BodyDef bodyDef = new BodyDef();
+            // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            bodyDef.allowSleep = false;
 
-        // Set our body's starting position in the world
-        Vector2 position = getPosition();
-        bodyDef.position.set(position.x + this.getWidth() / 2, position.y + this.getHeight() / 2);
+            // Set our body's starting position in the world
+            Vector2 position = getPosition();
+            bodyDef.position.set(position.x + this.getWidth() / 2, position.y + this.getHeight() / 2);
 
-        // Create our body in the world using our body definition
-        bodyComponent.body = world.getBox2dWorld().createBody(bodyDef);
+            // Create our body in the world using our body definition
+            bodyComponent.body = world.getBox2dWorld().createBody(bodyDef);
 
-        // Create Shape
-        Shape shape = this.createShape();
+            // Create Shape
+            Shape shape = this.createShape();
 
-        // Create a fixture definition to apply our shape to
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.filter.groupIndex = -1;
+            // Create our fixture and attach it to the body
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.filter.groupIndex = -1;
 
-        // Create our fixture and attach it to the body
-        bodyComponent.body.createFixture(fixtureDef);
+            Fixture fixture = bodyComponent.body.createFixture(fixtureDef);
+            fixture.setUserData(this);
 
-        // Remember to dispose of any shapes after you're done with them!
-        // BodyDef and FixtureDef don't need disposing, but shapes do.
-        shape.dispose();
+            // Remember to dispose of any shapes after you're done with them!
+            // BodyDef and FixtureDef don't need disposing, but shapes do.
+            shape.dispose();
+        }
 
-        if (Game.getInstance() instanceof IServerGame) {
+        if (!(this instanceof IServerEntity) && Game.getInstance() instanceof IServerGame) {
             ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
                     new EntitySpawnServerPacket(this.getId(), this.getType(), getPosition(), getDirection()), world
             );
@@ -135,7 +139,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
         PositionComponent.MAPPER.get(this).world = null;
         bodyComponent.body = null;
 
-        if (Game.getInstance() instanceof IServerGame) {
+        if (!(this instanceof IServerEntity) && Game.getInstance() instanceof IServerGame) {
             ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
                     new EntityDestroyServerPacket(this.getId()), world
             );

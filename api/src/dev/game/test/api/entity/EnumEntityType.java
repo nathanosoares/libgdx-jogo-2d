@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 public enum EnumEntityType {
 
     PLAYER(IPlayer.class),
-    HIT_PROJECTILE(IHitProjectile.class),
     ;
 
     private final Class<? extends IEntity> clazz;

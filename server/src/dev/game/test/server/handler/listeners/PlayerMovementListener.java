@@ -6,6 +6,7 @@ import dev.game.test.api.net.packet.client.HitClientPacket;
 import dev.game.test.api.net.packet.client.MovementClientPacket;
 import dev.game.test.api.net.packet.server.EntityDirectionServerPacket;
 import dev.game.test.api.net.packet.server.PlayerMovementResponseServerPacket;
+import dev.game.test.core.entity.Player;
 import dev.game.test.core.entity.components.DirectionComponent;
 import dev.game.test.core.entity.player.componenets.HitComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
@@ -39,7 +40,9 @@ public class PlayerMovementListener extends AbstractPlayerPacketListener {
 
     @Subscribe
     public void on(HitClientPacket packet) {
-        HitComponent hitComponent = HitComponent.MAPPER.get(this.manager.getPlayer());
+        Player player = this.manager.getPlayer();
+
+        HitComponent hitComponent = HitComponent.MAPPER.get(player);
         hitComponent.pending = true;
     }
 

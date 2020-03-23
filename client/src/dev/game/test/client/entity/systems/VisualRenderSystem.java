@@ -12,11 +12,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.entity.components.DirectionComponent;
+import dev.game.test.core.entity.components.HealthComponent;
 import dev.game.test.core.entity.components.PositionComponent;
 import lombok.RequiredArgsConstructor;
 
@@ -165,6 +167,11 @@ public class VisualRenderSystem extends EntitySystem {
                                 (float) -hitVisualComponent.handler.degrees
                         );
                     }
+                }
+
+                if (HealthComponent.MAPPER.has(entity)) {
+
+
                 }
             }
         }

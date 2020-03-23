@@ -1,9 +1,7 @@
 package dev.game.test.core.block;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.*;
 import dev.game.test.api.block.IBlock;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
@@ -24,12 +22,16 @@ public class BlockSolidState extends BlockState implements ISolidState {
 
         body = world.getBox2dWorld().createBody(bodyDef);
 
-        PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(block.getWidth() / 2f, block.getHeight() / 2f);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(block.getWidth() / 2f, block.getHeight() / 2f);
 
-        body.createFixture(polygonShape, 0.0f);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
 
-        polygonShape.dispose();
+        Fixture fixture = body.createFixture(fixtureDef);
+        fixture.setUserData(this);
+
+        shape.dispose();
     }
 
 }

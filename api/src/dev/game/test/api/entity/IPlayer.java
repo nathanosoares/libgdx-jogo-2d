@@ -2,7 +2,7 @@ package dev.game.test.api.entity;
 
 import dev.game.test.api.keybind.Keybind;
 
-public interface IPlayer extends IEntity {
+public interface IPlayer extends ILivingEntity {
 
     String getName();
 

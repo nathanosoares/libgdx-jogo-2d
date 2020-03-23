@@ -16,7 +16,7 @@ import dev.game.test.core.entity.player.componenets.MovementComponent;
 
 import java.util.UUID;
 
-public class Player extends Entity implements IPlayer {
+public class Player extends LivingEntity implements IPlayer {
 
     public Player(UUID uuid, String name) {
         super(uuid);
@@ -82,4 +82,5 @@ public class Player extends Entity implements IPlayer {
     public float getHeight() {
         return 1;
     }
+
 }
