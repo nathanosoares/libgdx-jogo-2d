@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
+import dev.game.test.core.CoreConstants;
 import dev.game.test.core.block.Block;
 
 public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
@@ -28,11 +29,11 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
 
     private void loadTextures() {
         Pixmap pixmapRaw = new Pixmap(imageHandle);
-        Pixmap pixmapOut = new Pixmap(16, 16 * 0xFF, Pixmap.Format.RGBA8888);
+        Pixmap pixmapOut = new Pixmap(CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE * 0xFF, Pixmap.Format.RGBA8888);
 
         for (int i = 0; i < 0xFF; i++) {
-            for (int x = 0; x < 16; x++) {
-                for (int y = 0; y < 16; y++) {
+            for (int x = 0; x < CoreConstants.TILE_SIZE; x++) {
+                for (int y = 0; y < CoreConstants.TILE_SIZE; y++) {
                     pixmapOut.setColor(pixmapRaw.getPixel(x, y));
 
                     for (TextureConnection textureConnection : CONNECTIONS) {
@@ -47,7 +48,7 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
                         }
                     }
 
-                    pixmapOut.drawPixel(x, y + i * 16);
+                    pixmapOut.drawPixel(x, y + i * CoreConstants.TILE_SIZE);
                 }
             }
         }
@@ -61,7 +62,7 @@ public class ConnectedTextureSimple implements ConnectedTexture, Disposable {
 
     public TextureRegion getTexture(IBlockState blockState) {
         int code = blockState.getConnectedData();
-        atlasRegion.setRegion(0, code * 16, 16, 16);
+        atlasRegion.setRegion(0, code * CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE);
         return atlasRegion;
     }
 

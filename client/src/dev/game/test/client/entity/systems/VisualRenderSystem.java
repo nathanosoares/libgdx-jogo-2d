@@ -183,11 +183,10 @@ public class VisualRenderSystem extends EntitySystem {
                             livingEntity.getHealth(), livingEntity.getMaxHealth()
                     ));
 
-                    final float fontX = position.x + (iEntity.getWidth() - layout.width) / 2;
-                    final float fontY = position.y + (iEntity.getHeight() + layout.height) / 2 + 1;
+                    float fontX = position.x - layout.width / 2;
+                    float fontY = 0.8f + position.y + layout.height;
 
                     font.draw(this.batch, layout, fontX, fontY);
-
                 }
             }
         }

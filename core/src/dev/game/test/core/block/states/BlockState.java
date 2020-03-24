@@ -1,5 +1,6 @@
 package dev.game.test.core.block.states;
 
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.block.IBlock;
 import dev.game.test.api.block.IBlockState;
@@ -22,12 +23,12 @@ public class BlockState implements IBlockState {
 
     protected IWorldLayer layer;
 
-    protected Vector2 position;
+    protected GridPoint2 position;
 
     @Setter
     private int connectedData;
 
-    public BlockState(IBlock block, IWorld world, IWorldLayer layer, Vector2 position) {
+    public BlockState(IBlock block, IWorld world, IWorldLayer layer, GridPoint2 position) {
         this.block = block;
         this.world = world;
         this.layer = layer;

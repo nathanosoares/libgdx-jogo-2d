@@ -1,6 +1,7 @@
 package dev.game.test.core.block;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.block.IBlock;
 import dev.game.test.api.block.IBlockState;
@@ -20,14 +21,14 @@ public abstract class Block implements IBlock {
     protected final int id;
 
     @Getter
-    protected int width = 1;
+    protected float width = 1f;
 
     @Getter
-    protected int height = 1;
+    protected float height = 1f;
 
     @Override
     public IBlockState createState(IWorld world, IWorldLayer layer, int x, int y) {
-        return new BlockState(this, world, layer, new Vector2(x, y));
+        return new BlockState(this, world, layer, new GridPoint2(x, y));
     }
 
     public void loadTextures() {
@@ -50,4 +51,6 @@ public abstract class Block implements IBlock {
     public void onBlockNeighbourUpdate(IBlockState blockState, EnumFacing neighbourFacing) {
 
     }
+
+
 }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import dev.game.test.api.block.IBlockState;
+import dev.game.test.core.CoreConstants;
 import dev.game.test.core.block.Block;
 
 public class BlockGrass extends Block {
@@ -17,9 +18,9 @@ public class BlockGrass extends Block {
 
     @Override
     public void loadTextures() {
-        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+        Pixmap pixmap = new Pixmap(CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.valueOf("6df7b1"));
-        pixmap.fillRectangle(0, 0, 16, 16);
+        pixmap.fillRectangle(0, 0, CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE);
         this.texture = new TextureRegion(new Texture(pixmap));
     }
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.google.common.collect.Maps;
 import dev.game.test.api.block.IBlockState;
+import dev.game.test.api.block.IPhysicBlockState;
 import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.entity.ILivingEntity;
@@ -12,12 +13,11 @@ import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
 import dev.game.test.core.block.Block;
-import dev.game.test.core.block.states.SolidBlockState;
-import dev.game.test.core.block.states.BlockState;
 import dev.game.test.core.block.Blocks;
 import dev.game.test.core.entity.Hit;
 import lombok.Getter;
 
+import java.lang.annotation.Target;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -61,36 +61,42 @@ public class World implements IWorld {
 
                 Hit hit = null;
                 Fixture hitFixture = null;
-                ILivingEntity livingEntity = null;
+                Object target = null;
 
-                if (fixtureA.getUserData() instanceof Hit && fixtureB.getUserData() instanceof ILivingEntity) {
+                if (fixtureA.getUserData() instanceof Hit) {
 
                     hitFixture = fixtureA;
                     hit = (Hit) fixtureA.getUserData();
-                    livingEntity = (ILivingEntity) fixtureB.getUserData();
+                    target = fixtureB.getUserData();
 
-                } else if (fixtureB.getUserData() instanceof Hit && fixtureA.getUserData() instanceof ILivingEntity) {
+                } else if (fixtureB.getUserData() instanceof Hit) {
 
                     hitFixture = fixtureB;
                     hit = (Hit) fixtureB.getUserData();
-                    livingEntity = (ILivingEntity) fixtureA.getUserData();
+                    target = fixtureA.getUserData();
 
                 }
 
-                if (hitFixture != null) {
+                if (hitFixture != null && !hit.getDamaged().contains(target)) {
 
-                    if (!hit.getDamaged().contains(livingEntity.getId()) && hit.getSource() != livingEntity) {
+                    if (target instanceof ILivingEntity) {
+                        ILivingEntity livingEntity = (ILivingEntity) target;
+                        if (hit.getSource() != target) {
 
-                        // TODO event
+                            // TODO event
 
-                        System.out.println("damage");
+                            livingEntity.damage(hit.getSource(), hit.getDamage());
+                        }
 
-                        livingEntity.damage(hit.getSource(), hit.getDamage());
+                    } else if (target instanceof IPhysicBlockState) {
+                        IPhysicBlockState physicBlockState = (IPhysicBlockState) target;
+
+                        physicBlockState.onHit(hit.getSource());
                     }
 
-
-                    hit.getDamaged().add(livingEntity.getId());
+                    hit.getDamaged().add(target);
                 }
+
             }
 
             @Override

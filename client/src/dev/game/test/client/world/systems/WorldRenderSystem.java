@@ -7,17 +7,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.block.IPhysicBlockState;
 import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.client.ClientApplication;
 import dev.game.test.client.world.animations.OpacityAccessor;
+import dev.game.test.core.CoreConstants;
 import dev.game.test.core.block.states.BlockState;
 import lombok.RequiredArgsConstructor;
 
@@ -29,8 +32,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class WorldRenderSystem extends EntitySystem {
 
-    public static final float TILE_WIDTH = 16.0f;
-    public static final float UNIT_PER_PIXEL = 1.0f / 16.0f;
 
     private final IClientGame game;
     protected final OrthographicCamera camera;
@@ -43,6 +44,10 @@ public class WorldRenderSystem extends EntitySystem {
     private final Vector2 mouseScreenPosition = new Vector2();
 
     private final Vector2 mouseWorldPosition = new Vector2();
+    private final GridPoint2 oldMouseWorldGrid = new GridPoint2();
+    private final GridPoint2 mouseWorldGrid = new GridPoint2();
+
+    private boolean mouseWorldGridChanged = false;
 
     private final Map<BlockState, AtomicReference<Float>> opacity = Maps.newHashMap();
 
@@ -73,7 +78,6 @@ public class WorldRenderSystem extends EntitySystem {
         return vector2.set(mouseWorldPosition);
     }
 
-
     @Override
     public void update(float deltaTime) {
 
@@ -82,6 +86,14 @@ public class WorldRenderSystem extends EntitySystem {
 
         mouseScreenPosition.set(Gdx.input.getX(), Gdx.input.getY());
         mouseWorldPosition.set(viewport.unproject(mouseScreenPosition.cpy()));
+
+        oldMouseWorldGrid.set(mouseWorldGrid);
+        mouseWorldGrid.set((int) mouseWorldPosition.x, (int) mouseWorldPosition.y);
+        mouseWorldGridChanged = !oldMouseWorldGrid.equals(mouseWorldGrid);
+
+        if (mouseWorldGridChanged) {
+            System.out.println(mouseWorldGrid);
+        }
 
         if (game.getClientManager().getCurrentWorld() != null) {
             IWorld world = game.getClientManager().getCurrentWorld();
@@ -123,8 +135,9 @@ public class WorldRenderSystem extends EntitySystem {
             }
         }
 
-
         this.batch.end();
+
+        this.mouseWorldGridChanged = false;
     }
 
     private void setView(OrthographicCamera camera) {
@@ -140,8 +153,8 @@ public class WorldRenderSystem extends EntitySystem {
 
         IWorldLayer layer = world.getLayers()[layerIndex];
 
-        float layerTileWidth = TILE_WIDTH * UNIT_PER_PIXEL;
-        float layerTileHeight = TILE_WIDTH * UNIT_PER_PIXEL;
+        float layerTileWidth = CoreConstants.TILE_SIZE * CoreConstants.TILE_UNIT_PER_PIXEL;
+        float layerTileHeight = CoreConstants.TILE_SIZE * CoreConstants.TILE_UNIT_PER_PIXEL;
 
         int col1 = Math.max(0, (int) ((viewBounds.x) / layerTileWidth));
         int col2 = (int) Math.min(world.getBounds().getWidth(), (int) ((viewBounds.x + viewBounds.width + layerTileWidth) / layerTileWidth));
@@ -166,7 +179,7 @@ public class WorldRenderSystem extends EntitySystem {
 
                 batch.setColor(1.0f, 1.0f, 1.0f, 1);
 
-                if (x == (int) mouseWorldPosition.x && y == (int) mouseWorldPosition.y) {
+                if (x == mouseWorldGrid.x && y == mouseWorldGrid.y) {
                     float fade = (float) ((Math.sin(2 * Math.PI * .8f * System.currentTimeMillis() / 1000) + 1.0f) / 2.0f);
                     batch.setColor(0.9f, 0.7f, 1.0f, 0.7f + 0.25f * fade);
                 }
@@ -225,8 +238,15 @@ public class WorldRenderSystem extends EntitySystem {
                             alpha
                     );
 
+                    float renderX = x;
+                    float renderY = y;
 
-                    batch.draw(region, x, y, region.getRegionWidth() * UNIT_PER_PIXEL, region.getRegionHeight() * UNIT_PER_PIXEL);
+                    if (state instanceof IPhysicBlockState) {
+                        renderX += ((IPhysicBlockState) state).getBodyOffset().x;
+                        renderY += ((IPhysicBlockState) state).getBodyOffset().y;
+                    }
+
+                    batch.draw(region, renderX, renderY, region.getRegionWidth() * CoreConstants.TILE_UNIT_PER_PIXEL, region.getRegionHeight() * CoreConstants.TILE_UNIT_PER_PIXEL);
                 }
 
                 x += layerTileWidth;

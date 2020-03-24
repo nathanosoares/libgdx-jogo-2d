@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
+import dev.game.test.core.CoreConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -41,15 +42,15 @@ public interface ConnectedTexture {
      */
 
     static TextureConnection[] CONNECTIONS = new TextureConnection[]{
-            new SideTextureConnection(1 << 7, new Rectangle(0, 0, 16, 8), new Vector2(0, 16), EnumFacing.NORTH),
-            new SideTextureConnection(1 << 6, new Rectangle(0, 8, 16, 8), new Vector2(0, 16), EnumFacing.SOUTH),
-            new SideTextureConnection(1 << 5, new Rectangle(0, 0, 8, 16), new Vector2(16, 0), EnumFacing.WEST),
-            new SideTextureConnection(1 << 4, new Rectangle(8, 0, 8, 16), new Vector2(16, 0), EnumFacing.EAST),
+            new SideTextureConnection(1 << 7, new Rectangle(0, 0, CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE / 2f), new Vector2(0, CoreConstants.TILE_SIZE), EnumFacing.NORTH),
+            new SideTextureConnection(1 << 6, new Rectangle(0, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE / 2f), new Vector2(0, CoreConstants.TILE_SIZE), EnumFacing.SOUTH),
+            new SideTextureConnection(1 << 5, new Rectangle(0, 0, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE), new Vector2(CoreConstants.TILE_SIZE, 0), EnumFacing.WEST),
+            new SideTextureConnection(1 << 4, new Rectangle(CoreConstants.TILE_SIZE / 2f, 0, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE), new Vector2(CoreConstants.TILE_SIZE, 0), EnumFacing.EAST),
             //
-            new CornerTextureConnection(1 << 3, new Rectangle(0, 0, 8, 8), new Vector2(16, 16), EnumFacing.NORTH, EnumFacing.WEST),
-            new CornerTextureConnection(1 << 2, new Rectangle(8, 0, 8, 8), new Vector2(16, 16), EnumFacing.NORTH, EnumFacing.EAST),
-            new CornerTextureConnection(1 << 1, new Rectangle(0, 8, 8, 8), new Vector2(16, 16), EnumFacing.SOUTH, EnumFacing.WEST),
-            new CornerTextureConnection(1 << 0, new Rectangle(8, 8, 8, 8), new Vector2(16, 16), EnumFacing.SOUTH, EnumFacing.EAST),
+            new CornerTextureConnection(1 << 3, new Rectangle(0, 0, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE / 2f), new Vector2(CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE), EnumFacing.NORTH, EnumFacing.WEST),
+            new CornerTextureConnection(1 << 2, new Rectangle(CoreConstants.TILE_SIZE / 2f, 0, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE / 2f), new Vector2(CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE), EnumFacing.NORTH, EnumFacing.EAST),
+            new CornerTextureConnection(1 << 1, new Rectangle(0, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE / 2f), new Vector2(CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE), EnumFacing.SOUTH, EnumFacing.WEST),
+            new CornerTextureConnection(1, new Rectangle(CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE / 2f, CoreConstants.TILE_SIZE / 2f), new Vector2(CoreConstants.TILE_SIZE, CoreConstants.TILE_SIZE), EnumFacing.SOUTH, EnumFacing.EAST),
     };
 
     @RequiredArgsConstructor

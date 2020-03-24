@@ -19,5 +19,5 @@ public class Hit {
     protected final float damage;
 
     @Getter
-    protected List<UUID> damaged = Lists.newArrayList();
+    protected List<Object> damaged = Lists.newArrayList();
 }

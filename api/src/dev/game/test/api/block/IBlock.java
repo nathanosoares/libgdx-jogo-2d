@@ -9,9 +9,9 @@ public interface IBlock {
 
     int getId();
 
-    int getWidth();
+    float getWidth();
 
-    int getHeight();
+    float getHeight();
 
     IBlockState createState(IWorld world, IWorldLayer layer, int x, int z);
 
