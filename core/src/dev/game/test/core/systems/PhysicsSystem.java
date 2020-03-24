@@ -7,11 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import dev.game.test.api.IGame;
 import dev.game.test.api.IServerGame;
+import dev.game.test.api.block.IBlockState;
+import dev.game.test.api.block.IPhysicBlockState;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.server.EntityMovementServerPacket;
 import dev.game.test.api.net.packet.server.EntityPositionServerPacket;
 import dev.game.test.api.net.packet.server.PlayerMovementResponseServerPacket;
 import dev.game.test.api.world.IWorld;
+import dev.game.test.core.block.impl.BlockWater;
 import dev.game.test.core.entity.components.BodyComponent;
 import dev.game.test.core.entity.components.IdentifiableComponent;
 import dev.game.test.core.entity.components.PositionComponent;
@@ -79,11 +82,20 @@ public class PhysicsSystem extends IteratingSystem {
 
     private final Vector2 movement = new Vector2();
 
-
     private void processMovement(Entity entity, BodyComponent bodyComponent) {
         MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
 
-        float speed = movementComponent.speed * 30;
+        float speed = movementComponent.speed * 50;
+
+        IEntity iEntity = (IEntity) entity;
+
+        Vector2 entityPosition = iEntity.getPosition();
+
+        IBlockState blockState = iEntity.getWorld().getLayers()[0].getBlockState(entityPosition.x, entityPosition.y);
+
+        if (blockState != null && blockState.getBlock() instanceof BlockWater) {
+            speed *= 0.3f;
+        }
 
         movement.set(movementComponent.deltaX * speed, movementComponent.deltaY * speed);
 
@@ -123,9 +135,10 @@ public class PhysicsSystem extends IteratingSystem {
     private void processPosition(Entity entity, BodyComponent bodyComponent) {
         PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
 
-        IEntity iEntity = (IEntity) entity;
-        positionComponent.x = bodyComponent.body.getPosition().x - iEntity.getWidth() / 2;
-        positionComponent.y = bodyComponent.body.getPosition().y - iEntity.getHeight() / 2;
+        positionComponent.x = bodyComponent.body.getPosition().x;
+        positionComponent.y = bodyComponent.body.getPosition().y;
+
+//        System.out.println(positionComponent);
 
         if (game instanceof IServerGame) {
             Vector2 position = new Vector2(positionComponent.x, positionComponent.y);

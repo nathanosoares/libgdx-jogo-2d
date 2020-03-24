@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.Lists;
@@ -23,33 +24,36 @@ import dev.game.test.client.GameUtils;
 import dev.game.test.client.entity.systems.AnimateStateSystem;
 import dev.game.test.client.entity.systems.PlayerControllerSystem;
 import dev.game.test.client.entity.systems.VisualRenderSystem;
+import dev.game.test.client.systems.GameHudSystem;
 import dev.game.test.client.systems.PhysicsDebugSystem;
 import dev.game.test.client.world.systems.WorldRenderSystem;
+import dev.game.test.core.CoreConstants;
 import dev.game.test.core.entity.components.KeybindComponent;
 import dev.game.test.core.registry.impl.KeybindsRegistry;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
 public class GameScreen extends ScreenAdapter {
 
     public static final int VIEWPORT_SIZE = 20;
 
     private final IClientGame game;
 
-    private Viewport viewport;
-
     private OrthographicCamera camera;
-
     private SpriteBatch spriteBatch;
+
+    private Viewport viewport;
 
     @Getter
     private Vector2 hover = new Vector2();
 
     private List<EntitySystem> systems = Lists.newArrayList();
+
+    public GameScreen(IClientGame game) {
+        this.game = game;
+    }
 
     private EntitySystem registerSystem(EntitySystem system) {
         this.systems.add(system);
@@ -62,11 +66,11 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
         this.camera = new OrthographicCamera();
 
-        DisplayMode displayMode = Gdx.graphics.getDisplayMode();
-
-        float ratio = (float) displayMode.width / (float) displayMode.height;
-
-        this.viewport = new FillViewport(VIEWPORT_SIZE, VIEWPORT_SIZE / ratio, this.camera);
+        this.viewport = new ExtendViewport(
+                CoreConstants.V_WIDTH / CoreConstants.PPM,
+                CoreConstants.V_HEIGHT / CoreConstants.PPM,
+                this.camera
+        );
 
         this.spriteBatch = new SpriteBatch();
 
@@ -75,6 +79,7 @@ public class GameScreen extends ScreenAdapter {
         this.registerSystem(new WorldRenderSystem(this.game, this.camera, this.spriteBatch, this.viewport));
         this.registerSystem(new VisualRenderSystem(this.game, this.spriteBatch));
         this.registerSystem(new PhysicsDebugSystem(this.game, this.camera));
+        this.registerSystem(new GameHudSystem(this.game, this.spriteBatch));
 
         Gdx.input.setInputProcessor(new PlayerControllerInputAdapter());
     }
@@ -87,6 +92,8 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         this.viewport.update(width, height);
+
+        this.game.getEngine().getSystem(GameHudSystem.class).resize(width, height);
     }
 
     @Override

@@ -23,5 +23,6 @@ public class SetupBlocks implements Setup {
         registryBlocks.registerBlock(3, Blocks.WATER);
         registryBlocks.registerBlock(4, Blocks.GRASS);
         registryBlocks.registerBlock(5, Blocks.REINFORCED_DIRT);
+        registryBlocks.registerBlock(6, Blocks.GRASS_PLANT);
     }
 }

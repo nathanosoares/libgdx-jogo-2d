@@ -87,8 +87,8 @@ public class PlayerControllerSystem extends EntitySystem {
         double oldDegrees = directionComponent.degrees;
 
         directionComponent.degrees = Math.toDegrees(Math.atan2(
-                mouseWorldPosition.x - (positionComponent.x + iEntity.getWidth() / 2),
-                mouseWorldPosition.y - (positionComponent.y + iEntity.getHeight() / 2)
+                mouseWorldPosition.x - (positionComponent.x),
+                mouseWorldPosition.y - (positionComponent.y)
         ));
 
         if (oldDegrees != directionComponent.degrees) {

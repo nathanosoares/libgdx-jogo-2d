@@ -5,6 +5,8 @@ import dev.game.test.api.util.EnumFacing;
 
 public interface IWorldLayer {
 
+    IWorld getWorld();
+
     IBlockState[][] getStates();
 
     IBlockState getBlockState(int x, int y);

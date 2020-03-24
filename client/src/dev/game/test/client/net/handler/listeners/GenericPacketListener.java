@@ -41,6 +41,7 @@ public class GenericPacketListener extends AbstractServerPacketListener {
 
         IPlayer player = game.getClientManager().getPlayer();
 
+        System.out.println(packet.getPosition());
         player.setPosition(world, packet.getPosition());
     }
 }

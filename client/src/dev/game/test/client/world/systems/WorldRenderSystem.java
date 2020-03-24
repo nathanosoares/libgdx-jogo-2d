@@ -18,8 +18,7 @@ import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
 import dev.game.test.client.ClientApplication;
 import dev.game.test.client.world.animations.OpacityAccessor;
-import dev.game.test.core.block.BlockState;
-import lombok.Getter;
+import dev.game.test.core.block.states.BlockState;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Iterator;

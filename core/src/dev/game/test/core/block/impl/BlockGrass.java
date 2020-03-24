@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.core.block.Block;
-import dev.game.test.core.block.BlockState;
-import lombok.Getter;
 
 public class BlockGrass extends Block {
 

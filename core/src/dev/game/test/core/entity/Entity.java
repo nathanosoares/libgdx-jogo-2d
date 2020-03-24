@@ -61,7 +61,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
         if (bodyComponent.body != null) {
             bodyComponent.body.setTransform(
-                    new Vector2(positionComponent.x + this.getWidth() / 2, positionComponent.y + this.getWidth() / 2),
+                    new Vector2(positionComponent.x, positionComponent.y),
                     bodyComponent.body.getAngle()
             );
         }
@@ -111,7 +111,7 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
         // Set our body's starting position in the world
         Vector2 position = getPosition();
-        bodyDef.position.set(position.x + this.getWidth() / 2, position.y + this.getHeight() / 2);
+        bodyDef.position.set(position.x, position.y);
 
         // Create our body in the world using our body definition
         bodyComponent.body = world.getBox2dWorld().createBody(bodyDef);

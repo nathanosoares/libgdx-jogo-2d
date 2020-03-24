@@ -30,7 +30,8 @@ public class ServerWorldUtils {
 
                     WorldLayerSnapshotServerPacket.LayerData data = new WorldLayerSnapshotServerPacket.LayerData(
                             blockState.getBlock().getId(),
-                            blockState.getPosition(),
+                            x,
+                            y,
                             blockState.getConnectedData()
                     );
 

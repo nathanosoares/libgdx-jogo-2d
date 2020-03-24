@@ -1,4 +1,4 @@
-package dev.game.test.core.block;
+package dev.game.test.core.block.states;
 
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.block.IBlock;
@@ -16,13 +16,13 @@ import lombok.ToString;
 public class BlockState implements IBlockState {
 
     @Setter
-    private IBlock block;
+    protected IBlock block;
 
-    private IWorld world;
+    protected IWorld world;
 
-    private IWorldLayer layer;
+    protected IWorldLayer layer;
 
-    private Vector2 position;
+    protected Vector2 position;
 
     @Setter
     private int connectedData;

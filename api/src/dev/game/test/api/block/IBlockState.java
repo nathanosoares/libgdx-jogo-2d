@@ -8,8 +8,6 @@ public interface IBlockState {
 
     IBlock getBlock();
 
-    void setBlock(IBlock block);
-
     IWorld getWorld();
 
     IWorldLayer getLayer();

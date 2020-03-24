@@ -63,8 +63,8 @@ public class HitSystem extends IteratingSystem {
 
                 double radians = Math.toRadians(directionComponent.degrees);
 
-                double x = iEntity.getWidth() * Math.sin(radians) + iEntity.getPosition().x + iEntity.getWidth() / 2;
-                double y = iEntity.getHeight() * Math.cos(radians) + iEntity.getPosition().y + iEntity.getHeight() / 2;
+                double x = iEntity.getWidth() * Math.sin(radians) + iEntity.getPosition().x;
+                double y = iEntity.getHeight() * Math.cos(radians) + iEntity.getPosition().y;
 
                 Hit hit = new Hit(iEntity, 2.0f);
 

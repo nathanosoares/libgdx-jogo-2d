@@ -12,8 +12,8 @@ import dev.game.test.api.entity.IPlayer;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.core.Game;
 import dev.game.test.core.block.Block;
-import dev.game.test.core.block.BlockSolidState;
-import dev.game.test.core.block.BlockState;
+import dev.game.test.core.block.states.SolidBlockState;
+import dev.game.test.core.block.states.BlockState;
 import dev.game.test.core.block.Blocks;
 import dev.game.test.core.entity.Hit;
 import lombok.Getter;
@@ -117,41 +117,33 @@ public class World implements IWorld {
 
         for (int x = 0; x < getBounds().getWidth(); x++) {
             for (int y = 0; y < getBounds().getHeight(); y++) {
-
-                ground.setBlockState(new BlockState(
-                        primary, this, ground, new Vector2(x, y)
-                ));
-
+                ground.setBlockState(primary.createState(this, ground, x, y));
             }
         }
 
         for (int x = 4; x < 9; x++) {
-            ground.getBlockState(x, 5).setBlock(secondary);
-            ground.getBlockState(x, 6).setBlock(secondary);
+            ground.setBlockState(secondary.createState(this, ground, x, 5));
+            ground.setBlockState(secondary.createState(this, ground, x, 6));
 
             if (x == 4) {
                 continue;
             }
 
-            ground.getBlockState(x, 4).setBlock(secondary);
-            ground.getBlockState(x, 7).setBlock(secondary);
+            ground.setBlockState(secondary.createState(this, ground, x, 4));
+            ground.setBlockState(secondary.createState(this, ground, x, 7));
         }
 
         for (int x = 9; x < 12; x++) {
-            ground.getBlockState(x, 11).setBlock(Blocks.WATER);
-            ground.getBlockState(x, 12).setBlock(Blocks.WATER);
+            ground.setBlockState(Blocks.WATER.createState(this, ground, x, 11));
+            ground.setBlockState(Blocks.WATER.createState(this, ground, x, 12));
 
             if (x == 9) {
                 continue;
             }
 
-            ground.getBlockState(x, 9).setBlock(Blocks.WATER);
-            ground.getBlockState(x, 10).setBlock(Blocks.WATER);
+            ground.setBlockState(Blocks.WATER.createState(this, ground, x, 9));
+            ground.setBlockState(Blocks.WATER.createState(this, ground, x, 10));
         }
-
-        ground.getBlockState(4, 10).setBlock(Blocks.WATER);
-        ground.getBlockState(4, 11).setBlock(Blocks.REINFORCED_DIRT);
-
 
         for (int x = 0; x < this.getBounds().getWidth(); x++) {
             for (int y = 0; y < this.getBounds().getHeight(); y++) {
@@ -162,15 +154,13 @@ public class World implements IWorld {
 
         this.layers[0] = ground;
 
-        WorldLayer decoration = new WorldLayer(this);
+        WorldLayer decorationLayer = new WorldLayer(this);
 
-        decoration.setBlockState(new BlockSolidState(Blocks.STONE, this, decoration, new Vector2(2, 4)));
+        decorationLayer.setBlockState(Blocks.GRASS_PLANT.createState(this, decorationLayer, 8, 8));
+        decorationLayer.setBlockState(Blocks.STONE.createState(this, decorationLayer, 4, 4));
 
-        this.layers[1] = decoration;
+        this.layers[1] = decorationLayer;
     }
-
-    //
-
 
     @Override
     public Collection<IPlayer> getPlayers() {

@@ -2,17 +2,23 @@ package dev.game.test.core.world;
 
 import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.block.IBlockState;
+import dev.game.test.api.block.IPhysicBlockState;
 import dev.game.test.api.util.EnumFacing;
+import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
-import dev.game.test.core.block.BlockState;
+import dev.game.test.core.block.states.BlockState;
 import lombok.Getter;
 
 public class WorldLayer implements IWorldLayer {
 
     @Getter
+    protected final IWorld world;
+
+    @Getter
     protected IBlockState[][] states;
 
     public WorldLayer(World world) {
+        this.world = world;
         this.states = new BlockState[(int) world.getBounds().getWidth()][(int) world.getBounds().getHeight()];
     }
 
@@ -47,8 +53,22 @@ public class WorldLayer implements IWorldLayer {
 
                 int x = (int) blockState.getPosition().x + additionalX;
                 int y = (int) blockState.getPosition().y + additionalY;
-                this.states[x][y] = blockState;
 
+                if (isOrigin(x, y)) {
+                    IBlockState oldState = this.states[x][y];
+
+                    if (oldState instanceof IPhysicBlockState) {
+                        this.world.getBox2dWorld().destroyBody(((IPhysicBlockState) oldState).getBody());
+                    }
+                }
+
+                if (additionalX== 0 && additionalY == 0) {
+                    if (blockState instanceof IPhysicBlockState) {
+                        ((IPhysicBlockState) blockState).createPhysics(this.world.getBox2dWorld());
+                    }
+                }
+
+                this.states[x][y] = blockState;
 //                blockState.getBlock().onBlockNeighbourUpdate(blockState, null);
             }
         }

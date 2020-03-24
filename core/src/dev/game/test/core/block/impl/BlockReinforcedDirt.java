@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.core.block.Block;
-import dev.game.test.core.block.BlockState;
 import dev.game.test.core.block.connected.ConnectedTextureSimple;
 
 public class BlockReinforcedDirt extends Block {

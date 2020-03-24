@@ -80,8 +80,8 @@ public class VisualRenderSystem extends EntitySystem {
 
                 this.batch.draw(
                         visual.region,
-                        position.x,
-                        position.y,
+                        position.x - iEntity.getWidth() / 2,
+                        position.y - iEntity.getHeight() / 2,
                         0,
                         0,
                         visual.region.getRegionWidth(),
@@ -125,8 +125,8 @@ public class VisualRenderSystem extends EntitySystem {
                     float radius = 0.5f;
                     double radians = Math.toRadians(degrees);
 
-                    double x = radius * Math.sin(radians) + position.x + (iEntity.getWidth() / 2) - originX;
-                    double y = radius * Math.cos(radians) + position.y + (iEntity.getHeight() / 2) - originY;
+                    double x = radius * Math.sin(radians) + position.x - originX;
+                    double y = radius * Math.cos(radians) + position.y - originY;
 
                     spriteSword.setFlip(radians < Math.toRadians(directionComponent.degrees), true);
                     spriteSword.setOrigin(4, 15f);
@@ -153,8 +153,8 @@ public class VisualRenderSystem extends EntitySystem {
                         radius = 1.5f;
                         radians = Math.toRadians(hitVisualComponent.handler.degrees);
 
-                        x = radius * Math.sin(radians) + position.x + (iEntity.getWidth() / 2) - originX;
-                        y = radius * Math.cos(radians) + position.y + (iEntity.getHeight() / 2) - originY;
+                        x = radius * Math.sin(radians) + position.x - originX;
+                        y = radius * Math.cos(radians) + position.y - originY;
 
                         this.batch.draw(
                                 region,
