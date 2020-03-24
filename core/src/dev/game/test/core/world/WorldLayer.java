@@ -40,8 +40,9 @@ public class WorldLayer implements IWorldLayer {
 
     public IBlockState getFacingBlock(IBlockState blockState, EnumFacing... facings) {
         GridPoint2 position = blockState.getPosition();
-        int x = (int) position.x;
-        int y = (int) position.y;
+
+        int x = position.x;
+        int y = position.y;
 
         for (EnumFacing facing1 : facings) {
             x += facing1.getOffset().x;
@@ -55,8 +56,8 @@ public class WorldLayer implements IWorldLayer {
         for (int additionalX = 0; additionalX < blockState.getBlock().getWidth(); additionalX++) {
             for (int additionalY = 0; additionalY < blockState.getBlock().getHeight(); additionalY++) {
 
-                int x = (int) blockState.getPosition().x + additionalX;
-                int y = (int) blockState.getPosition().y + additionalY;
+                int x = blockState.getPosition().x + additionalX;
+                int y = blockState.getPosition().y + additionalY;
 
                 if (isOrigin(x, y)) {
                     IBlockState oldState = this.states[x][y];
