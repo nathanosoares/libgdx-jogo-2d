@@ -15,7 +15,11 @@ public interface IEntity extends Identifiable {
 
     void setPosition(IWorld world, Vector2 vec);
 
+    Vector2 getPosition(Vector2 vector2);
+
     Vector2 getPosition();
+
+    float getAltitude();
 
     void setVelocity(Vector2 vec);
 

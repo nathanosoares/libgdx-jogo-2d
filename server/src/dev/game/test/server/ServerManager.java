@@ -55,6 +55,7 @@ public class ServerManager implements IServerManager {
         }
 
         worlds.put(world.getName(), world);
+        world.setLoaded(true);
     }
 
     @Override

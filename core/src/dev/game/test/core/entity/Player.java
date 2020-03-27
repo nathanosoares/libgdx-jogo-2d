@@ -5,18 +5,28 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IPlayer;
+import dev.game.test.api.inventory.IInventory;
 import dev.game.test.api.keybind.Keybind;
-import dev.game.test.core.entity.components.BodyComponent;
+import dev.game.test.core.entity.components.GravityComponent;
 import dev.game.test.core.entity.components.KeybindComponent;
 import dev.game.test.core.entity.components.NamedComponent;
 import dev.game.test.core.entity.components.StateComponent;
 import dev.game.test.core.entity.player.PlayerState;
 import dev.game.test.core.entity.player.componenets.HitComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
+import dev.game.test.core.inventory.PlayerInventory;
+import dev.game.test.core.inventory.components.InventoryComponent;
+import lombok.Getter;
 
 import java.util.UUID;
 
+@Getter
 public class Player extends LivingEntity implements IPlayer {
+
+    private final EnumEntityType type = EnumEntityType.PLAYER;
+
+    private final int width = 1;
+    private final int height = 1;
 
     public Player(UUID uuid, String name) {
         super(uuid);
@@ -32,6 +42,9 @@ public class Player extends LivingEntity implements IPlayer {
 
         this.add(new StateComponent<>(new DefaultStateMachine<>(this, PlayerState.IDLE)));
         this.add(new KeybindComponent());
+        this.add(new InventoryComponent(new PlayerInventory(this)));
+
+        this.getComponent(GravityComponent.class).gravity = 2;
     }
 
     @Override
@@ -60,8 +73,8 @@ public class Player extends LivingEntity implements IPlayer {
     }
 
     @Override
-    public EnumEntityType getType() {
-        return EnumEntityType.PLAYER;
+    public IInventory getInventory() {
+        return InventoryComponent.MAPPER.get(this).inventory;
     }
 
     @Override
@@ -71,15 +84,4 @@ public class Player extends LivingEntity implements IPlayer {
 
         return polygonShape;
     }
-
-    @Override
-    public float getWidth() {
-        return 1;
-    }
-
-    @Override
-    public float getHeight() {
-        return 1;
-    }
-
 }

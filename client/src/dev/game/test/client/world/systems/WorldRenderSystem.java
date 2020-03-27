@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
@@ -22,6 +23,7 @@ import dev.game.test.client.ClientApplication;
 import dev.game.test.client.world.animations.OpacityAccessor;
 import dev.game.test.core.CoreConstants;
 import dev.game.test.core.block.states.BlockState;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Iterator;
@@ -50,6 +52,9 @@ public class WorldRenderSystem extends EntitySystem {
     private boolean mouseWorldGridChanged = false;
 
     private final Map<BlockState, AtomicReference<Float>> opacity = Maps.newHashMap();
+
+    @Getter
+    private final Map<Map.Entry<GridPoint2, Animation<TextureRegion>>, Float> breakAnimations = Maps.newHashMap();
 
     TextureRegion portalFrame = new TextureRegion(new Texture(Gdx.files.internal("map/portal-frame.png")));
     TextureRegion portalGround = new TextureRegion(new Texture(Gdx.files.internal("map/portal-ground.png")));
@@ -91,10 +96,6 @@ public class WorldRenderSystem extends EntitySystem {
         mouseWorldGrid.set((int) mouseWorldPosition.x, (int) mouseWorldPosition.y);
         mouseWorldGridChanged = !oldMouseWorldGrid.equals(mouseWorldGrid);
 
-        if (mouseWorldGridChanged) {
-            System.out.println(mouseWorldGrid);
-        }
-
         if (game.getClientManager().getCurrentWorld() != null) {
             IWorld world = game.getClientManager().getCurrentWorld();
 
@@ -102,6 +103,8 @@ public class WorldRenderSystem extends EntitySystem {
                 renderMapLayer(world, layerIndex);
             }
         }
+
+        renderBreakAnimations(deltaTime);
 
         batch.setColor(1.0f, 1.0f, 1.0f, 1);
         batch.draw(portalGround, portalFrameX, portalFrameY, 1, 1);
@@ -253,6 +256,31 @@ public class WorldRenderSystem extends EntitySystem {
             }
 
             y -= layerTileHeight;
+        }
+    }
+
+    private void renderBreakAnimations(float deltaTime) {
+
+        Iterator<Map.Entry<Map.Entry<GridPoint2, Animation<TextureRegion>>, Float>> iterator = breakAnimations.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<Map.Entry<GridPoint2, Animation<TextureRegion>>, Float> entry = iterator.next();
+
+            float stateTime = entry.getValue() + deltaTime;
+
+            entry.setValue(stateTime);
+
+            Map.Entry<GridPoint2, Animation<TextureRegion>> key = entry.getKey();
+            GridPoint2 position = key.getKey();
+            Animation<TextureRegion> animation = key.getValue();
+            TextureRegion region = animation.getKeyFrame(stateTime, false);
+
+            batch.draw(region, position.x, position.y, region.getRegionWidth() * CoreConstants.TILE_UNIT_PER_PIXEL, region.getRegionHeight() * CoreConstants.TILE_UNIT_PER_PIXEL);
+
+            if (animation.isAnimationFinished(stateTime)) {
+                System.out.println("remove");
+                iterator.remove();
+            }
         }
     }
 }

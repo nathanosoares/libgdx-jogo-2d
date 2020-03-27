@@ -36,8 +36,7 @@ public class SolidBlockState extends PhysicBlockState {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
 
-        Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData(this);
+        body.createFixture(fixtureDef);
 
         shape.dispose();
     }

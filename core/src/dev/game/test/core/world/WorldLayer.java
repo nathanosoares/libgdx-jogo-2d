@@ -2,10 +2,11 @@ package dev.game.test.core.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Vector2;
 import dev.game.test.api.IClientGame;
+import dev.game.test.api.IServerGame;
 import dev.game.test.api.block.IBlockState;
 import dev.game.test.api.block.IPhysicBlockState;
+import dev.game.test.api.net.packet.server.WorldLayerSnapshotServerPacket;
 import dev.game.test.api.util.EnumFacing;
 import dev.game.test.api.world.IWorld;
 import dev.game.test.api.world.IWorldLayer;
@@ -19,10 +20,15 @@ public class WorldLayer implements IWorldLayer {
     protected final IWorld world;
 
     @Getter
+    private final int index;
+
+    @Getter
     protected IBlockState[][] states;
 
-    public WorldLayer(World world) {
+    public WorldLayer(World world, int index) {
         this.world = world;
+        this.index = index;
+
         this.states = new BlockState[(int) world.getBounds().getWidth()][(int) world.getBounds().getHeight()];
     }
 
@@ -70,6 +76,7 @@ public class WorldLayer implements IWorldLayer {
                 if (additionalX == 0 && additionalY == 0) {
                     if (blockState instanceof IPhysicBlockState) {
                         ((IPhysicBlockState) blockState).createPhysics(this.world.getBox2dWorld());
+                        ((IPhysicBlockState) blockState).getBody().setUserData(blockState);
                     }
                 }
 
@@ -79,6 +86,24 @@ public class WorldLayer implements IWorldLayer {
                     blockState.getBlock().onBlockNeighbourUpdate(blockState, null);
                 }
             }
+        }
+
+        if (this.world.isLoaded() && Game.getInstance() instanceof IServerGame) {
+            WorldLayerSnapshotServerPacket.LayerData[][] dataArray = new WorldLayerSnapshotServerPacket.LayerData[][]{
+                    {
+                            new WorldLayerSnapshotServerPacket.LayerData(
+                                    blockState.getBlock().getId(),
+                                    blockState.getPosition().x,
+                                    blockState.getPosition().y,
+                                    blockState.getConnectedData()
+                            )
+                    }
+            };
+
+            ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
+                    new WorldLayerSnapshotServerPacket(world.getName(), this.index, dataArray),
+                    this.getWorld()
+            );
         }
     }
 

@@ -1,8 +1,8 @@
 package dev.game.test.core.entity;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import dev.game.test.api.IServerGame;
@@ -11,6 +11,7 @@ import dev.game.test.api.entity.IServerEntity;
 import dev.game.test.api.net.packet.server.EntityDestroyServerPacket;
 import dev.game.test.api.net.packet.server.EntitySpawnServerPacket;
 import dev.game.test.api.world.IWorld;
+import dev.game.test.core.Box2dUtils;
 import dev.game.test.core.Game;
 import dev.game.test.core.entity.components.*;
 
@@ -20,11 +21,12 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
     public Entity(UUID id) {
         this.add(new IdentifiableComponent(id));
-        this.add(new PositionComponent(0, 0, null));
+        this.add(new TransformComponent(0, 0, 1, null));
         this.add(new EntityComponent(false));
         this.add(new VelocityComponent());
         this.add(new DirectionComponent());
         this.add(new BodyComponent());
+        this.add(new GravityComponent());
 
         this.setupDefaultComponents();
     }
@@ -45,33 +47,35 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
 
     @Override
     public Vector2 getPosition() {
-        PositionComponent positionComponent = PositionComponent.MAPPER.get(this);
+        return getPosition(new Vector2());
+    }
 
-        return new Vector2(positionComponent.x, positionComponent.y);
+    @Override
+    public Vector2 getPosition(Vector2 vec) {
+        TransformComponent transformComponent = TransformComponent.MAPPER.get(this);
+        vec.set(transformComponent.x, transformComponent.y);
+
+        return vec;
+    }
+
+    @Override
+    public float getAltitude() {
+        return TransformComponent.MAPPER.get(this).altitude;
     }
 
     @Override
     public void setPosition(Vector2 vec) {
-        PositionComponent positionComponent = PositionComponent.MAPPER.get(this);
+        TransformComponent transformComponent = TransformComponent.MAPPER.get(this);
 
-        positionComponent.x = vec.x;
-        positionComponent.y = vec.y;
-
-        BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
-
-        if (bodyComponent.body != null) {
-            bodyComponent.body.setTransform(
-                    new Vector2(positionComponent.x, positionComponent.y),
-                    bodyComponent.body.getAngle()
-            );
-        }
+        transformComponent.x = vec.x;
+        transformComponent.y = vec.y;
     }
 
     @Override
     public void setPosition(IWorld world, Vector2 vec) {
         if (!world.equals(this.getWorld())) {
             world.spawnEntity(this, vec);
-            PositionComponent.MAPPER.get(this).world = world;
+            TransformComponent.MAPPER.get(this).world = world;
         } else {
             this.setPosition(vec);
         }
@@ -101,13 +105,55 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
     public void onSpawn(IWorld world) {
 
         EntityComponent.MAPPER.get(this).spawned = true;
-        PositionComponent.MAPPER.get(this).world = world;
+        TransformComponent.MAPPER.get(this).world = world;
 
+        buildBodyComponent(world);
+        buildGravityComponent(world);
+
+        if (!(this instanceof IServerEntity) && Game.getInstance() instanceof IServerGame) {
+            ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
+                    new EntitySpawnServerPacket(this.getId(), this.getType(), getPosition(), getDirection()), world
+            );
+        }
+    }
+
+    @Override
+    public void onDestroy(IWorld world) {
+        BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
+        GravityComponent gravityComponent = GravityComponent.MAPPER.get(this);
+
+        world.getBox2dWorld().destroyBody(bodyComponent.body);
+        world.getBox2dWorld().destroyBody(gravityComponent.body);
+
+        EntityComponent.MAPPER.get(this).spawned = false;
+        TransformComponent.MAPPER.get(this).world = null;
+        bodyComponent.body = null;
+        gravityComponent.body = null;
+
+        if (!(this instanceof IServerEntity) && Game.getInstance() instanceof IServerGame) {
+            ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
+                    new EntityDestroyServerPacket(this.getId()), world
+            );
+        }
+    }
+
+    @Override
+    public IWorld getWorld() {
+        return TransformComponent.MAPPER.get(this).world;
+    }
+
+    @Override
+    public UUID getId() {
+        return IdentifiableComponent.MAPPER.get(this).uuid;
+    }
+
+    private void buildBodyComponent(IWorld world) {
         BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
         BodyDef bodyDef = new BodyDef();
         // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.allowSleep = false;
+        bodyDef.gravityScale = 0;
 
         // Set our body's starting position in the world
         Vector2 position = getPosition();
@@ -124,47 +170,26 @@ public abstract class Entity extends com.badlogic.ashley.core.Entity implements 
         fixtureDef.shape = shape;
         fixtureDef.filter.groupIndex = -1;
 
-        Fixture fixture = bodyComponent.body.createFixture(fixtureDef);
-        fixture.setUserData(this);
+        bodyComponent.body.createFixture(fixtureDef);
 
         // Remember to dispose of any shapes after you're done with them!
         // BodyDef and FixtureDef don't need disposing, but shapes do.
         shape.dispose();
-
-        if (!(this instanceof IServerEntity) && Game.getInstance() instanceof IServerGame) {
-            ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
-                    new EntitySpawnServerPacket(this.getId(), this.getType(), getPosition(), getDirection()), world
-            );
-        }
     }
 
-    @Override
-    public void onDestroy(IWorld world) {
+    private void buildGravityComponent(IWorld world) {
+        GravityComponent gravityComponent = GravityComponent.MAPPER.get(this);
         BodyComponent bodyComponent = BodyComponent.MAPPER.get(this);
-        world.getBox2dWorld().destroyBody(bodyComponent.body);
 
-        EntityComponent.MAPPER.get(this).spawned = false;
-        PositionComponent.MAPPER.get(this).world = null;
-        bodyComponent.body = null;
+        BodyDef bodyDef = Box2dUtils.createDef(bodyComponent.body);
+        bodyDef.gravityScale = 1;
 
-        if (!(this instanceof IServerEntity) && Game.getInstance() instanceof IServerGame) {
-            ((IServerGame) Game.getInstance()).getConnectionHandler().broadcastPacket(
-                    new EntityDestroyServerPacket(this.getId()), world
-            );
-        }
-    }
+        FixtureDef fixtureDef = Box2dUtils.createDef(bodyComponent.body.getFixtureList().get(0));
+        fixtureDef.isSensor = true;
 
-    /*
+        gravityComponent.body = world.getBox2dWorld().createBody(bodyDef);
+        gravityComponent.body.createFixture(fixtureDef);
+        gravityComponent.body.setUserData(this);
 
-     */
-
-    @Override
-    public IWorld getWorld() {
-        return PositionComponent.MAPPER.get(this).world;
-    }
-
-    @Override
-    public UUID getId() {
-        return IdentifiableComponent.MAPPER.get(this).uuid;
     }
 }

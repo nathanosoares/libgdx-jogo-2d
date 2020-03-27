@@ -7,6 +7,8 @@ public interface IWorldLayer {
 
     IWorld getWorld();
 
+    int getIndex();
+
     IBlockState[][] getStates();
 
     IBlockState getBlockState(int x, int y);

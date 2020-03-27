@@ -7,7 +7,7 @@ import dev.game.test.core.block.Block;
 import java.util.Map;
 
 @Deprecated
-public class RegistryBlocks implements IRegistry<Block> {
+public class BlockRegistry implements IRegistry<Block> {
 
     private final Map<Integer, Block> blockId = Maps.newHashMap();
 

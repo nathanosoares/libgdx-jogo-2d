@@ -60,6 +60,7 @@ public class PacketPayloadSetup implements Setup {
         registry.registerSerializer(1210, DirectionClientPacket.class);
         registry.registerSerializer(1211, EntityDirectionServerPacket.class);
         registry.registerSerializer(1220, EntityHeathServerPacket.class);
+        registry.registerSerializer(1230, PlayerBreakAnimationServerPacket.class);
 
         // Simple Objects
         registry.registerSerializer(2000, Vector2.class);

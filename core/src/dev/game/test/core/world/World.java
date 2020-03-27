@@ -16,6 +16,7 @@ import dev.game.test.core.block.Block;
 import dev.game.test.core.block.Blocks;
 import dev.game.test.core.entity.Hit;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.annotation.Target;
 import java.util.Collection;
@@ -37,6 +38,10 @@ public class World implements IWorld {
 
     private final Map<UUID, IPlayer> players = Maps.newHashMap();
 
+    @Getter
+    @Setter
+    private boolean loaded = false;
+
     public World(String name, int width, int height) {
         this(name, 0, width, height);
     }
@@ -47,40 +52,37 @@ public class World implements IWorld {
         this.layers = new WorldLayer[layersSize];
 
         for (int i = 0; i < layersSize; i++) {
-            this.layers[i] = new WorldLayer(this);
+            this.layers[i] = new WorldLayer(this, i);
         }
 
-        this.box2dWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+        this.box2dWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, -5), true);
 
         this.box2dWorld.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-
                 Fixture fixtureA = contact.getFixtureA();
                 Fixture fixtureB = contact.getFixtureB();
 
                 Hit hit = null;
-                Fixture hitFixture = null;
                 Object target = null;
 
-                if (fixtureA.getUserData() instanceof Hit) {
+                if (fixtureA.getBody().getUserData() instanceof Hit) {
 
-                    hitFixture = fixtureA;
-                    hit = (Hit) fixtureA.getUserData();
-                    target = fixtureB.getUserData();
+                    hit = (Hit) fixtureA.getBody().getUserData();
+                    target = fixtureB.getBody().getUserData();
 
-                } else if (fixtureB.getUserData() instanceof Hit) {
+                } else if (fixtureB.getBody().getUserData() instanceof Hit) {
 
-                    hitFixture = fixtureB;
-                    hit = (Hit) fixtureB.getUserData();
-                    target = fixtureA.getUserData();
+                    hit = (Hit) fixtureB.getBody().getUserData();
+                    target = fixtureA.getBody().getUserData();
 
                 }
 
-                if (hitFixture != null && !hit.getDamaged().contains(target)) {
+                if (hit != null && !hit.getDamaged().contains(target)) {
 
                     if (target instanceof ILivingEntity) {
                         ILivingEntity livingEntity = (ILivingEntity) target;
+
                         if (hit.getSource() != target) {
 
                             // TODO event
@@ -106,7 +108,6 @@ public class World implements IWorld {
 
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
-
             }
 
             @Override
@@ -119,7 +120,7 @@ public class World implements IWorld {
     public void fillLayers(Block primary, Block secondary) {
         this.layers = new WorldLayer[2];
 
-        WorldLayer ground = new WorldLayer(this);
+        WorldLayer ground = new WorldLayer(this, 0);
 
         for (int x = 0; x < getBounds().getWidth(); x++) {
             for (int y = 0; y < getBounds().getHeight(); y++) {
@@ -139,17 +140,7 @@ public class World implements IWorld {
             ground.setBlockState(secondary.createState(this, ground, x, 7));
         }
 
-        for (int x = 9; x < 12; x++) {
-            ground.setBlockState(Blocks.WATER.createState(this, ground, x, 11));
-            ground.setBlockState(Blocks.WATER.createState(this, ground, x, 12));
 
-            if (x == 9) {
-                continue;
-            }
-
-            ground.setBlockState(Blocks.WATER.createState(this, ground, x, 9));
-            ground.setBlockState(Blocks.WATER.createState(this, ground, x, 10));
-        }
 
         for (int x = 0; x < this.getBounds().getWidth(); x++) {
             for (int y = 0; y < this.getBounds().getHeight(); y++) {
@@ -160,7 +151,7 @@ public class World implements IWorld {
 
         this.layers[0] = ground;
 
-        WorldLayer decorationLayer = new WorldLayer(this);
+        WorldLayer decorationLayer = new WorldLayer(this, 1);
 
         decorationLayer.setBlockState(Blocks.GRASS_PLANT.createState(this, decorationLayer, 8, 8));
         decorationLayer.setBlockState(Blocks.STONE.createState(this, decorationLayer, 4, 4));

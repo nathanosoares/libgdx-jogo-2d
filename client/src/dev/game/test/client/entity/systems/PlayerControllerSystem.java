@@ -5,19 +5,18 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
 import dev.game.test.api.IClientGame;
-import dev.game.test.api.entity.EnumEntityType;
 import dev.game.test.api.entity.IEntity;
+import dev.game.test.api.entity.ILivingEntity;
 import dev.game.test.api.net.packet.client.DirectionClientPacket;
 import dev.game.test.api.net.packet.client.HitClientPacket;
 import dev.game.test.api.net.packet.client.MovementClientPacket;
 import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.world.systems.WorldRenderSystem;
-import dev.game.test.core.Box2dUtils;
 import dev.game.test.core.entity.components.DirectionComponent;
+import dev.game.test.core.entity.components.GravityComponent;
 import dev.game.test.core.entity.components.KeybindComponent;
-import dev.game.test.core.entity.components.PositionComponent;
+import dev.game.test.core.entity.components.TransformComponent;
 import dev.game.test.core.entity.player.componenets.MovementComponent;
 import dev.game.test.core.keybind.Keybinds;
 
@@ -36,7 +35,7 @@ public class PlayerControllerSystem extends EntitySystem {
         Entity entity = (Entity) this.game.getClientManager().getPlayer();
         IEntity iEntity = (IEntity) entity;
 
-        PositionComponent positionComponent = PositionComponent.MAPPER.get(entity);
+        TransformComponent transformComponent = TransformComponent.MAPPER.get(entity);
         MovementComponent movementComponent = MovementComponent.MAPPER.get(entity);
         KeybindComponent activatedKeybinds = KeybindComponent.MAPPER.get(entity);
         HitVisualComponent hitVisualComponent = HitVisualComponent.MAPPER.get(entity);
@@ -87,8 +86,8 @@ public class PlayerControllerSystem extends EntitySystem {
         double oldDegrees = directionComponent.degrees;
 
         directionComponent.degrees = Math.toDegrees(Math.atan2(
-                mouseWorldPosition.x - (positionComponent.x),
-                mouseWorldPosition.y - (positionComponent.y)
+                mouseWorldPosition.x - (transformComponent.x),
+                mouseWorldPosition.y - (transformComponent.y)
         ));
 
         if (oldDegrees != directionComponent.degrees) {
@@ -108,6 +107,10 @@ public class PlayerControllerSystem extends EntitySystem {
                     movementComponent.deltaX,
                     movementComponent.deltaY
             ));
+        }
+
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.MIDDLE)) {
+            ((ILivingEntity) iEntity).damage(null, 0);
         }
     }
 }

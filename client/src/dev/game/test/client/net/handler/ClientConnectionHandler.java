@@ -27,6 +27,7 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
     @Getter
     private ServerConnectionManager manager;
 
+    @Getter
     private Client client;
 
     public void connect(String hostname, int port) throws IOException {
@@ -37,43 +38,7 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
 
         client.start();
 
-        client.addListener(new Listener() {
-            @Override
-            public void connected(Connection connection) {
-                super.connected(connection);
-
-                createHandler(connection);
-
-                Timer.instance().scheduleTask(new Timer.Task() {
-                    @Override
-                    public void run() {
-                        client.updateReturnTripTime();
-                    }
-                }, 0, 3);
-            }
-
-            @Override
-            public void disconnected(Connection connection) {
-                super.disconnected(connection);
-            }
-
-            @Override
-            public void received(Connection connection, Object object) {
-                super.received(connection, object);
-
-                if (object instanceof Packet) {
-                    ClientConnectionHandler.this.manager.queuePacket((Packet) object);
-                }
-
-                if (object instanceof FrameworkMessage.Ping) {
-                    FrameworkMessage.Ping ping = (FrameworkMessage.Ping) object;
-
-                    if (ping.isReply) {
-                        System.out.println("Ping: " + connection.getReturnTripTime());
-                    }
-                }
-            }
-        });
+        client.addListener(new ClientListener());
 
         client.connect(20000, hostname, port);
     }
@@ -88,4 +53,42 @@ public class ClientConnectionHandler implements IClientConnectionHandler {
         this.manager.sendPacket(new PacketHandshake(this.game.getUsername()));
     }
 
+    private class ClientListener extends Listener {
+        @Override
+        public void connected(Connection connection) {
+            super.connected(connection);
+
+            createHandler(connection);
+
+
+            Timer.instance().scheduleTask(new Timer.Task() {
+                @Override
+                public void run() {
+                    client.updateReturnTripTime();
+                }
+            }, 0, 3);
+        }
+
+        @Override
+        public void disconnected(Connection connection) {
+            super.disconnected(connection);
+        }
+
+        @Override
+        public void received(Connection connection, Object object) {
+            super.received(connection, object);
+
+            if (object instanceof Packet) {
+                ClientConnectionHandler.this.manager.queuePacket((Packet) object);
+            }
+
+            if (object instanceof FrameworkMessage.Ping) {
+                FrameworkMessage.Ping ping = (FrameworkMessage.Ping) object;
+
+                if (ping.isReply) {
+                    System.out.println("Ping: " + connection.getReturnTripTime());
+                }
+            }
+        }
+    }
 }

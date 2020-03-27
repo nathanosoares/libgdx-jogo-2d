@@ -21,5 +21,6 @@ public class SetupKeybinds implements Setup {
         keybindsRegistry.registerKeybind(Keybinds.MOVE_DOWN);
         keybindsRegistry.registerKeybind(Keybinds.MOVE_RIGHT);
         keybindsRegistry.registerKeybind(Keybinds.CHANGE_WORLD);
+        keybindsRegistry.registerKeybind(Keybinds.ADD_GRASS_PLANT);
     }
 }

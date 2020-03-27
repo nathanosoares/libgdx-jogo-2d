@@ -4,7 +4,11 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.utils.Array;
 import dev.game.test.api.IServerGame;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.net.packet.server.PlayerHitServerPacket;
@@ -18,6 +22,7 @@ import dev.game.test.core.entity.player.componenets.HitComponent;
 public class HitSystem extends IteratingSystem {
 
     private final Game game;
+    private Array<Body> bodies = new Array<>();
 
     public HitSystem(Game game) {
         super(Family.all(HitComponent.class, DirectionComponent.class).get());
@@ -61,34 +66,38 @@ public class HitSystem extends IteratingSystem {
 
                 IEntity iEntity = (IEntity) entity;
 
+                System.out.println(iEntity.getAltitude());
                 double radians = Math.toRadians(directionComponent.degrees);
 
                 double x = iEntity.getWidth() * Math.sin(radians) + iEntity.getPosition().x;
-                double y = iEntity.getHeight() * Math.cos(radians) + iEntity.getPosition().y;
+                double y = iEntity.getHeight() * Math.cos(radians) + iEntity.getPosition().y + iEntity.getAltitude();
 
                 Hit hit = new Hit(iEntity, 2.0f);
 
                 BodyDef bodyDef = new BodyDef();
                 bodyDef.type = BodyDef.BodyType.DynamicBody;
 
-                float width = 1f;
+                float width = 0.9f;
                 float height = 1.5f;
 
-                ChainShape shape = Box2dUtils.createEllipse(width, height, 30);
+                iEntity.getWorld().getBox2dWorld().getBodies(bodies);
 
                 Body body = iEntity.getWorld().getBox2dWorld().createBody(bodyDef);
-
-                FixtureDef fixtureDef = new FixtureDef();
-                fixtureDef.shape = shape;
-                fixtureDef.isSensor = true;
-                fixtureDef.filter.groupIndex = 1;
-
-                Fixture fixture = body.createFixture(fixtureDef);
-                fixture.setUserData(hit);
-
                 body.setTransform((float) x, (float) y, (float) -radians);
+                body.setUserData(hit);
 
-                shape.dispose();
+                while (height > 0.1) {
+                    ChainShape shape = Box2dUtils.createEllipse(width, height, 30);
+
+                    FixtureDef fixtureDef = new FixtureDef();
+                    fixtureDef.shape = shape;
+                    fixtureDef.isSensor = true;
+
+                    body.createFixture(fixtureDef);
+                    shape.dispose();
+
+                    height -= 0.1;
+                }
 
                 Gdx.app.postRunnable(() -> iEntity.getWorld().getBox2dWorld().destroyBody(body));
             }

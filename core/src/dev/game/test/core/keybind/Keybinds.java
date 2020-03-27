@@ -15,4 +15,6 @@ public class Keybinds {
 
     public static Keybind CHANGE_WORLD = new KeybindAdapter("change_world", "Change World", "desc", Input.Keys.T);
 
+    public static Keybind ADD_GRASS_PLANT = new KeybindAdapter("add_grass_plant", "Add grass plant", "desc", Input.Keys.Q);
+
 }

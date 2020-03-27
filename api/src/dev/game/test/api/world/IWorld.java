@@ -16,6 +16,10 @@ public interface IWorld {
 
     IWorldLayer[] getLayers();
 
+    void setLoaded(boolean value);
+
+    boolean isLoaded();
+
     Rectangle getBounds();
 
     Collection<IEntity> getEntities();

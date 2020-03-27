@@ -7,21 +7,18 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import dev.game.test.api.IClientGame;
 import dev.game.test.api.entity.IEntity;
 import dev.game.test.api.entity.ILivingEntity;
 import dev.game.test.client.entity.components.HitVisualComponent;
 import dev.game.test.client.entity.components.VisualComponent;
 import dev.game.test.core.entity.components.DirectionComponent;
-import dev.game.test.core.entity.components.HealthComponent;
-import dev.game.test.core.entity.components.PositionComponent;
+import dev.game.test.core.entity.components.TransformComponent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -34,6 +31,8 @@ public class VisualRenderSystem extends EntitySystem {
 
     private final Sprite spriteSword;
 
+    private final TextureRegion shadowPixel = createShadowPixel();
+
     public VisualRenderSystem(IClientGame game, Batch batch) {
         this.game = game;
         this.batch = batch;
@@ -44,13 +43,13 @@ public class VisualRenderSystem extends EntitySystem {
 
     @Override
     public void addedToEngine(Engine engine) {
-        entities = engine.getEntitiesFor(Family.all(PositionComponent.class, VisualComponent.class).get());
+        entities = engine.getEntitiesFor(Family.all(TransformComponent.class, VisualComponent.class).get());
     }
 
     @Override
     public void update(float deltaTime) {
 
-        PositionComponent position;
+        TransformComponent position;
         VisualComponent visual;
 
         this.batch.begin();
@@ -59,8 +58,14 @@ public class VisualRenderSystem extends EntitySystem {
             Entity entity = entities.get(i);
             IEntity iEntity = (IEntity) entity;
 
-            position = PositionComponent.MAPPER.get(entity);
+            position = TransformComponent.MAPPER.get(entity);
             visual = VisualComponent.MAPPER.get(entity);
+
+            float physicX = position.x;
+            float physicY = position.y + position.altitude;
+
+            float renderX = physicX - iEntity.getWidth() / 2;
+            float renderY = physicY - iEntity.getHeight() / 2;
 
             if (visual.region != null) {
 
@@ -76,12 +81,47 @@ public class VisualRenderSystem extends EntitySystem {
                     }
                 }
 
-                batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+                // shadow
+                batch.setColor(1.0f, 1.0f, 1.0f, 0.3f);
 
+                float shadowX = position.x - iEntity.getWidth() / 2;
+                float endShadowX = position.x + iEntity.getWidth() / 2;
+
+                float size = 1 / 16f;
+
+                for (int shadowLayer = 1; shadowLayer <= 3; shadowLayer++) {
+
+                    float startX = shadowX;
+                    float endX = endShadowX;
+
+                    if (shadowLayer == 2) {
+                        startX -= size;
+                        endX += size;
+                    }
+
+                    for (float x = startX; x < endX; x += size) {
+                        this.batch.draw(
+                                shadowPixel,
+                                x,
+                                position.y - iEntity.getHeight() / 2 - (size * shadowLayer) + size,
+                                0,
+                                0,
+                                visual.region.getRegionWidth(),
+                                visual.region.getRegionHeight(),
+                                size / 16f,
+                                size / 16f,
+                                0
+                        );
+                    }
+                }
+                // end shadow
+
+                // skin
+                batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
                 this.batch.draw(
                         visual.region,
-                        position.x - iEntity.getWidth() / 2,
-                        position.y - iEntity.getHeight() / 2,
+                        renderX,
+                        renderY,
                         0,
                         0,
                         visual.region.getRegionWidth(),
@@ -90,7 +130,9 @@ public class VisualRenderSystem extends EntitySystem {
                         1 / 16f,
                         0
                 );
+                // end skin
 
+                // TODO mudar
                 if (HitVisualComponent.MAPPER.has(entity)) {
 
                     HitVisualComponent hitVisualComponent = HitVisualComponent.MAPPER.get(entity);
@@ -125,8 +167,8 @@ public class VisualRenderSystem extends EntitySystem {
                     float radius = 0.5f;
                     double radians = Math.toRadians(degrees);
 
-                    double x = radius * Math.sin(radians) + position.x - originX;
-                    double y = radius * Math.cos(radians) + position.y - originY;
+                    double x = radius * Math.sin(radians) + physicX - originX;
+                    double y = radius * Math.cos(radians) + physicY - originY;
 
                     spriteSword.setFlip(radians < Math.toRadians(directionComponent.degrees), true);
                     spriteSword.setOrigin(4, 15f);
@@ -153,8 +195,8 @@ public class VisualRenderSystem extends EntitySystem {
                         radius = 1.5f;
                         radians = Math.toRadians(hitVisualComponent.handler.degrees);
 
-                        x = radius * Math.sin(radians) + position.x - originX;
-                        y = radius * Math.cos(radians) + position.y - originY;
+                        x = radius * Math.sin(radians) + physicX - originX;
+                        y = radius * Math.cos(radians) + physicY - originY;
 
                         this.batch.draw(
                                 region,
@@ -183,8 +225,8 @@ public class VisualRenderSystem extends EntitySystem {
                             livingEntity.getHealth(), livingEntity.getMaxHealth()
                     ));
 
-                    float fontX = position.x - layout.width / 2;
-                    float fontY = 0.8f + position.y + layout.height;
+                    float fontX = physicX - layout.width / 2;
+                    float fontY = 0.8f + physicY + layout.height;
 
                     font.draw(this.batch, layout, fontX, fontY);
                 }
@@ -192,5 +234,13 @@ public class VisualRenderSystem extends EntitySystem {
         }
 
         this.batch.end();
+    }
+
+    private TextureRegion createShadowPixel() {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.valueOf("000000"));
+        pixmap.fillRectangle(0, 0, 1, 1);
+
+        return new TextureRegion(new Texture(pixmap));
     }
 }
