@@ -9,7 +9,7 @@ public class DesktopLauncher {
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration clientConfig = new Lwjgl3ApplicationConfiguration();
         clientConfig.setMaximized(false);
-//        clientConfig.useVsync(false);
+        clientConfig.useVsync(true);
 
         new Lwjgl3Application(new ClientApplication(), clientConfig);
     }
