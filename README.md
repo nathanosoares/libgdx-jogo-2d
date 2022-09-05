@@ -1,6 +1,8 @@
-Fluxograma de Eventos 
+## LibGDX with Ashley (ECS)
 
-#### [Link para edição](https://www.lucidchart.com/documents/edit/51a8f150-e3a6-4a70-bf69-14a37d9fa6a5)
+A simple game implementation with headless server side.
 
-
-![Fluxomogram de eventos](https://i.imgur.com/SlrI2is.png)
+Features:
+ - [EventBus](https://github.com/greenrobot/EventBus) system
+ - [Box2D](https://github.com/libgdx/gdx-box2d) with authority server side
+ - [Network](https://github.com/EsotericSoftware/kryonet) with [packet system](https://github.com/nathanosoares/libgdx-jogo-2d/tree/master/api/src/dev/game/test/api/net)
