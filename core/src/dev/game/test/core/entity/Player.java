@@ -25,8 +25,8 @@ public class Player extends LivingEntity implements IPlayer {
 
     private final EnumEntityType type = EnumEntityType.PLAYER;
 
-    private final int width = 1;
-    private final int height = 1;
+    private final float width = 1;
+    private final float height = 1;
 
     public Player(UUID uuid, String name) {
         super(uuid);
@@ -42,7 +42,7 @@ public class Player extends LivingEntity implements IPlayer {
 
         this.add(new StateComponent<>(new DefaultStateMachine<>(this, PlayerState.IDLE)));
         this.add(new KeybindComponent());
-        this.add(new InventoryComponent(new PlayerInventory(this)));
+//        this.add(new InventoryComponent(new PlayerInventory(this)));
 
         this.getComponent(GravityComponent.class).gravity = 2;
     }

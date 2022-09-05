@@ -45,8 +45,8 @@ public class ClientApplication extends GameApplication<ClientGame> {
         this.tweenManager = new TweenManager();
 
         try {
-            String ip = System.getProperty("ip");
-            String rawPort = System.getProperty("port");
+            String ip = System.getProperty("ip", "127.0.0.1");
+            String rawPort = System.getProperty("port", "25565");
 
             if (rawPort != null && Ints.tryParse(rawPort) != null) {
                 getGame().getConnectionHandler().connect(ip, Ints.tryParse(rawPort));

@@ -1,24 +1,10 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
 
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-
-        jcenter()
-        google()
-    }
-
-    dependencies {
-        classpath "io.freefair.gradle:lombok-plugin:4.1.6"
-    }
+plugins {
+    id "io.freefair.lombok" version "5.3.3.3"
 }
 
 allprojects {
     version = '1.0'
-
-    apply plugin: "io.freefair.lombok"
 
     ext {
         appName = "jogo-2d"
@@ -38,95 +24,76 @@ allprojects {
         jcenter()
         google()
 
+        maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "http://clojars.org/repo/" }
+    }
+}
+
+subprojects {
+    apply plugin: "java"
+    apply plugin: "io.freefair.lombok"
+
+    dependencies {
+        implementation "com.google.guava:guava:$guavaVersion"
+        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
+        implementation "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        implementation "org.mini2Dx:universal-tween-engine:6.3.3"
+        implementation 'org.greenrobot:eventbus:3.2.0'
+        implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+
+
+        implementation "kryonet:kryonet:$kryonetVersion"
+        implementation "com.esotericsoftware:kryo:$kryoVersion"
+        implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }
 }
 
 project(":desktop") {
-    apply plugin: "java-library"
-
     dependencies {
         implementation project(":api")
-        compile project(":core")
-        compile project(":client")
+        implementation project(":core")
+        implementation project(":client")
 
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-        compile("com.badlogicgames.gdx:gdx-tools:$gdxVersion") {
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+        implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion") {
             exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'
-        }
-    }
-    
-    jar {
-        manifest {
-            attributes 'Main-Class': 'dev.game.test.desktop.DesktopLauncher'
-        }
-
-        from {
-            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
         }
     }
 }
 
 project(":client") {
-    apply plugin: "java-library"
-
     dependencies {
         implementation project(":api")
         implementation project(":core")
     }
 }
 
-
 project(":server") {
-    apply plugin: "java-library"
-
     dependencies {
         implementation project(":api")
-        compile project(":core")
+        implementation project(":core")
 
-        compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-    }
-
-    jar {
-        manifest {
-            attributes 'Main-Class': 'dev.game.test.server.ServerLauncher'
-        }
-
-        from {
-            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-        }
+        implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
     }
 }
 
 project(":core") {
-    apply plugin: "java-library"
-
     dependencies {
         implementation project(":api")
 
-        api "kryonet:kryonet:$kryonetVersion"
-        api "com.esotericsoftware:kryo:$kryoVersion"
-        compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        implementation "kryonet:kryonet:$kryonetVersion"
+        implementation "com.esotericsoftware:kryo:$kryoVersion"
+        implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }
 }
 
 project(":api") {
-    apply plugin: "java-library"
-
     dependencies {
-        api "com.google.guava:guava:$guavaVersion"
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
-        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        api "org.mini2Dx:universal-tween-engine:6.3.3"
-        api 'org.greenrobot:eventbus:3.2.0'
-        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }
 }
-
